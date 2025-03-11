@@ -1,7 +1,7 @@
 import React, { Component }  from "react";
 import {Button, View} from "react-native";
 
-const App = ({navigation}) => {
+const HomeScreen = ({navigation}) => {
     return(
         <View>
             <View style={{ margin:10 }}>
@@ -20,4 +20,4 @@ const App = ({navigation}) => {
     )
 }
 
-export default App;
+export default HomeScreen;
