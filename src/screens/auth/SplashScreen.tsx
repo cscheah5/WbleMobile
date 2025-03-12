@@ -3,23 +3,24 @@ import {View, Text, ActivityIndicator, StyleSheet} from 'react-native';
 
 const SplashScreen = () => {
   return (
-    <View>
-      <ActivityIndicator size="large" />
-      <Text>Loading...</Text>
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#0000ff" />
+      <Text style={styles.text}>Loading...</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center'
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5', 
   },
-  title: {
-    fontSize: 24, 
-    fontWeight: 'bold',
-     marginBottom: 20
+  text: {
+    marginTop: 20,
+    fontSize: 18,
+    color: '#333', 
   },
 });
 
