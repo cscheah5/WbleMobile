@@ -1,21 +1,15 @@
-import React, { Component }  from "react";
-import {Button, View} from "react-native";
+import React, { useContext } from "react";
+import {Text, View, Button} from "react-native";
+
+import { AuthContext } from "@/contexts/AuthContext";
 
 const HomeScreen = ({navigation}) => {
+    const {logout} = useContext(AuthContext);
+
     return(
         <View>
-            <View style={{ margin:10 }}>
-                <Button title="Chicken" onPress={()=>{navigation.navigate('Animal', {
-                    title: 'Chicken',
-                    img: require('@/assets/images/chicken.jpg'),
-                })}} />
-            </View>
-            <View style={{ margin:10 }}>
-                <Button title="Koala" onPress={()=>{navigation.navigate('Animal', {
-                    title: 'Koala',
-                    img: require('@/assets/images/koala.jpg'),
-                })}} />
-            </View>
+            <Text>This is the home page</Text>
+            <Button title="Log out" onPress={() => logout()} />
         </View>
     )
 }
