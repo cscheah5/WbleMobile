@@ -4,17 +4,18 @@ import {
   View,
   Text,
   Pressable,
-  TextInput,
   StyleSheet,
   Image,
 } from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
+import {InputWithLabel} from '@/components/InputWithLabel';
+import { AppButton } from '@/components/AppButton';
 
-const SignInScreen = ({ navigation }) => {
+const SignInScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const { login } = useContext(AuthContext);
+  const {login} = useContext(AuthContext);
 
   const handleLogin = () => {
     login(username, password);
@@ -24,41 +25,33 @@ const SignInScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.title}>Login</Text>
-        <Image 
-          source={require('@/assets/images/logo.png')} 
+        <Image
+          source={require('@/assets/images/logo.png')}
           style={styles.logo}
         />
       </View>
 
       <View style={styles.formContainer}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>Username</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your username"
-            value={username}
-            onChangeText={setUsername}
-            autoCapitalize="none"
-          />
-        </View>
+        <InputWithLabel
+          label="Username"
+          placeholder="Enter your username"
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+        />
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-        </View>
+        <InputWithLabel
+          label="Password"
+          placeholder="Enter your password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-        <Pressable 
-          style={styles.loginButton}
+        <AppButton 
+          title="Log in"
           onPress={handleLogin}
-        >
-          <Text style={styles.loginButtonText}>Log in</Text>
-        </Pressable>
+        />
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have an account? </Text>
@@ -72,8 +65,8 @@ const SignInScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
+  container: {
+    flex: 1,
     backgroundColor: '#ffffff',
     padding: 20,
   },
@@ -82,8 +75,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
     marginBottom: 30,
   },
-  title: { 
-    fontSize: 28, 
+  title: {
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#333333',
     marginBottom: 20,
@@ -95,36 +88,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginTop: 20,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333333',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    padding: 15,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  loginButton: {
-    backgroundColor: '#4A90E2',
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  loginButtonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
   },
   signupContainer: {
     flexDirection: 'row',

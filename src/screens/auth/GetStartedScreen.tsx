@@ -1,3 +1,4 @@
+import { AppButton } from '@/components/AppButton';
 import React from 'react';
 import {
   SafeAreaView,
@@ -20,16 +21,15 @@ const GetStartedScreen = ({navigation}) => {
       </View>
 
       <View style={styles.actionContainer}>
-        <Pressable
-          style={styles.signInButton}
-          onPress={() => navigation.navigate('SignIn')}>
-          <Text style={styles.signInButtonText}>Sign In</Text>
-        </Pressable>
+        <AppButton          
+          title="Get Started"
+          onPress={() => navigation.navigate('SignIn')}        
+        />
 
         <View style={styles.signUpContainer}>
-          <Text style={styles.signUpText}>Doesn't have an account? </Text>
+          <Text style={styles.signUpText}>Already have an account? </Text>
           <Pressable onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.signUpLink}>Sign up here!</Text>
+            <Text style={styles.signUpLink}>Sign in here!</Text>
           </Pressable>
         </View>
       </View>
@@ -66,18 +66,6 @@ const styles = StyleSheet.create({
   actionContainer: {
     width: '100%',
     marginBottom: 30,
-  },
-  signInButton: {
-    backgroundColor: '#4A90E2',
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  signInButtonText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '600',
   },
   signUpContainer: {
     flexDirection: 'row',
