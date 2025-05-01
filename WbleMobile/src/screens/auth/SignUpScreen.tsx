@@ -1,20 +1,61 @@
-import React, {useContext, useState} from 'react';
+import React, { useState} from 'react';
 import {
   SafeAreaView,
   View,
   Text,
   Pressable,
   StyleSheet,
-  Image,
+  Alert,
 } from 'react-native';
-import {AuthContext} from '@/contexts/AuthContext';
 import {InputWithLabel} from '@/components/InputWithLabel';
 import {AppButton} from '@/components/AppButton';
+import { API_URL } from '@/config/config';
+import axios from 'axios';
 
-const SignUpScreen = ({navigation}) => {
+const SignUpScreen = ({navigation}: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleRegister = () => {
+    // Basic validation
+    if (!username || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      return;
+    }
+
+    setIsLoading(true);
+    axios.post(`${API_URL}/auth/register`, {
+      username: username,
+      password: password,
+      password_confirmation: confirmPassword,
+    })
+    .then(response => {
+      setIsLoading(false);
+      if (response.status === 200) {
+        Alert.alert('Success', 'Account created successfully!');
+        navigation.navigate('SignIn');
+      } else {
+        Alert.alert('Error', 'Failed to create account');
+      }
+    })
+    .catch(error => {
+      setIsLoading(false);
+      console.error('Error:', error);
+    });
+
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -49,7 +90,8 @@ const SignUpScreen = ({navigation}) => {
 
         <AppButton
           title="Create Account"
-          // onPress={handleLogin}
+          onPress={handleRegister}
+          disabled={isLoading}
         />
 
         <View style={styles.signupContainer}>

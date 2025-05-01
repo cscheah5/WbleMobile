@@ -11,7 +11,7 @@ import {AuthContext} from '@/contexts/AuthContext';
 import {InputWithLabel} from '@/components/InputWithLabel';
 import { AppButton } from '@/components/AppButton';
 
-const SignInScreen = ({navigation}) => {
+const SignInScreen = ({navigation}: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 

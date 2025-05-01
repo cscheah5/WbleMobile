@@ -27,9 +27,9 @@ const GetStartedScreen = ({navigation}) => {
         />
 
         <View style={styles.signUpContainer}>
-          <Text style={styles.signUpText}>Already have an account? </Text>
+          <Text style={styles.signUpText}>Don't have an account? </Text>
           <Pressable onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.signUpLink}>Sign in here!</Text>
+            <Text style={styles.signUpLink}>Sign up here!</Text>
           </Pressable>
         </View>
       </View>
