@@ -5,18 +5,15 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
 import {
   DrawerContentScrollView,
   DrawerItemList,
   createDrawerNavigator,
 } from '@react-navigation/drawer';
-
 import {AuthContext} from '@/contexts/AuthContext';
-
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
-// User Screens
 import HomeScreen from '@/screens/HomeScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
 import SubjectScreen from '@/screens/SubjectScreen';
@@ -71,16 +68,18 @@ const CustomDrawerComponent = (props: any) => {
 
 const AppStack = () => {
   return (
-    <Drawer.Navigator
-      drawerContent={props => <CustomDrawerComponent {...props} />}
-      screenOptions={{
-        drawerActiveTintColor: 'darkslateblue',
-        drawerActiveBackgroundColor: 'pink',
-      }}>
-      <Drawer.Screen name="Home" component={HomeScreen} />
-      <Drawer.Screen name="Profile" component={ProfileScreen} />
-      <Drawer.Screen name="Subject" component={SubjectScreen} />
-    </Drawer.Navigator>
+    <NavigationContainer>
+      <Drawer.Navigator
+        drawerContent={props => <CustomDrawerComponent {...props} />}
+        screenOptions={{
+          drawerActiveTintColor: 'darkslateblue',
+          drawerActiveBackgroundColor: 'pink',
+        }}>
+        <Drawer.Screen name="Home" component={HomeScreen} />
+        <Drawer.Screen name="Profile" component={ProfileScreen} />
+        <Drawer.Screen name="Subject" component={SubjectScreen} />
+      </Drawer.Navigator>
+    </NavigationContainer>
   );
 };
 
