@@ -29,17 +29,24 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-6. Run migrations (this will create fresh tables in your database):
+6. Create database.sqlite in the database folder
+```bash
+wble-backend
+|-database
+|  |-database.sqlite
+```
+
+7. Run migrations (this will create fresh tables in your database):
 ```bash
 php artisan migrate:fresh
 ```
 
-7. Generate JWT secret:
+8. Generate JWT secret:
 ```bash
 php artisan jwt:secret
 ```
 
-8. Start the development server:
+9. Start the development server:
 ```bash
 php artisan serve
 ```
