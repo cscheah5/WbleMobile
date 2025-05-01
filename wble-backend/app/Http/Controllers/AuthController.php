@@ -15,6 +15,11 @@ use Illuminate\Routing\Controller;
 
 class AuthController extends ApiController
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+    }
+    
     // User registration
     public function register(Request $request)
     {
