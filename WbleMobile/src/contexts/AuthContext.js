@@ -12,13 +12,13 @@ export const AuthProvider = ({children}) => {
   const [userInfo, setUserInfo] = useState(null);
 
   // Configure axios instance
-  const api = axios.create({
+  const authAxios = axios.create({
     baseURL: API_URL,
   });
 
   // Add request interceptor
   // Attach token to every request
-  api.interceptors.request.use(
+  authAxios.interceptors.request.use(
     async config => {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
@@ -32,8 +32,7 @@ export const AuthProvider = ({children}) => {
   // Add response interceptor for token refresh
   // Automatically refresh token on 401 error
   // Retry original request with new token
-
-  api.interceptors.response.use(
+  authAxios.interceptors.response.use(
     response => response,
     async error => {
       const originalRequest = error.config;
@@ -67,7 +66,7 @@ export const AuthProvider = ({children}) => {
       const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
       if (!storedRefreshToken) throw new Error('No refresh token available');
 
-      const response = await api.post('/auth/refresh', {
+      const response = await authAxios.post('/auth/refresh', {
         refresh_token: storedRefreshToken,
       });
 
@@ -97,7 +96,7 @@ export const AuthProvider = ({children}) => {
     setIsLoading(true);
 
     try {
-      const response = await api.post('/auth/login', {
+      const response = await authAxios.post('/auth/login', {
         username,
         password,
       });
@@ -131,7 +130,7 @@ export const AuthProvider = ({children}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
-        await api.post(
+        await authAxios.post(
           '/auth/logout',
           {},
           {
@@ -186,7 +185,7 @@ export const AuthProvider = ({children}) => {
         isLoading,
         userToken,
         userInfo,
-        api,
+        authAxios, // Axios instance with auth interceptor
       }}>
       {children}
     </AuthContext.Provider>

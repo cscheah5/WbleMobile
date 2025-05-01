@@ -6,6 +6,7 @@ import {
   Pressable,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
 import {InputWithLabel} from '@/components/InputWithLabel';
@@ -18,6 +19,12 @@ const SignInScreen = ({navigation}: any) => {
   const {login} = useContext(AuthContext);
 
   const handleLogin = () => {
+    // Basic validation
+    if (!username || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }    
+
     login(username, password);
   };
 
