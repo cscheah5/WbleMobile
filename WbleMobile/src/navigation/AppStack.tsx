@@ -5,14 +5,13 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
   DrawerContentScrollView,
   DrawerItemList,
   createDrawerNavigator,
 } from '@react-navigation/drawer';
 
-import { AuthContext } from '@/contexts/AuthContext';
+import {AuthContext} from '@/contexts/AuthContext';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -20,58 +19,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // User Screens
 import HomeScreen from '@/screens/HomeScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
+import SubjectScreen from '@/screens/SubjectScreen';
 
-const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
-
-// Custom button if needed
-const CustomButton = ({children, onPress}: any) => {
-  return (
-    <TouchableNativeFeedback
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-      onPress={onPress}>
-      <View
-        style={{
-          width: 100,
-          backgroundColor: '#609146',
-        }}>
-        {children}
-      </View>
-    </TouchableNativeFeedback>
-  );
-};
-
-const TabNavigator = () => {
-  return (
-    <Tab.Navigator
-      initialRouteName="Home"
-      screenOptions={{
-        headerShown: true,
-      }}>
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarIcon: ({focused}) => {
-            return <Ionicons name="home" size={20} color={'red'} />;
-          },
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({focused}) => {
-            return <Ionicons name="person" size={20} color={'blue'} />;
-          },
-        }}
-      />
-    </Tab.Navigator>
-  );
-};
 
 // Drawer component
 const CustomDrawerComponent = (props: any) => {
@@ -127,19 +77,9 @@ const AppStack = () => {
         drawerActiveTintColor: 'darkslateblue',
         drawerActiveBackgroundColor: 'pink',
       }}>
-      <Drawer.Screen
-        name="Tab"
-        component={TabNavigator}
-        options={{
-          drawerIcon: ({color}) => (
-            <Ionicons name="home-outline" size={20} color={color} />
-          ),
-          drawerLabelStyle: {
-            fontSize: 23,
-          },
-        }}
-      />
       <Drawer.Screen name="Home" component={HomeScreen} />
+      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="Subject" component={SubjectScreen} />
     </Drawer.Navigator>
   );
 };
