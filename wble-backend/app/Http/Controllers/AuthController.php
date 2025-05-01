@@ -13,13 +13,8 @@ use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 use Illuminate\Routing\Controller;
 
-class AuthController extends Controller
-{   
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    }
-
+class AuthController extends ApiController
+{
     // User registration
     public function register(Request $request)
     {
@@ -49,7 +44,7 @@ class AuthController extends Controller
 
         try {
             if (! $token = JWTAuth::attempt($credentials)) {
-                return response()->json(['error' => 'Invalid credentials'], 401);
+                return $this->errorResponse('Invalid credentials', 401);
             }
 
             // Get the authenticated user.
@@ -59,7 +54,7 @@ class AuthController extends Controller
 
             return response()->json(compact('token'));
         } catch (JWTException $e) {
-            return response()->json(['error' => 'Could not create token'], 500);
+            return $this->errorResponse('Could not create token', 500);
         }
     }
 
@@ -68,13 +63,13 @@ class AuthController extends Controller
     {
         try {
             if (! $user = JWTAuth::parseToken()->authenticate()) {
-                return response()->json(['error' => 'User not found'], 404);
+                return $this->errorResponse('User not found', 404);
             }
         } catch (JWTException $e) {
-            return response()->json(['error' => 'Invalid token'], 400);
+            return $this->errorResponse('Invalid token', 400);
         }
 
-        return response()->json(compact('user'));
+        return $this->successResponse(compact('user'));
     }
 
     // User logout
@@ -82,7 +77,7 @@ class AuthController extends Controller
     {
         JWTAuth::invalidate(JWTAuth::getToken());
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return $this->successResponse([], 'Successfully logged out');
     }
 
     public function refresh()
@@ -90,38 +85,34 @@ class AuthController extends Controller
         try {
             // Parse the existing token
             $currentToken = JWTAuth::getToken();
-    
+
             if (! $currentToken) {
-                return response()->json(['error' => 'Token not provided'], 400);
+                return $this->errorResponse('Token not provided', 400);
             }
-    
+
             // Refresh the token (invalidates old one)
             $newToken = JWTAuth::refresh($currentToken);
-    
+
             // Authenticate user based on old token
             $user = JWTAuth::setToken($newToken)->toUser();
-    
-            return $this->createNewToken($newToken, $user);
 
+            return $this->createNewToken($newToken, $user);
         } catch (TokenExpiredException $e) {
-            return response()->json(['error' => 'Token expired'], 401);
+            return $this->errorResponse('Token expired', 401);
         } catch (TokenInvalidException $e) {
-            return response()->json(['error' => 'Token invalid'], 401);
+            return $this->errorResponse('Token invalid', 401);
         } catch (JWTException $e) {
-            return response()->json(['error' => 'Could not refresh token'], 500);
+            return $this->errorResponse('Could not refresh token', 500);
         }
     }
-    
 
     protected function createNewToken($token, $user)
     {
-        return response()->json([
+        return $this->successResponse([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60, // 60 minutes
             'user' => $user
         ]);
     }
-
-    
 }
