@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SectionController;
 
 Route::group([
     'middleware' => 'api', // Base API middleware
@@ -26,4 +27,11 @@ Route::group([
     'prefix' => 'subjects'
 ], function ($router) {
     Route::get('/{id}', [SubjectController::class, 'show']);
+});
+
+Route::group([
+    'middleware' => 'api', // Base API middleware
+    'prefix' => 'sections'
+], function ($router) {
+    Route::get('/{id}', [SectionController::class, 'show']);
 });

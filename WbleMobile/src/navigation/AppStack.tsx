@@ -29,7 +29,6 @@ const AppStack = () => {
           ),
         })}
       />
-      {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
       <Stack.Screen name="Subject" component={SubjectScreen} />
     </Stack.Navigator>
   );

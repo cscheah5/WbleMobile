@@ -5,7 +5,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({navigation}) => {
-  const {authAxios} = useContext(AuthContext);
+  const {authAxios, userInfo} = useContext(AuthContext);
 
   const [subjectList, setSubjectList] = useState([
     {
@@ -34,10 +34,8 @@ const HomeScreen = ({navigation}) => {
     },
   ]);
 
-  // TODO load subject for this student
   const _loadSubjectById = async () => {
-    const user = await AsyncStorage.getItem('userInfo');
-    const response = await authAxios.get(`/subjects/${user.id}`);
+    const response = await authAxios.get(`/subjects/${userInfo.id}`);
     setSubjectList(response.data);
     console.log('subjectList', response.data);
   };
@@ -52,13 +50,13 @@ const HomeScreen = ({navigation}) => {
       <Text style={{fontSize: 50}}>Home</Text>
       <FlatList
         data={subjectList}
-        keyExtractor={item => item.subjectId}
         renderItem={({item}) => (
           <TouchableNativeFeedback
             onPress={() => {
               navigation.navigate('Subject', {
-                subjectId: item.subjectId,
-                subjectName: item.subjectName,
+                subjectId: item.id,
+                subjectName: item.name,
+                subjectCode: item.code,
               });
             }}>
             <View

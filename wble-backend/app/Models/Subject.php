@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
-use App\Models\WeekSection; // Ensure this class exists in the specified namespace
 
 class Subject extends Model
 {
     //
-    public function weekSections()
+    public function sections()
     {
-        return $this->hasMany(WeekSection::class);
+        return $this->hasMany(Section::class);
     }
 
     public function enrollments()
