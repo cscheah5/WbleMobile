@@ -19,7 +19,7 @@ class AuthController extends ApiController
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
-    
+
     // User registration
     public function register(Request $request)
     {
@@ -117,7 +117,9 @@ class AuthController extends ApiController
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60, // 60 minutes
-            'user' => $user
+            'issued_at' => now()->timestamp,
+            'refresh_token' => JWTAuth::claims(['type' => 'refresh'])->fromUser($user), // 14 days
+            'user' => $user->only(['id', 'username', 'role']) 
         ]);
     }
 }

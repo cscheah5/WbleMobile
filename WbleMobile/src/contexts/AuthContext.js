@@ -8,94 +8,186 @@ export const AuthContext = createContext();
 export const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
 
-  const login = (username, password) => {
+  // Configure axios instance
+  const api = axios.create({
+    baseURL: API_URL,
+  });
+
+  // Add request interceptor
+  // Attach token to every request
+  api.interceptors.request.use(
+    async config => {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    error => Promise.reject(error),
+  );
+
+  // Add response interceptor for token refresh
+  // Automatically refresh token on 401 error
+  // Retry original request with new token
+
+  api.interceptors.response.use(
+    response => response,
+    async error => {
+      const originalRequest = error.config;
+
+      // If 401 error and not a login/refresh request
+      if (
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url.includes('/auth/login') &&
+        !originalRequest.url.includes('/auth/refresh')
+      ) {
+        originalRequest._retry = true;
+
+        try {
+          const newTokens = await refreshAuthToken();
+
+          // Retry original request with new token
+          originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
+          return api(originalRequest);
+        } catch (refreshError) {
+          await logout();
+          return Promise.reject(refreshError);
+        }
+      }
+      return Promise.reject(error);
+    },
+  );
+
+  const refreshAuthToken = async () => {
+    try {
+      const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+      if (!storedRefreshToken) throw new Error('No refresh token available');
+
+      const response = await api.post('/auth/refresh', {
+        refresh_token: storedRefreshToken,
+      });
+
+      const {access_token, refresh_token} = response.data.data;
+
+      // Store new tokens
+      await AsyncStorage.multiSet([
+        ['userToken', access_token],
+        ['refreshToken', refresh_token],
+      ]);
+
+      // Update state
+      setUserToken(access_token);
+      setRefreshToken(refresh_token);
+
+      return {
+        accessToken: access_token,
+        refreshToken: refresh_token,
+      };
+    } catch (error) {
+      console.log('Token refresh failed:', error);
+      throw error;
+    }
+  };
+
+  const login = async (username, password) => {
     setIsLoading(true);
 
-    axios
-      .post(`${API_URL}/auth/login`, {
+    try {
+      const response = await api.post('/auth/login', {
         username,
         password,
-      })
-      .then(response => {
-        console.log(response.data);
-
-        let userToken = response.data.data.access_token;
-        let userInfo = response.data.data.user;
-
-        setUserToken(userToken);
-        setUserInfo(userInfo);
-
-        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-        AsyncStorage.setItem('userToken', userToken);
-        console.log('userInfo', userInfo);
-        console.log('userToken', userToken);
-      })
-      .catch(error => {
-        console.log(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
       });
+
+      const {access_token, refresh_token, user} = response.data.data;
+
+      // Store tokens and user info
+      await AsyncStorage.multiSet([
+        ['userToken', access_token],
+        ['refreshToken', refresh_token],
+        ['userInfo', JSON.stringify(user)],
+      ]);
+
+      // Update state
+      setUserToken(access_token);
+      setRefreshToken(refresh_token);
+      setUserInfo(user);
+
+      console.log('Login successful:', response.data);
+    } catch (error) {
+      console.log('Login error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const logout = () => {
+  const logout = async () => {
     setIsLoading(true);
 
-    AsyncStorage.getItem('userToken')
-      .then(token => {
-        return axios.post(
-          `${API_URL}/auth/logout`,
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        await api.post(
+          '/auth/logout',
           {},
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: {Authorization: `Bearer ${token}`},
           },
         );
-      })
-      .then(() => {
-        setUserToken(null);
-        setUserInfo(null);
-        console.log('Logout successful');
-        return AsyncStorage.multiRemove(['userInfo', 'userToken']);
-      })
-      .catch(error => {
-        console.log('Logout error:', error);
-        setUserToken(null);
-        setUserInfo(null);
-        return AsyncStorage.multiRemove(['userInfo', 'userToken']);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      }
+      console.log('Logout successful');
+    } catch (error) {
+      console.log('Logout error:', error);
+    } finally {
+      // Clear all auth data regardless of API success
+      await AsyncStorage.multiRemove(['userToken', 'refreshToken', 'userInfo']);
+      setUserToken(null);
+      setRefreshToken(null);
+      setUserInfo(null);
+      setIsLoading(false);
+    }
   };
 
-  const getToken = async () => {
+  const loadAuthData = async () => {
     try {
       setIsLoading(true);
-      let userInfo = await AsyncStorage.getItem('userInfo');
-      let userToken = await AsyncStorage.getItem('userToken');
-      userInfo = JSON.parse(userInfo);
+      const [userToken, refreshToken, userInfo] = await AsyncStorage.multiGet([
+        'userToken',
+        'refreshToken',
+        'userInfo',
+      ]);
 
-      if (userInfo) {
-        setUserInfo(userInfo);
-        setUserToken(userToken);
+      if (userToken[1] && userInfo[1]) {
+        setUserToken(userToken[1]);
+        setRefreshToken(refreshToken[1]);
+        setUserInfo(JSON.parse(userInfo[1]));
       }
-      setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log('Failed to load auth data:', error);
+      await logout();
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    getToken();
+    loadAuthData();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{login, logout, isLoading, userToken, userInfo}}>
+      value={{
+        login,
+        logout,
+        isLoading,
+        userToken,
+        userInfo,
+        api,
+      }}>
       {children}
     </AuthContext.Provider>
   );
