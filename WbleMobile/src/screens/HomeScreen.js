@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {Text, View, Button} from 'react-native';
+import {Text, View, TouchableNativeFeedback} from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
 import {FlatList} from 'react-native-gesture-handler';
 
@@ -43,18 +43,23 @@ const HomeScreen = ({navigation}) => {
         data={subjectList}
         keyExtractor={item => item.subjectId}
         renderItem={({item}) => (
-          <View style={{padding: 10}}>
-            <Text style={{fontSize: 20}}>{item.subjectName}</Text>
-            <Button
-              title="View Subject"
-              onPress={() =>
-                navigation.navigate('Subject', {
-                  subjectId: item.subjectId,
-                  subjectName: item.subjectName,
-                })
-              }
-            />
-          </View>
+          <TouchableNativeFeedback
+            onPress={() => {
+              navigation.navigate('Subject', {
+                subjectId: item.subjectId,
+                subjectName: item.subjectName,
+              });
+            }}>
+            <View
+              style={{
+                padding: 20,
+                margin: 10,
+                backgroundColor: '#f9c2ff',
+                borderRadius: 10,
+              }}>
+              <Text style={{fontSize: 20}}>{item.subjectName}</Text>
+            </View>
+          </TouchableNativeFeedback>
         )}
       />
     </View>
