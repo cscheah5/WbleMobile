@@ -13,40 +13,63 @@ export const AuthProvider = ({children}) => {
   const login = (username, password) => {
     setIsLoading(true);
 
-    axios.post(`${API_URL}/auth/login`, {
-      username,
-      password,
-    })
-    .then(response => {
-      console.log(response.data);
+    axios
+      .post(`${API_URL}/auth/login`, {
+        username,
+        password,
+      })
+      .then(response => {
+        console.log(response.data);
 
-      let userToken = response.data.data.access_token;
-      let userInfo = response.data.data.user;
+        let userToken = response.data.data.access_token;
+        let userInfo = response.data.data.user;
 
-      setUserToken(userToken);
-      setUserInfo(userInfo);
-      
-      AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-      AsyncStorage.setItem('userToken', userToken);
-      console.log('userInfo', userInfo);
-      console.log('userToken', userToken);
-    })
-    .then(() => {
-      setIsLoading(false);
-    })
-    .catch(error => {
-      console.log(error);
-      setIsLoading(false);
-    })
+        setUserToken(userToken);
+        setUserInfo(userInfo);
+
+        AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
+        AsyncStorage.setItem('userToken', userToken);
+        console.log('userInfo', userInfo);
+        console.log('userToken', userToken);
+      })
+      .catch(error => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const logout = () => {
     setIsLoading(true);
-    setUserToken(null);
-    setUserInfo(null);
-    AsyncStorage.removeItem('userInfo');
-    AsyncStorage.removeItem('userToken');
-    setIsLoading(false);
+
+    AsyncStorage.getItem('userToken')
+      .then(token => {
+        return axios.post(
+          `${API_URL}/auth/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+      })
+      .then(() => {
+        setUserToken(null);
+        setUserInfo(null);
+        console.log('Logout successful');
+        return AsyncStorage.multiRemove(['userInfo', 'userToken']);
+      })
+      .catch(error => {
+        console.log('Logout error:', error);
+        setUserToken(null);
+        setUserInfo(null);
+        return AsyncStorage.multiRemove(['userInfo', 'userToken']);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const getToken = async () => {
@@ -71,7 +94,8 @@ export const AuthProvider = ({children}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{login, logout, isLoading, userToken, userInfo}}>
+    <AuthContext.Provider
+      value={{login, logout, isLoading, userToken, userInfo}}>
       {children}
     </AuthContext.Provider>
   );
