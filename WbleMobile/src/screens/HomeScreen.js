@@ -1,7 +1,8 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Text, View, TouchableNativeFeedback} from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
 import {FlatList} from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({navigation}) => {
   const {authAxios} = useContext(AuthContext);
@@ -34,7 +35,17 @@ const HomeScreen = ({navigation}) => {
   ]);
 
   // TODO load subject for this student
-  const _loadSubject = async () => {};
+  const _loadSubjectById = async () => {
+    const user = await AsyncStorage.getItem('userInfo');
+    const response = await authAxios.get(`/subjects/${user.id}`);
+    setSubjectList(response.data);
+    console.log('subjectList', response.data);
+  };
+
+  useEffect(() => {
+    // Load subject list from API
+    _loadSubjectById();
+  }, []);
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -57,7 +68,8 @@ const HomeScreen = ({navigation}) => {
                 backgroundColor: '#f9c2ff',
                 borderRadius: 10,
               }}>
-              <Text style={{fontSize: 20}}>{item.subjectName}</Text>
+              <Text style={{fontSize: 20}}>{item.code}</Text>
+              <Text style={{fontSize: 20}}>{item.name}</Text>
             </View>
           </TouchableNativeFeedback>
         )}

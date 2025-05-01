@@ -4,6 +4,7 @@ import {
   TouchableNativeFeedback,
   TouchableOpacity,
   Text,
+  Button,
 } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {AuthContext} from '@/contexts/AuthContext';
@@ -14,9 +15,20 @@ import SubjectScreen from '@/screens/SubjectScreen';
 const Stack = createStackNavigator();
 
 const AppStack = () => {
+  const {logout} = useContext(AuthContext);
+
   return (
     <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={({navigation}) => ({
+          title: 'My Home',
+          headerRight: () => (
+            <Button title="Logout" onPress={logout} color="#000" />
+          ),
+        })}
+      />
       {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
       <Stack.Screen name="Subject" component={SubjectScreen} />
     </Stack.Navigator>
