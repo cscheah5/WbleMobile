@@ -12,16 +12,12 @@ import {AuthContext} from '@/contexts/AuthContext';
 export default function FriendScreen({navigation}) {
   const {authAxios} = useContext(AuthContext);
   const [acceptedFriends, setAcceptedFriends] = useState([]);
-  const [pendingFriends, setPendingFriends] = useState([]);
 
   const _loadFriends = async () => {
     console.log('Loading friends...');
     const response = await authAxios.get('/friends/');
     setAcceptedFriends(response.data.accepted_friends);
-    setPendingFriends(response.data.pending_friends);
-
-    console.log('acceptedFriends', response.data.accepted_friends);
-    console.log('pendingFriends', response.data.pending_friends);
+    console.log('acceptedFriends', response.data);
   };
 
   useEffect(() => {

@@ -21,16 +21,8 @@ class FriendController extends Controller
                 ->orWhere('user_id2', $userId);
         })->where('status', 'accepted')->get();
 
-        $pendingFriendships = Friend::where(function ($query) use ($userId) {
-            $query->where('user_id1', $userId)
-                ->orWhere('user_id2', $userId);
-        })->where('status', 'pending')->get();
-
         // Extract the friend IDs from the friendships
         $acceptedFriendIds = $acceptedFriendships->map(function ($friendship) use ($userId) {
-            return $friendship->user_id1 === $userId ? $friendship->user_id2 : $friendship->user_id1;
-        });
-        $pendingFriendIds = $pendingFriendships->map(function ($friendship) use ($userId) {
             return $friendship->user_id1 === $userId ? $friendship->user_id2 : $friendship->user_id1;
         });
 
@@ -39,14 +31,30 @@ class FriendController extends Controller
             return User::find($friendId);
         });
 
+        return response()->json($acceptedFriends);
+    }
+
+    public function getPendingFriendShips()
+    {
+        // Get all pending friend requests for the authenticated user
+        $userId = auth()->user()->id;
+
+        $pendingFriendships = Friend::where(function ($query) use ($userId) {
+            $query->where('user_id1', $userId)
+                ->orWhere('user_id2', $userId);
+        })->where('status', 'pending')->get();
+
+        // Extract the friend IDs from the friendships
+        $pendingFriendIds = $pendingFriendships->map(function ($friendship) use ($userId) {
+            return $friendship->user_id1 === $userId ? $friendship->user_id2 : $friendship->user_id1;
+        });
+
+        // Fetch the user details for each friend ID
         $pendingFriends = $pendingFriendIds->map(function ($friendId) {
             return User::find($friendId);
         });
 
-        return response()->json([
-            'accepted_friends' => $acceptedFriends,
-            'pending_friends' => $pendingFriends,
-        ]);
+        return response()->json($pendingFriends);
     }
 
     public function searchUser(Request $request)
