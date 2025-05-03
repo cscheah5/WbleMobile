@@ -61,4 +61,79 @@ class FriendController extends Controller
 
         return response()->json($searchedUser);
     }
+
+    public function sendFriendRequest(Request $request)
+    {
+        // Send a friend request
+        $userId = auth()->user()->id;
+        $friendId = $request->input('friend_id');
+
+        // Check if the friend request already exists
+        $existingRequest = Friend::where(function ($query) use ($userId, $friendId) {
+            $query->where('user_id1', $userId)
+                ->where('user_id2', $friendId);
+        })->orWhere(function ($query) use ($userId, $friendId) {
+            $query->where('user_id1', $friendId)
+                ->where('user_id2', $userId);
+        })->first();
+
+        if ($existingRequest) {
+            return response()->json(['message' => 'Friend request already sent or exists'], 400);
+        }
+
+        // Create a new friend request
+        // *Gotcha: user_id1 is the sender
+        // *Gotcha: user_id2 is the receiver
+        Friend::create([
+            'user_id1' => $userId,
+            'user_id2' => $friendId,
+            'status' => 'pending',
+        ]);
+
+        return response()->json(['message' => 'Friend request sent successfully']);
+    }
+
+    public function acceptFriendRequest(Request $request)
+    {
+        // Accept a friend request
+        $userId = auth()->user()->id;
+        $friendId = $request->input('friend_id');
+
+        // Check if the friend request exists and is pending
+        $friendship = Friend::where(function ($query) use ($userId, $friendId) {
+            $query->where('user_id1', $friendId)
+                ->where('user_id2', $userId);
+        })->where('status', 'pending')->first();
+
+        if (!$friendship) {
+            return response()->json(['message' => 'No pending friend request found'], 404);
+        }
+
+        // Update the status to accepted
+        $friendship->update(['status' => 'accepted']);
+
+        return response()->json(['message' => 'Friend request accepted successfully']);
+    }
+
+    public function rejectFriendRequest(Request $request)
+    {
+        // Reject a friend request
+        $userId = auth()->user()->id;
+        $friendId = $request->input('friend_id');
+
+        // Check if the friend request exists and is pending
+        $friendship = Friend::where(function ($query) use ($userId, $friendId) {
+            $query->where('user_id1', $friendId)
+                ->where('user_id2', $userId);
+        })->where('status', 'pending')->first();
+
+        if (!$friendship) {
+            return response()->json(['message' => 'No pending friend request found'], 404);
+        }
+
+        // Delete the friendship record
+        $friendship->delete();
+
+        return response()->json(['message' => 'Friend request rejected successfully']);
+    }
 }
