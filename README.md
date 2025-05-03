@@ -36,9 +36,9 @@ wble-backend
 |  |-database.sqlite
 ```
 
-7. Run migrations (this will create fresh tables in your database):
+7. Run migrations (this will create fresh tables and seeds your database):
 ```bash
-php artisan migrate:fresh
+php artisan migrate:fresh --seed
 ```
 
 8. Generate JWT secret:
