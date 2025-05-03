@@ -55,7 +55,10 @@ class FriendController extends Controller
         $name = $request->input('name');
         $userId = auth()->user()->id;
 
-        $results = DB::select("SELECT * FROM users WHERE name LIKE ? AND id != ?", ["%$name%", $userId]);
-        return response()->json($results);
+        $searchedUser = User::where('username', 'like', '%' . $name . '%')
+            ->where('id', '!=', $userId)
+            ->get();
+
+        return response()->json($searchedUser);
     }
 }

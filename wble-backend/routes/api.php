@@ -42,4 +42,5 @@ Route::group([
     'prefix' => 'friends'
 ], function ($router) {
     Route::get('/', [FriendController::class, 'index']);
+    Route::post('/search-user', [FriendController::class, 'searchUser']);
 });
