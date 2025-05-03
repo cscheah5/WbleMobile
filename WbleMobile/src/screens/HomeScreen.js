@@ -63,7 +63,7 @@ const HomeScreen = ({navigation}) => {
               style={{
                 padding: 20,
                 margin: 10,
-                backgroundColor: '#f9c2ff',
+                backgroundColor: 'lightblue',
                 borderRadius: 10,
               }}>
               <Text style={{fontSize: 20}}>{item.code}</Text>

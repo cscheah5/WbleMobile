@@ -2,6 +2,7 @@ import {View, Text} from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
 import {FlatList} from 'react-native-gesture-handler';
+import WeekSection from '@/components/WeekSection';
 
 export default function SubjectScreen({route, navigation}) {
   const {subjectId, subjectCode, subjectName} = route.params;
@@ -9,9 +10,7 @@ export default function SubjectScreen({route, navigation}) {
   const [weekSections, setWeekSections] = useState([]);
 
   const _loadWeekSectionsBySubjectId = async () => {
-    console.log('Fetching sections');
     const response = await authAxios.get(`/sections/${subjectId}`);
-    console.log('Finish fetching sections');
     setWeekSections(response.data);
     console.log('weekSections', response.data);
   };
@@ -31,13 +30,7 @@ export default function SubjectScreen({route, navigation}) {
       </Text>
       <FlatList
         data={weekSections}
-        renderItem={({item}) => (
-          <View>
-            <Text>
-              {item.start_date} - {item.end_date} (Week {item.week_number})
-            </Text>
-          </View>
-        )}
+        renderItem={({item}) => <WeekSection item={item} />}
       />
     </View>
   );

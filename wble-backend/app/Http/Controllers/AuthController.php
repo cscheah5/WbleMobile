@@ -56,8 +56,6 @@ class AuthController extends ApiController
             $user = JWTAuth::user();
 
             return $this->createNewToken($token, $user);
-
-            return response()->json(compact('token'));
         } catch (JWTException $e) {
             return $this->errorResponse('Could not create token', 500);
         }
@@ -119,7 +117,7 @@ class AuthController extends ApiController
             'expires_in' => JWTAuth::factory()->getTTL() * 60, // 60 minutes
             'issued_at' => now()->timestamp,
             'refresh_token' => JWTAuth::claims(['type' => 'refresh'])->fromUser($user), // 14 days
-            'user' => $user->only(['id', 'username', 'role']) 
+            'user' => $user->only(['id', 'username', 'role'])
         ]);
     }
 }
