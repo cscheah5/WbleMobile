@@ -34,13 +34,16 @@ export default function SearchUserScreen() {
         }}
         onChangeText={text => _searchUserByUsername(text)}
       />
+      {/* TODO: disable add button if requested before */}
       <FlatList
         data={userList}
         renderItem={({item}) => {
           return (
             <TouchableNativeFeedback
               style={{padding: 10, borderBottomWidth: 1, borderColor: '#ccc'}}>
-              <Text style={{fontSize: 18}}>{item.username}</Text>
+              <Text style={{fontSize: 18}}>
+                {item.username} <Button title="add" />{' '}
+              </Text>
             </TouchableNativeFeedback>
           );
         }}
