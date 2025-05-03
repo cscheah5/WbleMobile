@@ -12,6 +12,7 @@ import HomeScreen from '@/screens/HomeScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
 import SubjectScreen from '@/screens/SubjectScreen';
 import FriendScreen from '@/screens/FriendScreen';
+import SearchUserScreen from '@/screens/SearchUserScreen';
 
 const Stack = createStackNavigator();
 
@@ -32,6 +33,7 @@ const AppStack = () => {
       />
       <Stack.Screen name="Subject" component={SubjectScreen} />
       <Stack.Screen name="Friend" component={FriendScreen} />
+      <Stack.Screen name="SearchUser" component={SearchUserScreen} />
     </Stack.Navigator>
   );
 };

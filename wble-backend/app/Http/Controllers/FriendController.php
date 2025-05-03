@@ -52,7 +52,7 @@ class FriendController extends Controller
     public function searchUser(Request $request)
     {
         // Search for users by name
-        $name = $request->input('name');
+        $name = $request->get('username');
         $userId = auth()->user()->id;
 
         $searchedUser = User::where('username', 'like', '%' . $name . '%')
