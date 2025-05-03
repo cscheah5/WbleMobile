@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SectionController;
+use App\Http\Controllers\FriendController;
 
 Route::group([
     'middleware' => 'api', // Base API middleware
@@ -34,4 +35,11 @@ Route::group([
     'prefix' => 'sections'
 ], function ($router) {
     Route::get('/{id}', [SectionController::class, 'show']);
+});
+
+Route::group([
+    'middleware' => 'api', // Base API middleware
+    'prefix' => 'friends'
+], function ($router) {
+    Route::get('/', [FriendController::class, 'index']);
 });
