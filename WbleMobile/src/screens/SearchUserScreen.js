@@ -43,12 +43,14 @@ export default function SearchUserScreen() {
   };
 
   const _sendFriendRequest = async $friendId => {
+    //TODO add routes in api.php
     const response = await authAxios.post(`/friends/send-friend-request`, {
       friend_id: $friendId,
     });
     console.log('response', response.data);
   };
 
+  // this will revert the request props for user
   const toggleRequest = id => {
     console.log('toggleRequest', id);
     setUserList(prevList => {
@@ -63,6 +65,7 @@ export default function SearchUserScreen() {
     });
   };
 
+  // debounce the search input to avoid too many requests
   useEffect(() => {
     if (!searchTerm) return;
     if (debounceTimer.current) {
