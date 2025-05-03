@@ -1,4 +1,4 @@
-import {View, Text} from 'react-native';
+import {View, Text, SafeAreaView} from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
 import {FlatList} from 'react-native-gesture-handler';
@@ -24,7 +24,7 @@ export default function SubjectScreen({route, navigation}) {
   }, []);
 
   return (
-    <View>
+    <SafeAreaView style={{paddingBottom: 20}}>
       <Text>
         {subjectCode} - {subjectName}
       </Text>
@@ -32,6 +32,6 @@ export default function SubjectScreen({route, navigation}) {
         data={weekSections}
         renderItem={({item}) => <WeekSection item={item} />}
       />
-    </View>
+    </SafeAreaView>
   );
 }
