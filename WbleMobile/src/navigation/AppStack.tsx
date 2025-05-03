@@ -11,6 +11,7 @@ import {AuthContext} from '@/contexts/AuthContext';
 import HomeScreen from '@/screens/HomeScreen';
 import ProfileScreen from '@/screens/ProfileScreen';
 import SubjectScreen from '@/screens/SubjectScreen';
+import FriendScreen from '@/screens/FriendScreen';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,7 @@ const AppStack = () => {
         })}
       />
       <Stack.Screen name="Subject" component={SubjectScreen} />
+      <Stack.Screen name="Friend" component={FriendScreen} />
     </Stack.Navigator>
   );
 };

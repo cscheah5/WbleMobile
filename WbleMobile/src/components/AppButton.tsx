@@ -1,25 +1,27 @@
 import React from 'react';
-import { Text, StyleSheet, View ,TouchableNativeFeedback, TouchableNativeFeedbackProps } from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableNativeFeedback,
+  TouchableNativeFeedbackProps,
+} from 'react-native';
 
 export type AppButtonProps = TouchableNativeFeedbackProps & {
   title: string;
-}
+};
 
-export const AppButton: React.FC<AppButtonProps> = (props) => {
-  const {
-    title,
-    onPress,
-    disabled = false,
-    ...buttonProps
-  } = props;
+export const AppButton: React.FC<AppButtonProps> = props => {
+  const {title, onPress, disabled = false, children, ...buttonProps} = props;
 
   return (
-    <TouchableNativeFeedback 
+    <TouchableNativeFeedback
       onPress={onPress}
       disabled={disabled}
       {...buttonProps}>
       <View style={[styles.button, disabled && styles.buttonDisabled]}>
         <Text style={styles.buttonText}>{title}</Text>
+        {children}
       </View>
     </TouchableNativeFeedback>
   );
@@ -42,5 +44,5 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: '600',
-  }
+  },
 });
