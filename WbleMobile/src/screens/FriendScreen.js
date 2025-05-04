@@ -7,7 +7,25 @@ import {
 } from 'react-native';
 import React, {useContext, useState, useEffect} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
+import {FloatingAction} from 'react-native-floating-action';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import {AuthContext} from '@/contexts/AuthContext';
+
+const actions = [
+  {
+    text: 'Search User',
+    icon: <Ionicons name="search-circle-outline" size={24} color="#fff" />,
+    name: 'bt_search_user',
+    position: 1,
+  },
+  {
+    text: 'Friend Requests',
+    icon: <Ionicons name="accessibility-outline" size={24} color="#fff" />,
+    name: 'bt_add_friend',
+    position: 2,
+  },
+];
 
 export default function FriendScreen({navigation}) {
   const {authAxios} = useContext(AuthContext);
@@ -26,10 +44,6 @@ export default function FriendScreen({navigation}) {
 
   return (
     <>
-      <Button
-        title="Search User Screen"
-        onPress={() => navigation.navigate('SearchUser')}
-      />
       <Text styles={{fontSize: 50}}>Friends</Text>
       <FlatList
         data={acceptedFriends}
@@ -41,6 +55,19 @@ export default function FriendScreen({navigation}) {
             </TouchableNativeFeedback>
           );
         }}
+      />
+
+      <FloatingAction
+        actions={actions}
+        onPressItem={name => {
+          if (name === 'bt_search_user') {
+            navigation.navigate('SearchUser');
+          } else if (name === 'bt_add_friend') {
+            navigation.navigate('FriendRequest');
+          }
+        }}
+        color="#FF6347"
+        overlayColor="rgba(0, 0, 0, 0.5)"
       />
     </>
   );

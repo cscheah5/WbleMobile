@@ -8,6 +8,7 @@ import {
 import React, {useContext, useState, useRef, useEffect} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
 import {FlatList} from 'react-native-gesture-handler';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // maybe used for button icons
 
 export default function SearchUserScreen() {
   const {authAxios} = useContext(AuthContext);
