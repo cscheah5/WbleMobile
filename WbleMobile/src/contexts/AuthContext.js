@@ -11,13 +11,11 @@ export const AuthProvider = ({children}) => {
   const [refreshToken, setRefreshToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
 
-  // Configure axios instance
   const authAxios = axios.create({
     baseURL: API_URL,
   });
 
-  // Add request interceptor
-  // Attach token to every request
+  // Request interceptor
   authAxios.interceptors.request.use(
     async config => {
       const token = await AsyncStorage.getItem('userToken');
@@ -29,15 +27,12 @@ export const AuthProvider = ({children}) => {
     error => Promise.reject(error),
   );
 
-  // Add response interceptor for token refresh
-  // Automatically refresh token on 401 error
-  // Retry original request with new token
+  // Response interceptor
   authAxios.interceptors.response.use(
     response => response,
     async error => {
       const originalRequest = error.config;
 
-      // If 401 error and not a login/refresh request
       if (
         error.response?.status === 401 &&
         !originalRequest._retry &&
@@ -48,18 +43,24 @@ export const AuthProvider = ({children}) => {
 
         try {
           const newTokens = await refreshAuthToken();
-
-          // Retry original request with new token
           originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-          return api(originalRequest);
+          return authAxios(originalRequest);
         } catch (refreshError) {
-          await logout();
+          console.log('Refresh failed, logging out...');
+          await clearAuthData();
           return Promise.reject(refreshError);
         }
       }
       return Promise.reject(error);
     },
   );
+
+  const clearAuthData = async () => {
+    await AsyncStorage.multiRemove(['userToken', 'refreshToken', 'userInfo']);
+    setUserToken(null);
+    setRefreshToken(null);
+    setUserInfo(null);
+  };
 
   const refreshAuthToken = async () => {
     try {
@@ -72,13 +73,11 @@ export const AuthProvider = ({children}) => {
 
       const {access_token, refresh_token} = response.data.data;
 
-      // Store new tokens
       await AsyncStorage.multiSet([
         ['userToken', access_token],
         ['refreshToken', refresh_token],
       ]);
 
-      // Update state
       setUserToken(access_token);
       setRefreshToken(refresh_token);
 
@@ -88,6 +87,7 @@ export const AuthProvider = ({children}) => {
       };
     } catch (error) {
       console.log('Token refresh failed:', error);
+      await clearAuthData();
       throw error;
     }
   };
@@ -103,50 +103,49 @@ export const AuthProvider = ({children}) => {
 
       const {access_token, refresh_token, user} = response.data.data;
 
-      // Store tokens and user info
       await AsyncStorage.multiSet([
         ['userToken', access_token],
         ['refreshToken', refresh_token],
         ['userInfo', JSON.stringify(user)],
       ]);
 
-      // Update state
       setUserToken(access_token);
       setRefreshToken(refresh_token);
       setUserInfo(user);
 
       console.log('Login successful:', response.data);
+
+      return { 
+        success: true,
+        data: response.data 
+      };
     } catch (error) {
       console.log('Login error:', error);
-      throw error;
+      return { 
+        success: false,
+        error: error.response?.data?.message || 'Invalid credentials' 
+      };
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = async () => {
+    console.log('Logging out...');
     setIsLoading(true);
-
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
-        await authAxios.post(
-          '/auth/logout',
+        await axios.post(
+          `${API_URL}/auth/logout`,
           {},
-          {
-            headers: {Authorization: `Bearer ${token}`},
-          },
+          {headers: {Authorization: `Bearer ${token}`}},
         );
       }
-      console.log('Logout successful');
     } catch (error) {
       console.log('Logout error:', error);
     } finally {
-      // Clear all auth data regardless of API success
-      await AsyncStorage.multiRemove(['userToken', 'refreshToken', 'userInfo']);
-      setUserToken(null);
-      setRefreshToken(null);
-      setUserInfo(null);
+      await clearAuthData();
       setIsLoading(false);
     }
   };
@@ -167,7 +166,6 @@ export const AuthProvider = ({children}) => {
       }
     } catch (error) {
       console.log('Failed to load auth data:', error);
-      await logout();
     } finally {
       setIsLoading(false);
     }
@@ -185,7 +183,7 @@ export const AuthProvider = ({children}) => {
         isLoading,
         userToken,
         userInfo,
-        authAxios, // Axios instance with auth interceptor
+        authAxios,
       }}>
       {children}
     </AuthContext.Provider>
