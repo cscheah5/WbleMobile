@@ -77,7 +77,9 @@ export default function FriendScreen({navigation}) {
         data={acceptedFriends}
         renderItem={({item}) => {
           return (
-            <TouchableNativeFeedback onLongPress={() => handleLongPress(item)}>
+            <TouchableNativeFeedback
+              onLongPress={() => handleLongPress(item)}
+              onPress={() => navigation.navigate('Chat')}>
               <View
                 style={{
                   padding: 10,
