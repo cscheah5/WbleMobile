@@ -1,7 +1,8 @@
 import {View, Text, TouchableNativeFeedback} from 'react-native';
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useCallback} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
 import {AuthContext} from '@/contexts/AuthContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 export default function FriendRequestScreen({route}) {
   const {authAxios} = useContext(AuthContext);
@@ -23,9 +24,12 @@ export default function FriendRequestScreen({route}) {
     console.log('response', response.data);
   };
 
-  useEffect(() => {
-    _loadFriendRequests();
-  }, []);
+  //runs code whenever the screen comes into focus, so your friends list will refresh every time you navigate back to this screen.
+  useFocusEffect(
+    useCallback(() => {
+      _loadFriendRequests();
+    }, []),
+  );
 
   return (
     <FlatList
@@ -38,7 +42,7 @@ export default function FriendRequestScreen({route}) {
             <TouchableNativeFeedback
               onPress={() => {
                 _acceptFriendRequest(item.id);
-                route.params.friendRefresh();
+                // route.params.friendRefresh();
               }}>
               <Text style={{color: 'blue'}}>Accept</Text>
             </TouchableNativeFeedback>

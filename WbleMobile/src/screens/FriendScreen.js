@@ -5,11 +5,11 @@ import {
   TouchableNativeFeedback,
   Button,
 } from 'react-native';
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useCallback} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
 import {FloatingAction} from 'react-native-floating-action';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import {useFocusEffect} from '@react-navigation/native';
 import {AuthContext} from '@/contexts/AuthContext';
 
 const actions = [
@@ -39,9 +39,11 @@ export default function FriendScreen({navigation}) {
     console.log('acceptedFriends', response.data);
   };
 
-  useEffect(() => {
-    _loadFriends();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      _loadFriends();
+    }, []),
+  );
 
   return (
     <>
@@ -50,10 +52,12 @@ export default function FriendScreen({navigation}) {
         data={acceptedFriends}
         renderItem={({item}) => {
           return (
-            <TouchableNativeFeedback
-              style={{padding: 10, borderBottomWidth: 1, borderColor: '#ccc'}}>
-              <Text style={{fontSize: 18}}>{item.username}</Text>
-            </TouchableNativeFeedback>
+            <View
+              style={{padding: 10, borderColor: 'black', borderTopWidth: 1}}>
+              <TouchableNativeFeedback>
+                <Text style={{fontSize: 18}}>{item.username}</Text>
+              </TouchableNativeFeedback>
+            </View>
           );
         }}
       />
