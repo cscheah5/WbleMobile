@@ -12,20 +12,25 @@ import {AuthContext} from '@/contexts/AuthContext';
 import {InputWithLabel} from '@/components/InputWithLabel';
 import { AppButton } from '@/components/AppButton';
 
-const SignInScreen = ({navigation}: any) => {
+const SignInScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const {login} = useContext(AuthContext);
 
-  const handleLogin = () => {
+  const handleLogin = async() => {
     // Basic validation
     if (!username || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
-    }    
+    }
 
-    login(username, password);
+    const result = await login(username, password);
+
+    if (!result.success) {
+      Alert.alert('Login failed', result.error || 'Invalid credentials');
+      setPassword('');
+    }
   };
 
   return (

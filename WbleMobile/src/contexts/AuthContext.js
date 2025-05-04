@@ -44,10 +44,10 @@ export const AuthProvider = ({children}) => {
         try {
           const newTokens = await refreshAuthToken();
           originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
-          return authAxios(originalRequest); 
+          return authAxios(originalRequest);
         } catch (refreshError) {
           console.log('Refresh failed, logging out...');
-          await clearAuthData(); 
+          await clearAuthData();
           return Promise.reject(refreshError);
         }
       }
@@ -112,11 +112,19 @@ export const AuthProvider = ({children}) => {
       setUserToken(access_token);
       setRefreshToken(refresh_token);
       setUserInfo(user);
+
       console.log('Login successful:', response.data);
-      return { success: true };
+
+      return { 
+        success: true,
+        data: response.data 
+      };
     } catch (error) {
       console.log('Login error:', error);
-      throw error;
+      return { 
+        success: false,
+        error: error.response?.data?.message || 'Invalid credentials' 
+      };
     } finally {
       setIsLoading(false);
     }
@@ -131,7 +139,7 @@ export const AuthProvider = ({children}) => {
         await axios.post(
           `${API_URL}/auth/logout`,
           {},
-          { headers: { Authorization: `Bearer ${token}` } }
+          {headers: {Authorization: `Bearer ${token}`}},
         );
       }
     } catch (error) {
