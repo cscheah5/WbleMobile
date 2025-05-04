@@ -12,34 +12,14 @@ import {FlatList} from 'react-native-gesture-handler';
 export default function SearchUserScreen() {
   const {authAxios} = useContext(AuthContext);
   const [userList, setUserList] = useState([]); // all users excluding self
-  const [pendingFriendShips, setPendingFriendShips] = useState([]);
   const [searchTerm, setSearchTerm] = useState(''); // search term for searching users
+
   const debounceTimer = useRef(null); // debounce timer for search input
 
   const _searchUserByUsername = async username => {
     console.log('Searching for user:', username);
     const response = await authAxios.post(`/friends/search-user`, {username});
-    // check if user is pending friend request
-    // if yes, set requested to true
-    // if no, set requested to false
-    setUserList(
-      response.data.map(user => {
-        if (
-          pendingFriendShips.some(pendingFriend => pendingFriend.id === user.id)
-        ) {
-          return {...user, requested: true};
-        }
-        return {...user, requested: false};
-      }),
-    );
-  };
-
-  const _loadPendingFriendShips = async () => {
-    console.log('Loading pending friend requests...');
-    const response = await authAxios.get('/friends/pending-friends');
-    setPendingFriendShips(response.data);
-
-    console.log('pendingFriendRequests', response.data);
+    setUserList(response.data);
   };
 
   const _sendFriendRequest = async $friendId => {
@@ -50,21 +30,6 @@ export default function SearchUserScreen() {
     console.log('response', response.data);
   };
 
-  // this will revert the request props for user
-  const toggleRequest = id => {
-    console.log('toggleRequest', id);
-    setUserList(prevList => {
-      const newList = prevList.map(user => {
-        if (user.id === id) {
-          return {...user, requested: !user.requested};
-        }
-        return user;
-      });
-
-      return newList;
-    });
-  };
-
   // debounce the search input to avoid too many requests
   useEffect(() => {
     if (!searchTerm) return;
@@ -72,7 +37,6 @@ export default function SearchUserScreen() {
       clearTimeout(debounceTimer.current);
     }
     debounceTimer.current = setTimeout(async () => {
-      await _loadPendingFriendShips(); //load pending friend requests for checking if the user is already requested
       _searchUserByUsername(searchTerm);
     }, 500); // 500ms debounce time
   }, [searchTerm]);
@@ -100,19 +64,7 @@ export default function SearchUserScreen() {
               style={{padding: 10, borderBottomWidth: 1, borderColor: '#ccc'}}>
               <Text style={{fontSize: 18}}>
                 {item.username}{' '}
-                <Button
-                  title={item.requested ? 'Cancel' : 'Add'}
-                  onPress={() => {
-                    toggleRequest(item.id);
-                    if (item.requested) {
-                      //   _sendFriendRequest(item.id);
-                    } else {
-                      //   _cancelFriendRequest(item.id);
-                    }
-
-                    // _loadPendingFriendShips();
-                  }}
-                />{' '}
+                <Button title={item.requested ? 'Requested' : 'Add'} />{' '}
               </Text>
             </TouchableNativeFeedback>
           );

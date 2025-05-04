@@ -34,6 +34,7 @@ class FriendController extends Controller
         return response()->json($acceptedFriends);
     }
 
+    // !to be removed
     public function getPendingFriendShips()
     {
         // Get all pending friend requests for the authenticated user
@@ -56,18 +57,50 @@ class FriendController extends Controller
 
         return response()->json($pendingFriends);
     }
-
     public function searchUser(Request $request)
     {
-        // Search for users by name
+        // Get search parameters
         $name = $request->get('username');
         $userId = auth()->user()->id;
 
-        $searchedUser = User::where('username', 'like', '%' . $name . '%')
+        // Search for users by name, excluding self
+        $users = User::where('username', 'like', '%' . $name . '%')
             ->where('id', '!=', $userId)
             ->get();
 
-        return response()->json($searchedUser);
+        // Get all friendship records related to the current user in a single query
+        $friendships = Friend::where(function ($query) use ($userId) {
+            $query->where('user_id1', $userId)
+                ->orWhere('user_id2', $userId);
+        })
+            ->whereIn('status', ['accepted', 'pending'])
+            ->get();
+
+        // Create lookup maps for accepted and pending friendships
+        $acceptedFriendIds = [];
+        $pendingFriendships = [];
+
+        foreach ($friendships as $friendship) {
+            $otherUserId = ($friendship->user_id1 == $userId) ? $friendship->user_id2 : $friendship->user_id1;
+
+            if ($friendship->status === 'accepted') {
+                $acceptedFriendIds[] = $otherUserId;
+            } else if ($friendship->status === 'pending') {
+                $pendingFriendships[$otherUserId] = $friendship;
+            }
+        }
+
+        // Filter out accepted friends and mark pending requests
+        $searchResult = $users->filter(function ($user) use ($acceptedFriendIds) {
+            // Exclude users who are already friends
+            return !in_array($user->id, $acceptedFriendIds);
+        })->map(function ($user) use ($pendingFriendships, $userId) {
+            // Set requested property based on pending status
+            $user->requested = isset($pendingFriendships[$user->id]);
+            return $user;
+        })->values(); // Reset array keys
+
+        return response()->json($searchResult);
     }
 
     public function sendFriendRequest(Request $request)
