@@ -24,10 +24,22 @@ export default function SearchUserScreen() {
 
   const _sendFriendRequest = async $friendId => {
     //TODO add routes in api.php
-    const response = await authAxios.post(`/friends/send-friend-request`, {
-      friend_id: $friendId,
-    });
+    console.log('Sending friend request to user:', $friendId);
+    const response = await authAxios.get(
+      `/friends/send-friend-request/${$friendId}`,
+    );
     console.log('response', response.data);
+  };
+
+  const toggleFriendRequest = async $friendId => {
+    setUserList(prevState => {
+      return prevState.map(user => {
+        if (user.id === $friendId) {
+          return {...user, requested: !user.requested};
+        }
+        return user;
+      });
+    });
   };
 
   // debounce the search input to avoid too many requests
@@ -64,7 +76,14 @@ export default function SearchUserScreen() {
               style={{padding: 10, borderBottomWidth: 1, borderColor: '#ccc'}}>
               <Text style={{fontSize: 18}}>
                 {item.username}{' '}
-                <Button title={item.requested ? 'Requested' : 'Add'} />{' '}
+                <Button
+                  title={item.requested ? 'Requested' : 'Add'}
+                  disabled={item.requested}
+                  onPress={() => {
+                    toggleFriendRequest(item.id);
+                    _sendFriendRequest(item.id);
+                  }}
+                />
               </Text>
             </TouchableNativeFeedback>
           );

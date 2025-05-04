@@ -39,7 +39,7 @@ const HomeScreen = ({navigation}) => {
   const _loadSubjectById = async () => {
     const response = await authAxios.get(`/subjects/${userInfo.id}`);
     setSubjectList(response.data);
-    console.log('subjectList', response.data);
+    // console.log('subjectList', response.data);
   };
 
   useEffect(() => {

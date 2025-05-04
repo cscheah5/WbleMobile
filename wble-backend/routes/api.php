@@ -43,4 +43,5 @@ Route::group([
 ], function ($router) {
     Route::get('/', [FriendController::class, 'index']);
     Route::post('/search-user', [FriendController::class, 'searchUser']);
+    Route::get('/send-friend-request/{id}', [FriendController::class, 'sendFriendRequest']);
 });

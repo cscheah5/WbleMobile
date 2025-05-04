@@ -103,11 +103,10 @@ class FriendController extends Controller
         return response()->json($searchResult);
     }
 
-    public function sendFriendRequest(Request $request)
+    public function sendFriendRequest($friendId)
     {
         // Send a friend request
         $userId = auth()->user()->id;
-        $friendId = $request->input('friend_id');
 
         // Check if the friend request already exists
         $existingRequest = Friend::where(function ($query) use ($userId, $friendId) {
@@ -125,11 +124,12 @@ class FriendController extends Controller
         // Create a new friend request
         // *Gotcha: user_id1 is the sender
         // *Gotcha: user_id2 is the receiver
-        Friend::create([
-            'user_id1' => $userId,
-            'user_id2' => $friendId,
-            'status' => 'pending',
-        ]);
+        $friend = new Friend;
+        $friend->user_id1 = $userId;
+        $friend->user_id2 = $friendId;
+        $friend->status = 'pending';
+        $friend->save();
+
 
         return response()->json(['message' => 'Friend request sent successfully']);
     }
