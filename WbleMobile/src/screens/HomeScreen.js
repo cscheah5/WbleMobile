@@ -36,6 +36,7 @@ const HomeScreen = ({navigation}) => {
     },
   ]);
 
+  //TODO: try catch block
   const _loadSubjectById = async () => {
     const response = await authAxios.get(`/subjects/${userInfo.id}`);
     setSubjectList(response.data);

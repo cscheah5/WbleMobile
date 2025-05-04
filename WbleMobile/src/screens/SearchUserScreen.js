@@ -17,12 +17,14 @@ export default function SearchUserScreen() {
 
   const debounceTimer = useRef(null); // debounce timer for search input
 
+  //TODO: try catch block for error handling
   const _searchUserByUsername = async username => {
     console.log('Searching for user:', username);
     const response = await authAxios.post(`/friends/search-user`, {username});
     setUserList(response.data);
   };
 
+  //TODO: try catch block for error handling
   const _sendFriendRequest = async $friendId => {
     console.log('Sending friend request to user:', $friendId);
     const response = await authAxios.get(

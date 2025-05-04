@@ -34,29 +34,6 @@ class FriendController extends Controller
         return response()->json($acceptedFriends);
     }
 
-    // !to be removed
-    public function getPendingFriendShips()
-    {
-        // Get all pending friend requests for the authenticated user
-        $userId = auth()->user()->id;
-
-        $pendingFriendships = Friend::where(function ($query) use ($userId) {
-            $query->where('user_id1', $userId)
-                ->orWhere('user_id2', $userId);
-        })->where('status', 'pending')->get();
-
-        // Extract the friend IDs from the friendships
-        $pendingFriendIds = $pendingFriendships->map(function ($friendship) use ($userId) {
-            return $friendship->user_id1 === $userId ? $friendship->user_id2 : $friendship->user_id1;
-        });
-
-        // Fetch the user details for each friend ID
-        $pendingFriends = $pendingFriendIds->map(function ($friendId) {
-            return User::find($friendId);
-        });
-
-        return response()->json($pendingFriends);
-    }
     public function searchUser(Request $request)
     {
         // Get search parameters
@@ -132,6 +109,26 @@ class FriendController extends Controller
 
 
         return response()->json(['message' => 'Friend request sent successfully']);
+    }
+
+    public function getFriendRequests()
+    {
+        // Get all friend requests for the authenticated user
+        $userId = auth()->user()->id;
+
+        // Fetch pending friend requests where the authenticated user is user_id2
+        $friendRequests = Friend::where('user_id2', $userId)
+            ->where('status', 'pending')
+            ->get();
+
+        $friendRequestIds = $friendRequests->map(function ($friendship) {
+            return $friendship->user_id1;
+        });
+
+        // Fetch user details for each friend request
+        $friendRequestUsers = User::whereIn('id', $friendRequestIds)->get();
+
+        return response()->json($friendRequestUsers);
     }
 
     public function acceptFriendRequest(Request $request)

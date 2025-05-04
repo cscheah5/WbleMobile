@@ -9,6 +9,7 @@ export default function SubjectScreen({route, navigation}) {
   const {authAxios} = useContext(AuthContext);
   const [weekSections, setWeekSections] = useState([]);
 
+  //TODO: try catch block for error handling
   const _loadWeekSectionsBySubjectId = async () => {
     const response = await authAxios.get(`/sections/${subjectId}`);
     setWeekSections(response.data);

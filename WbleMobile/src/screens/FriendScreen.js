@@ -31,6 +31,7 @@ export default function FriendScreen({navigation}) {
   const {authAxios} = useContext(AuthContext);
   const [acceptedFriends, setAcceptedFriends] = useState([]);
 
+  //TODO: try catch block for error handling
   const _loadFriends = async () => {
     console.log('Loading friends...');
     const response = await authAxios.get('/friends/');
