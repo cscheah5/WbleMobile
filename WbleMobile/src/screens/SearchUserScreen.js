@@ -23,7 +23,6 @@ export default function SearchUserScreen() {
   };
 
   const _sendFriendRequest = async $friendId => {
-    //TODO add routes in api.php
     console.log('Sending friend request to user:', $friendId);
     const response = await authAxios.get(
       `/friends/send-friend-request/${$friendId}`,
