@@ -4,6 +4,7 @@ import {
   ScrollView,
   TouchableNativeFeedback,
   Button,
+  Alert,
 } from 'react-native';
 import React, {useContext, useState, useCallback} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
@@ -39,6 +40,30 @@ export default function FriendScreen({navigation}) {
     console.log('acceptedFriends', response.data);
   };
 
+  const _handleDeleteFriend = async friendId => {
+    const response = await authAxios.get(`/friends/unfriend/${friendId}`);
+    console.log('response', response.data);
+    _loadFriends();
+  };
+
+  const handleLongPress = friend => {
+    Alert.alert(
+      'Friend options',
+      `What would you like to do with ${friend.username} ?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => _handleDeleteFriend(friend.id),
+        },
+      ],
+    );
+  };
+
   useFocusEffect(
     useCallback(() => {
       _loadFriends();
@@ -52,12 +77,17 @@ export default function FriendScreen({navigation}) {
         data={acceptedFriends}
         renderItem={({item}) => {
           return (
-            <View
-              style={{padding: 10, borderColor: 'black', borderTopWidth: 1}}>
-              <TouchableNativeFeedback>
+            <TouchableNativeFeedback onLongPress={() => handleLongPress(item)}>
+              <View
+                style={{
+                  padding: 10,
+                  borderBottomWidth: 1,
+                  borderColor: '#ccc',
+                }}>
                 <Text style={{fontSize: 18}}>{item.username}</Text>
-              </TouchableNativeFeedback>
-            </View>
+              </View>
+              {/* <Text style={{fontSize: 18}}>{item.username}</Text> */}
+            </TouchableNativeFeedback>
           );
         }}
       />

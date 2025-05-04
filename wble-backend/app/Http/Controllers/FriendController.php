@@ -174,4 +174,28 @@ class FriendController extends Controller
 
         return response()->json(['message' => 'Friend request rejected successfully']);
     }
+
+    public function unfriend($friendId)
+    {
+        // Unfriend a user
+        $userId = auth()->user()->id;
+
+        // Check if the friendship exists and is accepted
+        $friendship = Friend::where(function ($query) use ($userId, $friendId) {
+            $query->where('user_id1', $userId)
+                ->where('user_id2', $friendId);
+        })->orWhere(function ($query) use ($userId, $friendId) {
+            $query->where('user_id1', $friendId)
+                ->where('user_id2', $userId);
+        })->where('status', 'accepted')->first();
+
+        if (!$friendship) {
+            return response()->json(['message' => 'No friendship found'], 404);
+        }
+
+        // Delete the friendship record
+        $friendship->delete();
+
+        return response()->json(['message' => 'Unfriended successfully']);
+    }
 }

@@ -16,6 +16,7 @@ export default function FriendRequestScreen({route}) {
     // console.log('friendRequests', response.data);
   };
 
+  //TODO: try catch block for error handling
   const _acceptFriendRequest = async friendId => {
     console.log('Accepting friend request from user:', friendId);
     const response = await authAxios.get(
