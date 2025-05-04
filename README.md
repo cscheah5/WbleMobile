@@ -1,3 +1,6 @@
+# WBLE Front-end
+Configure server path at src/config/config.js
+
 # WBLE Backend
 
 This repository contains the backend API for the WBLE (Web-Based Learning Environment) application. It's built with Laravel PHP framework and uses JWT authentication.
