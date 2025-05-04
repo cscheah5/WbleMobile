@@ -45,4 +45,5 @@ Route::group([
     Route::post('/search-user', [FriendController::class, 'searchUser']);
     Route::get('/send-friend-request/{id}', [FriendController::class, 'sendFriendRequest']);
     Route::get('/requests', [FriendController::class, 'getFriendRequests']);
+    Route::get('/accept-friend-request/{id}', [FriendController::class, 'acceptFriendRequest']);
 });

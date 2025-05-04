@@ -35,7 +35,7 @@ export default function FriendScreen({navigation}) {
   const _loadFriends = async () => {
     console.log('Loading friends...');
     const response = await authAxios.get('/friends/');
-    setAcceptedFriends(response.data.accepted_friends);
+    setAcceptedFriends(response.data);
     console.log('acceptedFriends', response.data);
   };
 
@@ -64,7 +64,9 @@ export default function FriendScreen({navigation}) {
           if (name === 'bt_search_user') {
             navigation.navigate('SearchUser');
           } else if (name === 'bt_add_friend') {
-            navigation.navigate('FriendRequest');
+            navigation.navigate('FriendRequest', {
+              friendRefresh: _loadFriends,
+            });
           }
         }}
         color="#FF6347"

@@ -131,11 +131,10 @@ class FriendController extends Controller
         return response()->json($friendRequestUsers);
     }
 
-    public function acceptFriendRequest(Request $request)
+    public function acceptFriendRequest($friendId)
     {
         // Accept a friend request
         $userId = auth()->user()->id;
-        $friendId = $request->input('friend_id');
 
         // Check if the friend request exists and is pending
         $friendship = Friend::where(function ($query) use ($userId, $friendId) {
@@ -147,8 +146,9 @@ class FriendController extends Controller
             return response()->json(['message' => 'No pending friend request found'], 404);
         }
 
-        // Update the status to accepted
-        $friendship->update(['status' => 'accepted']);
+        // Update the status to accepted without mass assignment
+        $friendship->status = 'accepted';
+        $friendship->save();
 
         return response()->json(['message' => 'Friend request accepted successfully']);
     }

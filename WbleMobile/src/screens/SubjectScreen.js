@@ -13,7 +13,7 @@ export default function SubjectScreen({route, navigation}) {
   const _loadWeekSectionsBySubjectId = async () => {
     const response = await authAxios.get(`/sections/${subjectId}`);
     setWeekSections(response.data);
-    console.log('weekSections', response.data);
+    // console.log('weekSections', response.data);
   };
 
   useEffect(() => {
