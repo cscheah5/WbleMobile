@@ -22,7 +22,15 @@ export default function FriendRequestScreen({route}) {
     const response = await authAxios.get(
       `/friends/accept-friend-request/${friendId}`,
     );
-    console.log('response', response.data);
+    console.log(response.data);
+  };
+
+  //TODO: try catch block for error handling
+  const _rejectFriendRequest = async friendId => {
+    const response = await authAxios(
+      `/friends/reject-friend-request/${friendId}`,
+    );
+    console.log(response.data);
   };
 
   //runs code whenever the screen comes into focus, so your friends list will refresh every time you navigate back to this screen.
@@ -47,7 +55,10 @@ export default function FriendRequestScreen({route}) {
               }}>
               <Text style={{color: 'blue'}}>Accept</Text>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={() => {}}>
+            <TouchableNativeFeedback
+              onPress={() => {
+                _rejectFriendRequest(item.id);
+              }}>
               <Text style={{color: 'red'}}>Reject</Text>
             </TouchableNativeFeedback>
           </View>

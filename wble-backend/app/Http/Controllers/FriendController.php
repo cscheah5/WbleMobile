@@ -153,11 +153,10 @@ class FriendController extends Controller
         return response()->json(['message' => 'Friend request accepted successfully']);
     }
 
-    public function rejectFriendRequest(Request $request)
+    public function rejectFriendRequest($friendId)
     {
         // Reject a friend request
         $userId = auth()->user()->id;
-        $friendId = $request->input('friend_id');
 
         // Check if the friend request exists and is pending
         $friendship = Friend::where(function ($query) use ($userId, $friendId) {

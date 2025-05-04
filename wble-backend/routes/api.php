@@ -46,6 +46,6 @@ Route::group([
     Route::get('/send-friend-request/{id}', [FriendController::class, 'sendFriendRequest']);
     Route::get('/requests', [FriendController::class, 'getFriendRequests']);
     Route::get('/accept-friend-request/{id}', [FriendController::class, 'acceptFriendRequest']);
-    //
+    Route::get('/reject-friend-request/{id}', [FriendController::class, 'rejectFriendRequest']);
     Route::get('/unfriend/{id}', [FriendController::class, 'unfriend']);
 });
