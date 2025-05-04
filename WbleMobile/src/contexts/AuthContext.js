@@ -125,12 +125,12 @@ export const AuthProvider = ({children}) => {
   };
 
   const logout = async () => {
+    console.log('Logging out...');
     setIsLoading(true);
-
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
-        await authAxios.post(
+        await axios.post(
           '/auth/logout',
           {},
           {
