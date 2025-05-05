@@ -1,5 +1,5 @@
 import {View, Text, TextInput, Button, ScrollView} from 'react-native';
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useEffect, useState, useContext, useRef} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
 import {ChatContext} from '@/contexts/ChatContext';
 
@@ -9,6 +9,7 @@ export default function ChatScreen({route, navigation}) {
   const [message, setMessage] = useState('');
   const {authAxios, userInfo} = useContext(AuthContext);
   const {socket} = useContext(ChatContext);
+  const scrollViewRef = useRef(null);
 
   const _loadMessages = async () => {
     console.log('Loading messages...');
@@ -50,6 +51,15 @@ export default function ChatScreen({route, navigation}) {
     return `${base}.000000Z`; // "2025-05-05T04:00:38.000000Z"
   };
 
+  // Scroll to bottom when new messages arrive
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      setTimeout(() => {
+        scrollViewRef.current.scrollToEnd({animated: true});
+      }, 100);
+    }
+  }, [messagesHistory]);
+
   useEffect(() => {
     socket.on('private_message', msg => {
       const {senderId, receiverId, message} = msg;
@@ -81,7 +91,7 @@ export default function ChatScreen({route, navigation}) {
 
   return (
     <View style={{flex: 1, padding: 10, backgroundColor: '#f5f5f5'}}>
-      <ScrollView style={{flex: 1, marginBottom: 10}}>
+      <ScrollView ref={scrollViewRef} style={{flex: 1, marginBottom: 10}}>
         {messagesHistory.map((msg, index) => {
           // console.log('Real' + msg.created_at);
           const date = new Date(msg.created_at);
