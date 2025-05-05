@@ -10,6 +10,11 @@ The jwt secret key can be find in your laravel ```.env``` file
 pip install Flask Flask-SocketIO python-dotenv PyJWT
 ```
 
+## Optional Python dependencies (but often used with Flask-SocketIO)
+```bash
+pip install eventlet
+```
+
 
 # WBLE Front-end
 Configure server path at src/config/config.js
