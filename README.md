@@ -1,3 +1,7 @@
+# WBLE Flask Socket
+need to create .env file and put your jwt secret key from laravel
+LARAVEL_JWT_SECRET=your-jwt-secret-key
+
 # WBLE Front-end
 Configure server path at src/config/config.js
 
