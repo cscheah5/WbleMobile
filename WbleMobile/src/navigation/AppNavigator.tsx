@@ -10,7 +10,7 @@ import SplashScreen from '@/screens/auth/SplashScreen';
 import { AuthContext } from '@/contexts/AuthContext';
 
 const AppNavigator = () => {
-  const {isLoading, userToken} = useContext(AuthContext);
+  const {isLoading, userToken, userInfo} = useContext(AuthContext);
   
   if (isLoading) {
     // Wait for checking token
