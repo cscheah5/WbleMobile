@@ -1,12 +1,14 @@
 import {View, Text, TextInput, Button, ScrollView} from 'react-native';
 import React, {useEffect, useState, useContext} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
+import {ChatContext} from '@/contexts/ChatContext';
 
 export default function ChatScreen({route, navigation}) {
   const {friend} = route.params;
   const [messagesHistory, setMessagesHistory] = useState([]);
   const [message, setMessage] = useState('');
   const {authAxios, userInfo} = useContext(AuthContext);
+  const {socket} = useContext(ChatContext);
 
   const _loadMessages = async () => {
     console.log('Loading messages...');
@@ -30,6 +32,38 @@ export default function ChatScreen({route, navigation}) {
     //load
     _loadMessages();
   };
+
+  const _sendMessageViaSocket = message => {
+    socket.emit('private_message', {
+      senderId: userInfo.id,
+      senderName: userInfo.username,
+      receiverId: friend.id,
+      receiverName: friend.username,
+      message: message,
+    });
+  };
+
+  useEffect(() => {
+    socket.on('private_message', msg => {
+      const {senderId, receiverId, message} = msg;
+      const laravelTimestamp = new Date()
+        .toISOString()
+        .replace('Z', '.000000Z');
+      console.log('Msg received from socket: ' + message);
+      setMessagesHistory(prev => {
+        return [
+          ...prev,
+          {
+            sender_id: senderId,
+            receiver_id: receiverId,
+            message: message,
+            created_at: laravelTimestamp,
+            updated_at: laravelTimestamp,
+          },
+        ];
+      });
+    });
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -99,6 +133,7 @@ export default function ChatScreen({route, navigation}) {
         <Button
           title="Send"
           onPress={() => {
+            _sendMessageViaSocket(message);
             _createMessage(message);
           }}
         />
