@@ -10,6 +10,7 @@ export const AuthProvider = ({children}) => {
   const [userToken, setUserToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+  const [loginError, setLoginError] = useState(false);
 
   const authAxios = axios.create({
     baseURL: API_URL,
@@ -115,15 +116,16 @@ export const AuthProvider = ({children}) => {
 
       console.log('Login successful:', response.data);
 
-      return { 
+      return {
         success: true,
-        data: response.data 
+        data: response.data,
       };
     } catch (error) {
       console.log('Login error:', error);
-      return { 
+      setLoginError(true);
+      return {
         success: false,
-        error: error.response?.data?.message || 'Invalid credentials' 
+        error: error.response?.data?.message || 'Invalid credentials',
       };
     } finally {
       setIsLoading(false);
@@ -184,6 +186,7 @@ export const AuthProvider = ({children}) => {
         userToken,
         userInfo,
         authAxios,
+        loginError,
       }}>
       {children}
     </AuthContext.Provider>

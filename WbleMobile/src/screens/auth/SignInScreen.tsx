@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
 import {InputWithLabel} from '@/components/InputWithLabel';
-import { AppButton } from '@/components/AppButton';
+import {AppButton} from '@/components/AppButton';
 
 const SignInScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -18,7 +18,7 @@ const SignInScreen = ({navigation}) => {
 
   const {login} = useContext(AuthContext);
 
-  const handleLogin = async() => {
+  const handleLogin = async () => {
     // Basic validation
     if (!username || !password) {
       Alert.alert('Error', 'Please fill in all fields');
@@ -60,10 +60,7 @@ const SignInScreen = ({navigation}) => {
           secureTextEntry
         />
 
-        <AppButton 
-          title="Log in"
-          onPress={handleLogin}
-        />
+        <AppButton title="Log in" onPress={handleLogin} />
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have an account? </Text>
