@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('week_id')->constrained('week_sections')->onDelete('cascade');
+            $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
+            $table->enum('type', ['lecture', 'tutorial', 'practical', 'others']);
             $table->string('filename');
             $table->string('filepath');
             $table->timestamps();

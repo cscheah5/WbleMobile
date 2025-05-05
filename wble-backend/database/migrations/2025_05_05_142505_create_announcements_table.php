@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sections', function (Blueprint $table) {
+        Schema::create('announcements', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
-            $table->integer('week_number');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
+            $table->string('title');
+            $table->text('description');
             $table->timestamps();
+            
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('week_sections');
+        Schema::dropIfExists('announcements');
     }
 };

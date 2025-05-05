@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Material extends Model
+class Announcement extends Model
 {
+    /** @use HasFactory<\Database\Factories\AnnouncementFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'section_id',
-        'type',
-        'file_path',
-        'file_name',
+        'title',
+        'description',
     ];
 
     public function section()
