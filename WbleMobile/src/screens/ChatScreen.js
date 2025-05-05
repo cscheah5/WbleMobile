@@ -12,7 +12,7 @@ export default function ChatScreen({route, navigation}) {
     console.log('Loading messages...');
     const response = await authAxios.get(`/messages/${friend.id}`);
     setMessagesHistory(response.data);
-    console.log(response.data);
+    // console.log(response.data);
   };
 
   const _createMessage = async message => {
@@ -42,21 +42,37 @@ export default function ChatScreen({route, navigation}) {
   return (
     <View style={{flex: 1, padding: 10, backgroundColor: '#f5f5f5'}}>
       <ScrollView style={{flex: 1, marginBottom: 10}}>
-        {messagesHistory.map((msg, index) => (
-          <View
-            key={index}
-            style={{
-              marginVertical: 5,
-              padding: 10,
-              backgroundColor:
-                msg.sender_id === userInfo.id ? '#c8e6c9' : '#e0e0e0',
-              borderRadius: 5,
-              alignSelf:
-                msg.sender_id === userInfo.id ? 'flex-end' : 'flex-start',
-            }}>
-            <Text>{msg.message}</Text>
-          </View>
-        ))}
+        {messagesHistory.map((msg, index) => {
+          const date = new Date(msg.created_at);
+          const options = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
+          const formattedDate = date.toLocaleDateString(undefined, options);
+
+          return (
+            <View
+              key={index}
+              style={{
+                marginVertical: 5,
+                padding: 10,
+                backgroundColor:
+                  msg.sender_id === userInfo.id ? '#c8e6c9' : '#e0e0e0',
+                borderRadius: 5,
+                alignSelf:
+                  msg.sender_id === userInfo.id ? 'flex-end' : 'flex-start',
+                maxWidth: '80%',
+              }}>
+              <Text style={{fontSize: 14, color: '#000'}}>{msg.message}</Text>
+              <Text
+                style={{
+                  fontSize: 10,
+                  color: '#555',
+                  textAlign: 'right',
+                  marginTop: 5,
+                }}>
+                {formattedDate}
+              </Text>
+            </View>
+          );
+        })}
       </ScrollView>
       <View
         style={{
