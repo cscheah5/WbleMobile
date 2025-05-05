@@ -43,13 +43,19 @@ export default function ChatScreen({route, navigation}) {
     });
   };
 
+  const generateLaravelTimestamps = () => {
+    const now = new Date();
+    const iso = now.toISOString(); // Example: "2025-05-05T04:00:38.123Z"
+    const base = iso.split('.')[0]; // "2025-05-05T04:00:38"
+    return `${base}.000000Z`; // "2025-05-05T04:00:38.000000Z"
+  };
+
   useEffect(() => {
     socket.on('private_message', msg => {
       const {senderId, receiverId, message} = msg;
-      const laravelTimestamp = new Date()
-        .toISOString()
-        .replace('Z', '.000000Z');
+
       console.log('Msg received from socket: ' + message);
+
       setMessagesHistory(prev => {
         return [
           ...prev,
@@ -57,8 +63,8 @@ export default function ChatScreen({route, navigation}) {
             sender_id: senderId,
             receiver_id: receiverId,
             message: message,
-            created_at: laravelTimestamp,
-            updated_at: laravelTimestamp,
+            created_at: generateLaravelTimestamps(),
+            updated_at: generateLaravelTimestamps(),
           },
         ];
       });
@@ -77,6 +83,7 @@ export default function ChatScreen({route, navigation}) {
     <View style={{flex: 1, padding: 10, backgroundColor: '#f5f5f5'}}>
       <ScrollView style={{flex: 1, marginBottom: 10}}>
         {messagesHistory.map((msg, index) => {
+          // console.log('Real' + msg.created_at);
           const date = new Date(msg.created_at);
           const options = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
           const formattedDate = date.toLocaleDateString(undefined, options);
