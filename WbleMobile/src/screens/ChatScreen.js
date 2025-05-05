@@ -147,7 +147,7 @@ export default function ChatScreen({route, navigation}) {
           onChangeText={text => setMessage(text)}
         />
         <Button
-          title="Send"
+          title="Sendssss"
           onPress={() => {
             _sendMessageViaSocket(message);
             _createMessage(message);
