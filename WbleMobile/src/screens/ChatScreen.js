@@ -27,10 +27,7 @@ export default function ChatScreen({route, navigation}) {
       message: message,
     });
     console.log(response.data);
-
-    //reset state
     setMessage('');
-    //load
     _loadMessages();
   };
 
@@ -60,6 +57,7 @@ export default function ChatScreen({route, navigation}) {
     }
   }, [messagesHistory]);
 
+  //listening on socket
   useEffect(() => {
     socket.on('private_message', msg => {
       const {senderId, receiverId, message} = msg;
@@ -81,6 +79,7 @@ export default function ChatScreen({route, navigation}) {
     });
   }, []);
 
+  // set the stacker title
   useEffect(() => {
     navigation.setOptions({
       title: `${friend.username}`,
