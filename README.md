@@ -2,6 +2,9 @@
 need to create ```.env``` file and put this env variable
 ```LARAVEL_JWT_SECRET=your-jwt-secret-key```
 
+##The jwt secret key can be find in your laravel ```.env``` file
+
+
 # WBLE Front-end
 Configure server path at src/config/config.js
 
