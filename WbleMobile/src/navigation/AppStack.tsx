@@ -8,8 +8,12 @@ import {
 } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {AuthContext} from '@/contexts/AuthContext';
+
+import AdminStack from './AdminStack';
+import LecturerStack from './LecturerStack';
+import StudentStack from './StudentStack';
+
 import HomeScreen from '@/screens/HomeScreen';
-import ProfileScreen from '@/screens/ProfileScreen';
 import SubjectScreen from '@/screens/SubjectScreen';
 import FriendScreen from '@/screens/FriendScreen';
 import SearchUserScreen from '@/screens/SearchUserScreen';
@@ -19,27 +23,26 @@ import ChatScreen from '@/screens/ChatScreen';
 const Stack = createStackNavigator();
 
 const AppStack = () => {
-  const {logout} = useContext(AuthContext);
+  const {userInfo} = useContext(AuthContext);
 
-  return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={({navigation}) => ({
-          title: 'My Home',
-          headerRight: () => (
-            <Button title="Logout" onPress={logout} color="#000" />
-          ),
-        })}
-      />
-      <Stack.Screen name="Subject" component={SubjectScreen} />
-      <Stack.Screen name="Friend" component={FriendScreen} />
-      <Stack.Screen name="SearchUser" component={SearchUserScreen} />
-      <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
-      <Stack.Screen name="Chat" component={ChatScreen} />
-    </Stack.Navigator>
-  );
+  const renderAppStack = () => {
+    switch (userInfo.role) {
+      case 'admin':
+        console.log('User is admin, showing AdminStack');
+        return <AdminStack />;
+      case 'lecturer':
+        console.log('User is lecturer, showing LecturerStack');
+        return <LecturerStack />;
+      case 'student':
+        console.log('User is student, showing StudentStack');
+        return <StudentStack />;
+      default:
+        console.log('Unknown role, defaulting to StudentStack');
+        return <StudentStack />;
+    }
+  };
+
+  return renderAppStack();
 };
 
 export default AppStack;
