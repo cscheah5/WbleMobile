@@ -26,6 +26,7 @@ class UserFactory extends Factory
         return [
             'username' => fake()->name(),
             'password' =>  123456,
+            'role' => fake()->randomElement(['student', 'lecturer', 'admin']),
         ];
     }
 
