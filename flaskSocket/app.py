@@ -28,6 +28,37 @@ def handle_connect():
         print(f"Connection rejected:", str(e))
         return False # reject connection
 
+@socketio.on('private_message', namespace='/chat')
+def handle_private_message(data):
+    receiver = data['to']
+    message = data['message']
+    sender_token = data['userToken']
+
+    try:
+        sender = jwt.decode(sender_token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        sender_name = sender.get('sub')
+        print(f"Message from {sender_name} to {receiver}: {message}")
+
+        # emit to the receiver if connected
+        if receiver in connected_users:
+            emit('private_message', {
+                'from': sender_name,
+                'message': message
+            }, room=connected_users[receiver]) #Sends message directly to receiver's connection.
+    except jwt.ExpiredSignatureError:
+        emit('error', {'message': 'Token expired'})
+    except Exception as e:
+        emit('error', {'message': str(e)})
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    sid = request.sid
+    for username, stored_sid in list(connected_users.items()):
+        if stored_sid == sid:
+            print(f"{username} disconnected")
+            del connected_users[username]
+            break
 
 
 
