@@ -20,7 +20,7 @@ class MessageController extends Controller
             $query->where('sender_id', $userId)->where('receiver_id', $friendId);
         })->orWhere(function ($query) use ($userId, $friendId) {
             $query->where('sender_id', $friendId)->where('receiver_id', $userId);
-        })->orderBy('created_at', 'asc');
+        })->orderBy('created_at', 'asc')->get();
 
         return response()->json($messages);
     }

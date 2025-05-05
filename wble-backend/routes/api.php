@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\FriendController;
+use App\Http\Controllers\MessageController;
 
 Route::group([
     'middleware' => 'api', // Base API middleware
@@ -27,14 +28,14 @@ Route::group([
     'middleware' => 'api', // Base API middleware
     'prefix' => 'subjects'
 ], function ($router) {
-    Route::get('/{id}', [SubjectController::class, 'show']);
+    Route::get('/{userId}', [SubjectController::class, 'show']);
 });
 
 Route::group([
     'middleware' => 'api', // Base API middleware
     'prefix' => 'sections'
 ], function ($router) {
-    Route::get('/{id}', [SectionController::class, 'show']);
+    Route::get('/{subjectId}', [SectionController::class, 'show']);
 });
 
 Route::group([
@@ -43,9 +44,14 @@ Route::group([
 ], function ($router) {
     Route::get('/', [FriendController::class, 'index']);
     Route::post('/search-user', [FriendController::class, 'searchUser']);
-    Route::get('/send-friend-request/{id}', [FriendController::class, 'sendFriendRequest']);
+    Route::get('/send-friend-request/{friendId}', [FriendController::class, 'sendFriendRequest']);
     Route::get('/requests', [FriendController::class, 'getFriendRequests']);
-    Route::get('/accept-friend-request/{id}', [FriendController::class, 'acceptFriendRequest']);
-    Route::get('/reject-friend-request/{id}', [FriendController::class, 'rejectFriendRequest']);
-    Route::get('/unfriend/{id}', [FriendController::class, 'unfriend']);
+    Route::get('/accept-friend-request/{friendId}', [FriendController::class, 'acceptFriendRequest']);
+    Route::get('/reject-friend-request/{friendId}', [FriendController::class, 'rejectFriendRequest']);
+    Route::get('/unfriend/{friendId}', [FriendController::class, 'unfriend']);
+});
+
+Route::group(['middleware' => 'api', 'prefix' => 'messages'], function ($router) {
+    Route::get('/{friendId}', [MessageController::class, 'show']);
+    Route::post('/create', [MessageController::class, 'createMessage']);
 });
