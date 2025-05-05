@@ -1,58 +1,62 @@
 import {View, Text, TextInput, Button, ScrollView} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
+import {AuthContext} from '@/contexts/AuthContext';
 
 export default function ChatScreen({route, navigation}) {
-  const {user} = route.params;
+  const {friend} = route.params;
+  const [messagesHistory, setMessagesHistory] = useState([]);
+  const [message, setMessage] = useState('');
+  const {authAxios, userInfo} = useContext(AuthContext);
+
+  const _loadMessages = async () => {
+    console.log('Loading messages...');
+    const response = await authAxios.get(`/messages/${friend.id}`);
+    setMessagesHistory(response.data);
+    console.log(response.data);
+  };
+
+  const _createMessage = async message => {
+    console.log('Creating message...');
+
+    //create message
+    const response = await authAxios.post('/messages/create', {
+      friendId: friend.id,
+      message: message,
+    });
+    console.log(response.data);
+
+    //reset state
+    setMessage('');
+    //load
+    _loadMessages();
+  };
 
   useEffect(() => {
     navigation.setOptions({
-      title: `${user.username}`,
+      title: `${friend.username}`,
     });
-  }, []);
+
+    _loadMessages();
+  }, [friend]);
 
   return (
     <View style={{flex: 1, padding: 10, backgroundColor: '#f5f5f5'}}>
       <ScrollView style={{flex: 1, marginBottom: 10}}>
-        <View
-          style={{
-            marginVertical: 5,
-            padding: 10,
-            backgroundColor: '#e0e0e0',
-            borderRadius: 5,
-            alignSelf: 'flex-start',
-          }}>
-          <Text>Message 1</Text>
-        </View>
-        <View
-          style={{
-            marginVertical: 5,
-            padding: 10,
-            backgroundColor: '#c8e6c9',
-            borderRadius: 5,
-            alignSelf: 'flex-end',
-          }}>
-          <Text>Message 2</Text>
-        </View>
-        <View
-          style={{
-            marginVertical: 5,
-            padding: 10,
-            backgroundColor: '#e0e0e0',
-            borderRadius: 5,
-            alignSelf: 'flex-start',
-          }}>
-          <Text>Message 3</Text>
-        </View>
-        <View
-          style={{
-            marginVertical: 5,
-            padding: 10,
-            backgroundColor: '#c8e6c9',
-            borderRadius: 5,
-            alignSelf: 'flex-end',
-          }}>
-          <Text>Message 4</Text>
-        </View>
+        {messagesHistory.map((msg, index) => (
+          <View
+            key={index}
+            style={{
+              marginVertical: 5,
+              padding: 10,
+              backgroundColor:
+                msg.sender_id === userInfo.id ? '#c8e6c9' : '#e0e0e0',
+              borderRadius: 5,
+              alignSelf:
+                msg.sender_id === userInfo.id ? 'flex-end' : 'flex-start',
+            }}>
+            <Text>{msg.message}</Text>
+          </View>
+        ))}
       </ScrollView>
       <View
         style={{
@@ -73,8 +77,15 @@ export default function ChatScreen({route, navigation}) {
             marginRight: 5,
           }}
           placeholder="Enter message"
+          value={message}
+          onChangeText={text => setMessage(text)}
         />
-        <Button title="Send" onPress={() => {}} />
+        <Button
+          title="Send"
+          onPress={() => {
+            _createMessage(message);
+          }}
+        />
       </View>
     </View>
   );
