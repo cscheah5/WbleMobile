@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Subject;
+use App\Models\Section;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +19,7 @@ class SectionSeeder extends Seeder
         
         // Loop through each subject
         Subject::all()->each(function ($subject) use ($weeks, $startDate) {
-            $subject->factory()->createSectionsForSubject($subject, $startDate, $weeks);
+            Section::factory()->createSectionsForSubject($subject, $startDate, $weeks);
         });
     }
 }

@@ -9,32 +9,7 @@ import ItemCard from '@/components/ItemCard';
 const HomeScreen = ({navigation}) => {
   const {authAxios, userInfo} = useContext(AuthContext);
 
-  const [subjectList, setSubjectList] = useState([
-    {
-      subjectId: 'UECS2433',
-      subjectName: 'Wireless Application Development',
-    },
-    {
-      subjectId: 'UECS2434',
-      subjectName: 'Mobile Application Development',
-    },
-    {
-      subjectId: 'UECS2435',
-      subjectName: 'Web Application Development',
-    },
-    {
-      subjectId: 'UECS2436',
-      subjectName: 'Cloud Computing',
-    },
-    {
-      subjectId: 'UECS2437',
-      subjectName: 'Artificial Intelligence',
-    },
-    {
-      subjectId: 'UECS2438',
-      subjectName: 'Machine Learning',
-    },
-  ]);
+  const [subjectList, setSubjectList] = useState([]);
 
   //TODO: try catch block for error handling
   const _loadSubjectById = async () => {

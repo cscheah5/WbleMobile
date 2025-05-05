@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Testing\Fluent\Concerns\Has;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Material extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'section_id',
         'type',
-        'file_path',
-        'file_name',
+        'filepath',
+        'filename',
     ];
 
     public function section()

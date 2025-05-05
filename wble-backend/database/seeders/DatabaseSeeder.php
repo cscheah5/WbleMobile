@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Announcement;
 use App\Models\Friend;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -27,6 +28,8 @@ class DatabaseSeeder extends Seeder
             EnrollmentSeeder::class,
             SectionSeeder::class,
             FriendSeeder::class,
+            MaterialSeeder::class,
+            AnnouncementSeeder::class,
             // Add other seeders here
         ]);
     }

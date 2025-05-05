@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,11 @@ class AnnouncementFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'section_id' => Section::count() > 0 
+                ? Section::inRandomOrder()->first()->id 
+                : Section::factory(),
+            'title' => $this->faker->sentence(),
+            'description' => $this->faker->paragraph(),
         ];
     }
 }
