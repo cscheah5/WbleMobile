@@ -1,14 +1,14 @@
 import React from 'react';
 import AppNavigator from '@/navigation/AppNavigator';
 import {AuthProvider} from '@/contexts/AuthContext';
-import ChatProvider from '@/contexts/ChatContext';
+import SocketProvider from '@/contexts/SocketContext';
 
 const App = () => {
   return (
     <AuthProvider>
-      <ChatProvider>
+      <SocketProvider>
         <AppNavigator />
-      </ChatProvider>
+      </SocketProvider>
     </AuthProvider>
   );
 };

@@ -1,14 +1,14 @@
 import {View, Text, TextInput, Button, ScrollView} from 'react-native';
 import React, {useEffect, useState, useContext, useRef} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
-import {ChatContext} from '@/contexts/ChatContext';
+import {SocketContext} from '@/contexts/SocketContext';
 
 export default function ChatScreen({route, navigation}) {
   const {friend} = route.params;
   const [messagesHistory, setMessagesHistory] = useState([]);
   const [message, setMessage] = useState('');
   const {authAxios, userInfo} = useContext(AuthContext);
-  const {socket} = useContext(ChatContext);
+  const {socket} = useContext(SocketContext);
   const scrollViewRef = useRef(null);
 
   const _loadMessages = async () => {

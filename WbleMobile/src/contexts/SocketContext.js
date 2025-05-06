@@ -3,9 +3,9 @@ import {AuthContext} from './AuthContext';
 import {io} from 'socket.io-client';
 import {SOCKET_URL} from '@/config/config';
 
-export const ChatContext = createContext({});
+export const SocketContext = createContext({});
 
-export default function ChatProvider({children}) {
+export default function SocketProvider({children}) {
   const [socket, setSocket] = useState('');
   const {userInfo, userToken} = useContext(AuthContext);
 
@@ -25,8 +25,8 @@ export default function ChatProvider({children}) {
   }, [userToken]);
 
   return (
-    <ChatContext.Provider value={{socket: socket}}>
+    <SocketContext.Provider value={{socket: socket}}>
       {children}
-    </ChatContext.Provider>
+    </SocketContext.Provider>
   );
 }
