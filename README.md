@@ -113,7 +113,12 @@ php artisan migrate:fresh --seed
 php artisan jwt:secret
 ```
 
-9. Start the development server:
+9. Link the storage for file downloads:
+```bash
+php artisan storage:link
+```
+
+10. Start the development server:
 ```bash
 php artisan serve
 ```

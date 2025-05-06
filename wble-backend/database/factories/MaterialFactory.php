@@ -28,7 +28,8 @@ class MaterialFactory extends Factory
         $fileName = $this->faker->randomElement($fileTypes[$type]);
         
         // Generate a server-side path where files would be stored
-        $filePath = "storage/materials/{$type}/{$fileName}";
+        //$filePath = "materials/{$type}/{$fileName}";
+        $filePath = "materials/default.docx";
         
         return [
             'section_id' => Section::count() > 0 

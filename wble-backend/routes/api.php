@@ -7,6 +7,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SectionController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\MaterialController;
 
 Route::group([
     'middleware' => 'api', // Base API middleware
@@ -35,7 +36,9 @@ Route::group([
     'middleware' => 'api', // Base API middleware
     'prefix' => 'sections'
 ], function ($router) {
-    Route::get('/{subjectId}', [SectionController::class, 'show']);
+    Route::get('/{subjectId}', [SectionController::class, 'showCurrentWeek']);
+    Route::get('/{subjectId}/all', [SectionController::class, 'showAll']);
+    Route::get('/{subjectId}/materials', [SectionController::class, 'showMaterials']);
 });
 
 Route::group([
@@ -54,4 +57,12 @@ Route::group([
 Route::group(['middleware' => 'api', 'prefix' => 'messages'], function ($router) {
     Route::get('/{friendId}', [MessageController::class, 'show']);
     Route::post('/create', [MessageController::class, 'createMessage']);
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'materials'
+], function ($router) {
+    Route::post('/upload', [MaterialController::class, 'upload']);
+    Route::get('/download/{id}', [MaterialController::class, 'download']);
 });

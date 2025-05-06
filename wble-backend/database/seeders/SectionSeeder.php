@@ -15,7 +15,7 @@ class SectionSeeder extends Seeder
     public function run(): void
     {
         $weeks = 7; // duration
-        $startDate = Carbon::parse('2025-06-01'); // set your start date here
+        $startDate = Carbon::parse('2025-05-01'); // set your start date here
         
         // Loop through each subject
         Subject::all()->each(function ($subject) use ($weeks, $startDate) {
