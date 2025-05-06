@@ -1,11 +1,13 @@
 import {View, Text, TouchableNativeFeedback} from 'react-native';
-import React, {useContext, useState, useCallback} from 'react';
+import React, {useContext, useState, useCallback, useEffect} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
 import {AuthContext} from '@/contexts/AuthContext';
+import {SocketContext} from '@/contexts/SocketContext';
 import {useFocusEffect} from '@react-navigation/native';
 
 export default function FriendRequestScreen({route}) {
   const {authAxios} = useContext(AuthContext);
+  const {socket} = useContext(SocketContext);
   const [friendRequests, setFriendRequests] = useState([]);
 
   //TODO: try catch block for error handling
@@ -23,6 +25,7 @@ export default function FriendRequestScreen({route}) {
       `/friends/accept-friend-request/${friendId}`,
     );
     console.log(response.data);
+    _loadFriendRequests();
   };
 
   //TODO: try catch block for error handling
@@ -31,14 +34,22 @@ export default function FriendRequestScreen({route}) {
       `/friends/reject-friend-request/${friendId}`,
     );
     console.log(response.data);
+    _loadFriendRequests();
   };
 
   //runs code whenever the screen comes into focus, so your friends list will refresh every time you navigate back to this screen.
-  useFocusEffect(
-    useCallback(() => {
-      _loadFriendRequests();
-    }, []),
-  );
+  useEffect(() => {
+    _loadFriendRequests();
+  }, []);
+
+  // TODO: socket to be tested
+  useEffect(() => {
+    socket.on('receive_friend_request', friend => {
+      setFriendRequests(prevState => {
+        return [...prevState, friend];
+      });
+    });
+  }, []);
 
   return (
     <FlatList

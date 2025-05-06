@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import React, {useContext, useState, useRef, useEffect} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
+import {SocketContext} from '@/contexts/SocketContext';
 import {FlatList} from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // maybe used for button icons
 
@@ -14,7 +15,7 @@ export default function SearchUserScreen() {
   const {authAxios} = useContext(AuthContext);
   const [userList, setUserList] = useState([]); // all users excluding self
   const [searchTerm, setSearchTerm] = useState(''); // search term for searching users
-
+  const {socket} = useContext(SocketContext);
   const debounceTimer = useRef(null); // debounce timer for search input
 
   //TODO: try catch block for error handling
@@ -42,6 +43,11 @@ export default function SearchUserScreen() {
         return user;
       });
     });
+  };
+
+  const _sendFriendRequestViaSocket = friend => {
+    console.log(friend);
+    socket.emit('send_friend_request', {friend});
   };
 
   // debounce the search input to avoid too many requests
@@ -83,6 +89,7 @@ export default function SearchUserScreen() {
                   disabled={item.requested}
                   onPress={() => {
                     toggleFriendRequest(item.id);
+                    _sendFriendRequestViaSocket(item);
                     _sendFriendRequest(item.id);
                   }}
                 />
