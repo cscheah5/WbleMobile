@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = os.getenv("LARAVEL_JWT_SECRET")
 # only connected users can receive messages in live
 connected_users={}
 
-@socketio.on('connect', namespace='/chat')
+@socketio.on('connect')
 def handle_connect():
     jwtToken = request.args.get('userToken')
     try:
@@ -28,7 +28,7 @@ def handle_connect():
         print(f"Connection rejected:", str(e))
         return False # reject connection
 
-@socketio.on('private_message', namespace='/chat')
+@socketio.on('private_message')
 def handle_private_message(data):
     senderId = data['senderId']
     senderName = data['senderName']

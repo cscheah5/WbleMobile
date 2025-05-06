@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class MessageController extends Controller
 {
     /*
-        TODO: This method will retieve all the messages between the user and the friend but will only display 20 messages per page
+    This method will retieve all the messages between the user and the friend
     */
 
     public function show($friendId)
@@ -26,7 +26,7 @@ class MessageController extends Controller
     }
 
     /*
-        TODO: Create new message and store in database
+    Create new message and store in database
     */
     public function createMessage(Request $request)
     {
