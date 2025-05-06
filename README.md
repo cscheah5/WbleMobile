@@ -40,8 +40,33 @@ pip install eventlet
    The server will run on `http://0.0.0.0:5001` by default. You can modify this port in `flaskSocket/app.py`
 
 # WBLE Front-end
-Configure server path at src/config/config.js
+1. Navigate to the React Native project directory:
+   ```bash
+   cd WbleMobile
+   ```
 
+2. Install React Native dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Create and configure the app configuration file:
+   ```bash
+   cd src/config
+   cp config.example.js config.js
+   ```
+
+4. Configure server paths in `src/config/config.js` to point to your backend servers
+
+5. Run the React Native application:
+   ```bash
+   npx react-native run-android
+   # or
+   npx react-native run-ios
+   ```
+   
 # WBLE Backend
 
 This repository contains the backend API for the WBLE (Web-Based Learning Environment) application. It's built with Laravel PHP framework and uses JWT authentication.
