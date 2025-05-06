@@ -5,6 +5,8 @@ The jwt secret key can be find in your laravel ```.env``` file
 
 ```LARAVEL_JWT_SECRET=your-jwt-secret-key```
 
+The default port number will be 5000. You can modify this at flaskSocket/app.py
+
 ## Python dependencies
 ```bash
 pip install Flask Flask-SocketIO python-dotenv PyJWT
