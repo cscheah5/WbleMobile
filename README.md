@@ -1,20 +1,14 @@
 # WBLE 
-Default Account:
-Student - user1, user2
-Lecturer - leemj
-Admin - admin
+## Default Accounts
 
-Default Password: 123456
+| User Type | Username | Password |
+|-----------|----------|----------|
+| Student   | user1    | 123456   |
+| Student   | user2    | 123456   |
+| Lecturer  | leemj    | 123456   |
+| Admin     | admin    | 123456   |
 
 # WBLE Flask Socket
-need to create ```.env``` file and put this env variable
-
-The jwt secret key can be find in your laravel ```.env``` file
-
-```LARAVEL_JWT_SECRET=your-jwt-secret-key```
-
-The default port number will be 5001. You can modify this at flaskSocket/app.py
-
 ## Python dependencies
 ```bash
 pip install Flask Flask-SocketIO python-dotenv PyJWT
@@ -25,6 +19,25 @@ pip install Flask Flask-SocketIO python-dotenv PyJWT
 pip install eventlet
 ```
 
+1. Navigate to the Flask Socket directory:
+   ```bash
+   cd flaskSocket
+   ```
+
+2. Create a `.env` file by copying the example:
+   ```bash
+   cp .env.example .env
+
+3. Find your JWT secret key in the WBLE backend Laravel `.env` file and add it to your Flask Socket `.env`:
+   ```
+   LARAVEL_JWT_SECRET=your-jwt-secret-key
+   ```
+   
+4. Start the backend server:
+   ```bash
+   python app.py
+   ```
+   The server will run on `http://0.0.0.0:5001` by default. You can modify this port in `flaskSocket/app.py`
 
 # WBLE Front-end
 Configure server path at src/config/config.js
