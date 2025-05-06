@@ -5,6 +5,11 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import {AuthContext} from '@/contexts/AuthContext';
 import HomeScreen from '@/screens/HomeScreen';
+import SubjectScreen from '@/screens/SubjectScreen';
+import FriendScreen from '@/screens/FriendScreen';
+import SearchUserScreen from '@/screens/SearchUserScreen';
+import FriendRequestScreen from '@/screens/FriendRequestScreen';
+import ChatScreen from '@/screens/ChatScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +28,11 @@ const AppStack = () => {
           ),
         })}
       />
+      <Stack.Screen name="Subject" component={SubjectScreen} />
+      <Stack.Screen name="Friend" component={FriendScreen} />
+      <Stack.Screen name="SearchUser" component={SearchUserScreen} />
+      <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
+      <Stack.Screen name="Chat" component={ChatScreen} />
     </Stack.Navigator>
   );
 };
