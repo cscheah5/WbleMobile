@@ -48,6 +48,7 @@ export default function FriendRequestScreen({route}) {
       setFriendRequests(prevState => {
         return [...prevState, friend];
       });
+      _loadFriendRequests();
     });
   }, []);
 
