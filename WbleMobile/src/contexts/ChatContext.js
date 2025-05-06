@@ -1,6 +1,7 @@
 import React, {useState, useEffect, createContext, useContext} from 'react';
 import {AuthContext} from './AuthContext';
 import {io} from 'socket.io-client';
+import { SOCKET_URL } from '@/config/config';
 
 export const ChatContext = createContext({});
 
@@ -11,7 +12,7 @@ export default function ChatProvider({children}) {
   useEffect(() => {
     // if user exists, create a socket connection
     if (userToken) {
-      const newSocket = io('http://192.168.0.2:5000/chat', {
+      const newSocket = io(`${SOCKET_URL}/chat`, {
         query: {userToken},
         transport: ['websocket'],
       });
