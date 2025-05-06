@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             FriendSeeder::class,
             MaterialSeeder::class,
             AnnouncementSeeder::class,
+            TeachingSeeder::class,
             // Add other seeders here
         ]);
     }

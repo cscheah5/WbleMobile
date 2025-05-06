@@ -33,6 +33,8 @@ class UserSeeder extends Seeder
             'password' => '123456',
             'role' => 'admin',
         ]);
-        User::factory()->count(10)->create();
+        User::factory()->count(5)->create([
+            'role' => 'lecturer',
+        ]);
     }
 }
