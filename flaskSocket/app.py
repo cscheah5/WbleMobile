@@ -44,6 +44,7 @@ def handle_private_message(data):
             'message': message
         }, room=connected_users[receiverName]) #Sends message directly to receiver's connection.
 
+# Disconnect not tested yet....
 @socketio.on('disconnect')
 def handle_disconnect():
     sid = request.sid
