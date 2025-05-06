@@ -48,8 +48,6 @@ pip install eventlet
 2. Install React Native dependencies:
    ```bash
    npm install
-   # or
-   yarn install
    ```
 
 3. Create and configure the app configuration file:
