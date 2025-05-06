@@ -39,6 +39,18 @@ export default function ChatScreen({route, navigation}) {
       receiverName: friend.username,
       message: message,
     });
+    setMessagesHistory(prev => {
+      return [
+        ...prev,
+        {
+          sender_id: userInfo.id,
+          receiver_id: friend.id,
+          message: message,
+          created_at: generateLaravelTimestamps(),
+          updated_at: generateLaravelTimestamps(),
+        },
+      ];
+    });
   };
 
   const generateLaravelTimestamps = () => {
