@@ -15,13 +15,7 @@ const StudentTab = () => {
       screenOptions={({navigation}) => ({
         headerShown: false,
         tabBarStyle: {
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          elevation: 0,
-          backgroundColor: '#fff',
-          borderTopWidth: 0,
+          backgroundColor: '#ffffff',
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#8e8e93',
