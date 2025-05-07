@@ -25,13 +25,6 @@ const GetStartedScreen = ({navigation}) => {
           title="Get Started"
           onPress={() => navigation.navigate('SignIn')}        
         />
-
-        <View style={styles.signUpContainer}>
-          <Text style={styles.signUpText}>Don't have an account? </Text>
-          <Pressable onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.signUpLink}>Sign up here!</Text>
-          </Pressable>
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -66,20 +59,6 @@ const styles = StyleSheet.create({
   actionContainer: {
     width: '100%',
     marginBottom: 30,
-  },
-  signUpContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  signUpText: {
-    fontSize: 16,
-    color: '#333333',
-  },
-  signUpLink: {
-    fontSize: 16,
-    color: '#4A90E2',
-    fontWeight: '600',
   },
 });
 

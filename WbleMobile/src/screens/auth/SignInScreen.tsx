@@ -61,13 +61,6 @@ const SignInScreen = ({navigation}) => {
         />
 
         <AppButton title="Log in" onPress={handleLogin} />
-
-        <View style={styles.signupContainer}>
-          <Text style={styles.signupText}>Don't have an account? </Text>
-          <Pressable onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.signupLink}>Sign Up</Text>
-          </Pressable>
-        </View>
       </View>
     </SafeAreaView>
   );
@@ -97,21 +90,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginTop: 20,
-  },
-  signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  signupText: {
-    fontSize: 16,
-    color: '#333333',
-  },
-  signupLink: {
-    fontSize: 16,
-    color: '#4A90E2',
-    fontWeight: '600',
   },
 });
 
