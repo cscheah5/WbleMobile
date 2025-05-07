@@ -16,9 +16,7 @@ import {DrawerActions} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
-const AppStack = () => {
-  const {logout} = useContext(AuthContext);
-
+const SubjectStackNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
@@ -38,12 +36,8 @@ const AppStack = () => {
         })}
       />
       <Stack.Screen name="Subject" component={SubjectScreen} />
-      <Stack.Screen name="Friend" component={FriendScreen} />
-      <Stack.Screen name="SearchUser" component={SearchUserScreen} />
-      <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
-      <Stack.Screen name="Chat" component={ChatScreen} />
     </Stack.Navigator>
   );
 };
 
-export default AppStack;
+export default SubjectStackNavigator;

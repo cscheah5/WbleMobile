@@ -18,7 +18,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import AdminStack from './AdminStack';
 import LecturerStack from './LecturerStack';
-import StudentStack from './StudentStack';
+import StudentTab from './StudentTab';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -64,7 +64,7 @@ const CustomDrawerComponent = (props) => {
   );
 };
 
-const DrawerWrapper = ({role}: any) => {
+const AppDrawerNavigator = ({role}: any) => {
   let RoleStack;
   switch (role) {
     case 'admin':
@@ -75,7 +75,7 @@ const DrawerWrapper = ({role}: any) => {
       break;
     case 'student':
     default:
-      RoleStack = StudentStack;
+      RoleStack = StudentTab;
       break;
   }
 
@@ -85,7 +85,7 @@ const DrawerWrapper = ({role}: any) => {
         headerShown: false,
       }}
       drawerContent={props => <CustomDrawerComponent {...props} />}>
-      <Drawer.Screen name="Main" component={RoleStack} />
+      <Drawer.Screen name="MainDrawer" component={RoleStack} />
     </Drawer.Navigator>
   );
 };
@@ -93,7 +93,7 @@ const DrawerWrapper = ({role}: any) => {
 const AppStack = () => {
   const {userInfo} = useContext(AuthContext);
 
-  return <DrawerWrapper role={userInfo} />;
+  return <AppDrawerNavigator role={userInfo} />;
 };
 
 export default AppStack;
