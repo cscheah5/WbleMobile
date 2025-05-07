@@ -1,10 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Text, View, TouchableNativeFeedback} from 'react-native';
+import {Text, View, TouchableNativeFeedback, Button} from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
 import {FlatList} from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ItemCard from '@/components/ItemCard';
+import notifee from '@notifee/react-native';
 
 const HomeScreen = ({navigation}) => {
   const {authAxios, userInfo} = useContext(AuthContext);
@@ -22,6 +23,28 @@ const HomeScreen = ({navigation}) => {
     // Load subject list from API
     _loadSubjectById();
   }, []);
+
+  const displayNotification = async () => {
+    // Create a channel (required for Android)
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
+    });
+
+    // Display a notification
+    await notifee.displayNotification({
+      title: 'Notification Title',
+      body: 'Main body content of the notification',
+      android: {
+        channelId,
+        smallIcon: 'ic_launcher', // optional, defaults to 'ic_launcher'.
+        // pressAction is needed if you want the notification to open the app when pressed
+        // pressAction: {
+        //   id: 'default',
+        // },
+      },
+    });
+  };
 
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -41,6 +64,12 @@ const HomeScreen = ({navigation}) => {
       <ItemCard title="Friends" onPress={() => navigation.navigate('Friend')}>
         <Ionicons name="people-outline" size={20} color="black" />
       </ItemCard>
+      <Button
+        title="notification"
+        onPress={() => {
+          displayNotification();
+        }}
+      />
       <FlatList
         data={subjectList}
         renderItem={({item}) => (
