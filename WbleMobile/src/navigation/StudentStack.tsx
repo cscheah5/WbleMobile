@@ -13,7 +13,7 @@ import ChatScreen from '@/screens/ChatScreen';
 
 const Stack = createStackNavigator();
 
-const AppStack = () => {
+const StudentStack = () => {
   const {logout} = useContext(AuthContext);
 
   return (
@@ -37,4 +37,4 @@ const AppStack = () => {
   );
 };
 
-export default AppStack;
+export default StudentStack;

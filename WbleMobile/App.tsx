@@ -1,14 +1,17 @@
 import React from 'react';
 import AppNavigator from '@/navigation/AppNavigator';
-import {AuthProvider} from '@/contexts/AuthContext';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { PermissionProvider } from '@/contexts/PermissionContext';
 import SocketProvider from '@/contexts/SocketContext';
 
 const App = () => {
   return (
     <AuthProvider>
-      <SocketProvider>
-        <AppNavigator />
-      </SocketProvider>
+      <PermissionProvider>
+        <SocketProvider>
+          <AppNavigator />
+        </SocketProvider>
+      </PermissionProvider>
     </AuthProvider>
   );
 };
