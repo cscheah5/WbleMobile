@@ -15,7 +15,7 @@ const FriendStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Friends"
+        name="FriendList"
         component={FriendScreen}
         options={({navigation}) => ({
           title: 'Your Friends',

@@ -4,6 +4,7 @@ import {
   TouchableNativeFeedback,
   TouchableOpacity,
   Text,
+  Image,
   Button,
   StyleSheet,
 } from 'react-native';
@@ -29,16 +30,13 @@ const CustomDrawerComponent = (props) => {
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{flex: 1}}>
       <View style={styles.container}>
-        {/* Header section */}
         <View style={styles.header}>
-          {/* Uncomment this section when profilePic is ready */}
-          {/* 
           <Image
             style={styles.profileImage}
-            source={require('./profilePic.jpg')}
+            source={require('@/assets/images/wble_banner.jpg')}
           />
           <Text style={styles.profileName}>My Profile</Text>
-          */}
+         
         </View>
 
         {/* Menu items */}
@@ -101,28 +99,23 @@ export default AppStack;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 5,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
   header: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    backgroundColor: '#f5f5f5',
   },
   profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 10,
-    borderWidth: 2,
-    borderColor: '#2962ff',
+    width: '100%',
+    height: 120,
+    resizeMode: 'cover',
   },
   profileName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    marginTop: 10,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333333', 
   },
   menuContainer: {
     flex: 1,
