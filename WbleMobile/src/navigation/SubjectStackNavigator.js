@@ -11,25 +11,33 @@ import SearchUserScreen from '@/screens/friend/SearchUserScreen';
 import FriendRequestScreen from '@/screens/friend/FriendRequestScreen';
 import ChatScreen from '@/screens/friend/ChatScreen';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {DrawerActions} from '@react-navigation/native';
+
 const Stack = createStackNavigator();
 
-const AppStack = () => {
-  const {logout} = useContext(AuthContext);
-
+const SubjectStackNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
         name="Home"
         component={HomeScreen}
         options={({navigation}) => ({
-          title: 'Admin Home',
-          headerRight: () => (
-            <Button title="Logout" onPress={logout} color="#000" />
+          title: 'My Home',
+          headerLeft: () => (
+            <Ionicons
+            name="menu"
+            size={28}
+            color="#000"
+            style={{ marginLeft: 15 }}
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+            />
           ),
         })}
       />
+      <Stack.Screen name="Subject" component={SubjectScreen} />
     </Stack.Navigator>
   );
 };
 
-export default AppStack;
+export default SubjectStackNavigator;
