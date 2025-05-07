@@ -43,6 +43,7 @@ export const AuthProvider = ({children}) => {
         originalRequest._retry = true;
 
         try {
+          console.log('Refreshing token...');
           const newTokens = await refreshAuthToken();
           originalRequest.headers.Authorization = `Bearer ${newTokens.accessToken}`;
           return authAxios(originalRequest);
