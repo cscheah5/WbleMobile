@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1080735512880",
+    "project_id": "wblemobile-b20a0",
+    "storage_bucket": "wblemobile-b20a0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080735512880:android:ec77ea331f7a45b0d0b0f5",
+        "android_client_info": {
+          "package_name": "com.wblemobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoW3GJ0PMFcfDPWg5bzkE7spwvvuVyLjE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
