@@ -174,8 +174,30 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const initialize = async () => {
+    if (refreshToken) {
+      try {
+        console.log('Proactively refreshing token on app start...');
+        await refreshAuthToken();
+        console.log('Token refreshed successfully on app start');
+      } catch (error) {
+        console.log('Failed to refresh token on app start:', error);
+        // If refresh fails with a real auth error (not network), clear auth data
+        if (error.response && error.response.status) {
+          console.log('Clearing auth data due to refresh failure');
+          await clearAuthData();
+        }
+      }
+    }
+  }
+
   useEffect(() => {
-    loadAuthData();
+    const bootstrap = async () => {
+      await loadAuthData();
+      await initialize();
+    }
+
+    bootstrap();
   }, []);
 
   return (
