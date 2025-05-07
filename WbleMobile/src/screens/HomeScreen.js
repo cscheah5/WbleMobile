@@ -2,9 +2,6 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Text, View, TouchableNativeFeedback} from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
 import {FlatList} from 'react-native-gesture-handler';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import ItemCard from '@/components/ItemCard';
 
 const HomeScreen = ({navigation}) => {
   const {authAxios, userInfo} = useContext(AuthContext);
@@ -38,9 +35,6 @@ const HomeScreen = ({navigation}) => {
         <Text>Friends</Text>
         <Ionicons name="people-outline" size={25} color="black" />
       </View> */}
-      <ItemCard title="Friends" onPress={() => navigation.navigate('Friend')}>
-        <Ionicons name="people-outline" size={20} color="black" />
-      </ItemCard>
       <FlatList
         data={subjectList}
         renderItem={({item}) => (
