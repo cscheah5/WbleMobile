@@ -13,13 +13,6 @@ import AdminStack from './AdminStack';
 import LecturerStack from './LecturerStack';
 import StudentStack from './StudentStack';
 
-import HomeScreen from '@/screens/HomeScreen';
-import SubjectScreen from '@/screens/SubjectScreen';
-import FriendScreen from '@/screens/FriendScreen';
-import SearchUserScreen from '@/screens/SearchUserScreen';
-import FriendRequestScreen from '@/screens/FriendRequestScreen';
-import ChatScreen from '@/screens/ChatScreen';
-
 const Stack = createStackNavigator();
 
 const AppStack = () => {
