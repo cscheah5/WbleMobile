@@ -7,6 +7,7 @@ import SearchUserScreen from '@/screens/friend/SearchUserScreen';
 import FriendRequestScreen from '@/screens/friend/FriendRequestScreen';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {DrawerActions} from '@react-navigation/native';
 
 const Stack = createStackNavigator();
 
