@@ -46,7 +46,7 @@ class MessageController extends Controller
         $receiver = User::find($request->friendId);
         if ($receiver && $receiver->fcm_token) {
             $title = "New Messages";
-            $body = auth()->user()->username . " sent you a messsage.";
+            $body = auth()->user()->username . ": sent you a messsage.";
 
             Http::withHeaders([
                 'X-Internal-Secret' => env('FLASK_INTERNAL_SECRET'),
