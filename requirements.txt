@@ -1,0 +1,9 @@
+Flask
+Flask-SocketIO
+python-dotenv
+PyJWT
+eventlet
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+requests

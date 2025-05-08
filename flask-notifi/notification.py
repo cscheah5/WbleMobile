@@ -63,4 +63,4 @@ def send_notification():
 		return jsonify({'error': 'Failed to send notification', 'details': res.text}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5002)

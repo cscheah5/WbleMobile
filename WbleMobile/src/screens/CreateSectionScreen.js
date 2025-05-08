@@ -17,7 +17,7 @@ export default function CreateSectionScreen({route, navigation}) {
     return date.toISOString().split('T')[0];
   };
 
-  const handleCreateSection = async () => {
+  const handleCreateSection = async () => { 
     if (!weekNumber) {
       Alert.alert('Error', 'Please enter a week number');
       return;
