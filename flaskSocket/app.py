@@ -56,7 +56,7 @@ def handle_friend_request(data):
             'friend': data['friend']
         }, room=connected_users[username])
 
-# Disconnect not tested yet....
+
 @socketio.on('disconnect')
 def handle_disconnect():
     sid = request.sid
