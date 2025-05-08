@@ -1,5 +1,5 @@
 {
-    "laravelApiUrl": "http://10.0.2.2:8000/api",
-    "socketServerUrl": "http://10.0.2.2:5001"
+  "laravelApiUrl": "http://192.168.0.2:8000/api",
+  "laravelServerUrl": "http://192.168.0.2:8000",
+  "socketServerUrl": "http://192.168.0.2:5001"
 }
-  

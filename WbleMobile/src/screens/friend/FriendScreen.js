@@ -6,6 +6,7 @@ import {
   StyleSheet,
   StatusBar,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import React, {useContext, useState, useCallback} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
@@ -13,6 +14,7 @@ import {FloatingAction} from 'react-native-floating-action';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useFocusEffect} from '@react-navigation/native';
 import {AuthContext} from '@/contexts/AuthContext';
+import config from '@/config/config.json';
 
 const actions = [
   {
@@ -42,6 +44,11 @@ export default function FriendScreen({navigation}) {
       console.log('Loading friends...');
       const response = await authAxios.get('/friends/');
       setAcceptedFriends(response.data);
+      console.log(
+        'Friends response:',
+        config.laravelApiUrl,
+        response.data[0].profile_picture,
+      ); // 👈 LOG HERE
     } catch (error) {
       console.error('Error loading friends:', error);
       Alert.alert('Error', 'Failed to load friends. Please try again.');
@@ -49,7 +56,7 @@ export default function FriendScreen({navigation}) {
       setLoading(false);
     }
   };
-
+  // ${config.laravelApiUrl}${item.profile_picture}
   const _handleDeleteFriend = async friendId => {
     try {
       const response = await authAxios.get(`/friends/unfriend/${friendId}`);
@@ -89,7 +96,7 @@ export default function FriendScreen({navigation}) {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       <Text style={styles.header}>My Friends</Text>
-      
+
       {loading ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.message}>Loading...</Text>
@@ -103,7 +110,12 @@ export default function FriendScreen({navigation}) {
               onPress={() => navigation.navigate('Chat', {friend: item})}>
               <View style={styles.friendItem}>
                 <View style={styles.avatarContainer}>
-                  <Ionicons name="person-circle-outline" size={40} color="#007bff" />
+                  <Image
+                    style={{width: 40, height: 40, borderRadius: 20}}
+                    source={{
+                      uri: `${config.laravelServerUrl}${item.profile_picture}`,
+                    }}
+                  />
                 </View>
                 <View style={styles.friendInfo}>
                   <Text style={styles.friendName}>{item.username}</Text>
@@ -117,9 +129,7 @@ export default function FriendScreen({navigation}) {
       ) : (
         <View style={styles.emptyContainer}>
           <Ionicons name="people-outline" size={60} color="#ccc" />
-          <Text style={styles.emptyText}>
-            You don't have any friends yet
-          </Text>
+          <Text style={styles.emptyText}>You don't have any friends yet</Text>
           <Text style={styles.emptySubText}>
             Use the + button to search for users or check your friend requests
           </Text>
