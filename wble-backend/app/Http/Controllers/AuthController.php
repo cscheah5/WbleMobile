@@ -26,15 +26,23 @@ class AuthController extends ApiController
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:30|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
 
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+        } else {
+            $path = null; // or set a default string if you want
+        }
+
         $user = User::create([
             'username' => $request->get('username'),
             'password' => Hash::make($request->get('password')),
+            'profile_picture' => $path,
         ]);
 
         $token = JWTAuth::fromUser($user);
