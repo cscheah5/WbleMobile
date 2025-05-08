@@ -34,6 +34,38 @@ pip install -r requirements.txt
    ```
    The server will run on `http://0.0.0.0:5001` by default. You can modify this port in `flaskSocket/app.py`
 
+# WBLE Notification Server
+1. Navigate to the Flask Notification directory:
+   ```bash
+   cd flask-notifi
+   ```
+
+2. Create a `.env` file by copying the example:
+   ```bash
+   cp .env.example .env
+
+3. Configure Firebase & Application Credentials
+- **Create a Firebase Project** (if not done already)  
+- Download your **Service Account JSON** file from Firebase Console  
+- Update `.env` with the correct path:  
+  ```ini
+  GOOGLE_APPLICATION_CREDENTIALS="path/to/your-service-account.json"
+  FLASK_INTERNAL_SECRET="your-random-secure-key"  # Must match Laravel's .env
+  ```
+- Configure Firebase details in `flask-notifi/notification.py` (if needed).  
+
+4. Sync `FLASK_INTERNAL_SECRET` with Laravel Backend**  
+   Ensure the same secret is in Laravel’s `.env`:  
+   ```ini
+   FLASK_INTERNAL_SECRET=your-internal-flask-secret
+   ```
+   
+6. Start the backend server:
+   ```bash
+   python notification.py
+   ```
+   The server will run on `http://0.0.0.0:5002` by default. You can modify this port in `flask-notifi/notification.py`
+
 # WBLE Front-end
 1. Navigate to the React Native project directory:
    ```bash
