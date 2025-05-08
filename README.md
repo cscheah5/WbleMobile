@@ -61,7 +61,7 @@ pip install -r requirements.txt
    ```
 5. Add this env variable to laravel .env file (server url of your notification flask server)
    ```ini
-   FLASK_SERVER_URL=http://127.0.0.1:5000 #Use your own server url
+   FLASK_SERVER_URL=http://127.0.0.1:5002 #Use your own server url
    ```
    
 6. Start the backend server:
