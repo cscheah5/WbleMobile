@@ -1,13 +1,13 @@
-import {View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, PermissionsAndroid, Platform} from 'react-native';
-import React, {useState} from 'react';
-import RNFS from 'react-native-fs';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Platform } from 'react-native';
+import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { usePermission } from '@/contexts/PermissionContext';
+import { downloadFile } from '@/utils/downloadFile';
+import { getFileIcon } from '@/utils/sortMaterials';
 
 export default function WeekSection({
   item,
-  onEdit,
-  onDelete,
+
   onAddAnnouncement,
   onEditAnnouncement,
   onDeleteAnnouncement,
@@ -22,75 +22,6 @@ export default function WeekSection({
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
-  };
-
-  // Request storage permissions
-  const requestStoragePermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: "Storage Permission",
-          message: "App needs access to your storage to download files",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK",
-        }
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err) {
-      console.error("Permission request error:", err);
-      return false;
-    }
-  };
-
-  const downloadFile = async (material) => {
-    try {
-      setDownloading({...downloading, [material.id]: true});
-      
-      // Use the public download URL instead
-      const url = `http://10.0.2.2:8000/api/public/materials/download/${material.id}`;
-      console.log('Downloading from URL:', url);
-      
-      // Determine the download path
-      let downloadPath;
-      if (Platform.OS === 'android' && Platform.Version >= 29) {
-        downloadPath = `${RNFS.ExternalDirectoryPath}/${material.filename}`;
-      } else {
-        const hasPermission = await requestStoragePermission();
-        downloadPath = hasPermission 
-          ? `${RNFS.DownloadDirectoryPath}/${material.filename}`
-          : `${RNFS.DocumentDirectoryPath}/${material.filename}`;
-      }
-      
-      console.log('Downloading to path:', downloadPath);
-      
-      // Configure download with retries and better timeout settings
-      const response = await RNFS.downloadFile({
-        fromUrl: url,
-        toFile: downloadPath,
-        background: true,
-        discretionary: true,
-        progressDivider: 20,
-        connectionTimeout: 15000, // 15 seconds connection timeout
-        readTimeout: 30000, // 30 seconds read timeout
-        cacheable: false, // Don't use cache
-        progressInterval: 1000, // Update progress every second
-      }).promise;
-      
-      console.log('Download complete, response:', response);
-      setDownloading({...downloading, [material.id]: false});
-      
-      if (response.statusCode === 200) {
-        Alert.alert('Success', 'File downloaded successfully.');
-      } else {
-        Alert.alert('Download Failed', `Error code: ${response.statusCode}`);
-      }
-    } catch (error) {
-      console.error('Download error details:', error);
-      setDownloading({...downloading, [material.id]: false});
-      Alert.alert('Download Failed', 'Could not download the file. Please try again.');
-    }
   };
 
   const renderAnnouncement = ({item: announcement}) => (
@@ -141,7 +72,7 @@ export default function WeekSection({
         {/* Always show download button */}
         <TouchableOpacity 
           style={[styles.actionButton, styles.downloadButton, downloading[material.id] && styles.downloadingButton]}
-          onPress={() => downloadFile(material)}
+          onPress={() => downloadFile(material, setDownloading)}
           disabled={downloading[material.id]}>
           <Ionicons 
             name={downloading[material.id] ? "cloud-download-outline" : "cloud-download"} 
@@ -170,48 +101,12 @@ export default function WeekSection({
     </View>
   );
 
-  const getFileIcon = (filename) => {
-    const ext = filename.split('.').pop().toLowerCase();
-    switch(ext) {
-      case 'pdf': return 'document-text-outline';
-      case 'doc':
-      case 'docx': return 'document-outline';
-      case 'ppt':
-      case 'pptx': return 'easel-outline';
-      case 'xls':
-      case 'xlsx': return 'grid-outline';
-      case 'zip':
-      case 'rar': return 'archive-outline';
-      case 'jpg':
-      case 'jpeg':
-      case 'png': return 'image-outline';
-      default: return 'document-outline';
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.weekHeader}>
           Week {item.week_number}: {formatDate(item.start_date)} - {formatDate(item.end_date)}
         </Text>
-        
-        {/* Section management buttons */}
-        {(onEdit || onDelete) && (
-          <View style={styles.sectionActions}>
-            {onEdit && (
-              <TouchableOpacity onPress={onEdit}>
-                <Ionicons name="create-outline" size={24} color="#007bff" />
-              </TouchableOpacity>
-            )}
-            
-            {onDelete && (
-              <TouchableOpacity onPress={onDelete}>
-                <Ionicons name="trash-outline" size={24} color="#dc3545" />
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
       </View>
       
       {/* Announcements Section */}

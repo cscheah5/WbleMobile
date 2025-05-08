@@ -5,6 +5,8 @@ import { usePermission } from '@/contexts/PermissionContext';
 import { FlatList } from 'react-native-gesture-handler';
 import WeekSection from '@/components/WeekSection';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { downloadFile } from '@/utils/downloadFile';
+import { groupMaterialsByType, getFileIcon } from '@/utils/sortMaterials';
 
 export default function SubjectScreen({ route, navigation }) {
   const { subjectId, subjectCode, subjectName } = route.params;
@@ -14,13 +16,10 @@ export default function SubjectScreen({ route, navigation }) {
   const [materials, setMaterials] = useState([]);
   const [viewMode, setViewMode] = useState('all'); // Default to 'all'
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState({}); // Add this state variable
   
   // Check role explicitly to ensure it's properly detected
   const isLecturer = userInfo?.role === 'lecturer';
-  console.log('User role:', userInfo?.role);
-  console.log('Is lecturer:', isLecturer);
-  console.log('Can view current week:', can('view:current_week'));
-  console.log('Can view materials:', can('view:materials'));
 
   // Set initial view mode based on role
   useEffect(() => {
@@ -76,7 +75,6 @@ export default function SubjectScreen({ route, navigation }) {
   useEffect(() => {
     navigation.setOptions({
       title: subjectName,
-      // Remove the add section button from header
       headerRight: undefined
     });
     
@@ -134,59 +132,6 @@ export default function SubjectScreen({ route, navigation }) {
     </View>
   );
 
-  const groupMaterialsByType = (materials) => {
-    // Create an object to store material groups
-    const groupedByType = {};
-    
-    // Sort the materials by type
-    materials.forEach(material => {
-      const type = material.type || 'others';
-      if (!groupedByType[type]) {
-        groupedByType[type] = [];
-      }
-      groupedByType[type].push(material);
-    });
-    
-    // Define the order of types
-    const typeOrder = ['lecture', 'tutorial', 'practical', 'assessment', 'others']; // Changed 'other' to 'others'
-    
-    // Sort the keys based on the defined order
-    const sortedTypes = Object.keys(groupedByType).sort((a, b) => {
-      const indexA = typeOrder.indexOf(a.toLowerCase());
-      const indexB = typeOrder.indexOf(b.toLowerCase());
-      
-      // If type not in our predefined order, put it at the end
-      const orderA = indexA === -1 ? 999 : indexA;
-      const orderB = indexB === -1 ? 999 : indexB;
-      
-      return orderA - orderB;
-    });
-    
-    // Convert to format required by SectionList, maintaining the sorted order
-    return sortedTypes.map(type => ({
-      title: formatMaterialType(type),
-      data: groupedByType[type]
-    }));
-  };
-  
-  const formatMaterialType = (type) => {
-    // Capitalize first letter and handle specific types
-    switch (type.toLowerCase()) {
-      case 'lecture':
-        return 'Lecture Materials';
-      case 'tutorial':
-        return 'Tutorial Materials';
-      case 'practical':
-        return 'Practical Materials';
-      case 'assessment':
-        return 'Assessment Materials';
-      case 'others':
-        return 'Other Materials';
-      default:
-        return type.charAt(0).toUpperCase() + type.slice(1) + ' Materials';
-    }
-  };
-
   const renderContent = () => {
     if (loading) {
       return <Text style={styles.message}>Loading...</Text>;
@@ -200,17 +145,29 @@ export default function SubjectScreen({ route, navigation }) {
           renderItem={({item}) => (
             <View style={styles.materialItem}>
               <View style={styles.materialContent}>
-                <Text style={styles.materialTitle}>{item.filename}</Text>
+                <View style={styles.fileIconTitleRow}>
+                  <Ionicons 
+                    name={getFileIcon(item.filename)} 
+                    size={22} 
+                    color="#555" 
+                    style={styles.fileIcon}
+                  />
+                  <Text style={styles.materialTitle}>{item.filename}</Text>
+                </View>
                 <Text style={styles.materialInfo}>
                   Week {item.week_number} 
                   {item.description ? ` • ${item.description}` : ''}
                 </Text>
               </View>
               <TouchableOpacity 
-                style={styles.downloadButton}
-                onPress={() => downloadFile(item)}
-              >
-                <Ionicons name="cloud-download" size={22} color="white" />
+                style={[styles.downloadButton, downloading[item.id] && styles.downloadingButton]}
+                onPress={() => downloadFile(item, setDownloading)}
+                disabled={downloading[item.id]}>
+                <Ionicons 
+                  name={downloading[item.id] ? "cloud-download-outline" : "cloud-download"} 
+                  size={22} 
+                  color="white" 
+                />
               </TouchableOpacity>
             </View>
           )}
@@ -231,14 +188,11 @@ export default function SubjectScreen({ route, navigation }) {
           renderItem={({item}) => (
             <WeekSection 
               item={item}
-              // Remove section management - pass undefined for these props
-              onEdit={undefined}
-              onDelete={undefined}
-              // Keep announcement management
+              // Announcement management
               onAddAnnouncement={isLecturer ? () => handleAddAnnouncement(item.id) : undefined}
               onEditAnnouncement={isLecturer ? (announcement) => handleEditAnnouncement(announcement) : undefined}
               onDeleteAnnouncement={isLecturer ? (announcementId) => handleDeleteAnnouncement(announcementId) : undefined}
-              // Keep material management
+              // Material management
               onAddMaterial={isLecturer ? () => handleAddMaterial(item.id) : undefined}
               onEditMaterial={isLecturer ? (material) => handleEditMaterial(material) : undefined}
               onDeleteMaterial={isLecturer ? (materialId) => handleDeleteMaterial(materialId) : undefined}
@@ -249,15 +203,11 @@ export default function SubjectScreen({ route, navigation }) {
       ) : (
         <View style={styles.emptyContainer}>
           <Text style={styles.message}>No sections available</Text>
-          {/* Remove the create section button */}
         </View>
       );
     }
   };
 
-  // Keep these handler functions for reference but they won't be used
-  const handleEditSection = (section) => { /* ... */ };
-  const handleDeleteSection = (sectionId) => { /* ... */ };
   
   const handleAddAnnouncement = (sectionId) => {
     navigation.navigate('CreateAnnouncement', {
@@ -305,10 +255,6 @@ export default function SubjectScreen({ route, navigation }) {
       console.error("Error deleting material:", error);
       Alert.alert("Error", "Failed to delete material");
     }
-  };
-
-  const downloadFile = async (material) => {
-    // Your existing download implementation
   };
 
   return (
@@ -368,10 +314,17 @@ const styles = StyleSheet.create({
   materialContent: {
     flex: 1,
   },
+  fileIconTitleRow: { 
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  fileIcon: { 
+    marginRight: 10,
+  },
   materialTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
   },
   materialDescription: {
     fontSize: 14,
@@ -386,6 +339,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#007bff',
     padding: 10,
     borderRadius: 5,
+  },
+  downloadingButton: { 
+    backgroundColor: '#ccc',
   },
   message: {
     textAlign: 'center',

@@ -10,10 +10,10 @@ import FriendScreen from '@/screens/friend/FriendScreen';
 import SearchUserScreen from '@/screens/friend/SearchUserScreen';
 import FriendRequestScreen from '@/screens/friend/FriendRequestScreen';
 import ChatScreen from '@/screens/friend/ChatScreen';
-import CreateAnnouncementScreen from '@/screens/CreateAnnouncementScreen';
-import EditAnnouncementScreen from '@/screens/EditAnnouncementScreen';
-import CreateMaterialScreen from '@/screens/CreateMaterialScreen';
-import EditMaterialScreen from '@/screens/EditMaterialScreen';
+import CreateAnnouncementScreen from '@/screens/lecturerCRUD/CreateAnnouncementScreen';
+import EditAnnouncementScreen from '@/screens/lecturerCRUD/EditAnnouncementScreen';
+import CreateMaterialScreen from '@/screens/lecturerCRUD/CreateMaterialScreen';
+import EditMaterialScreen from '@/screens/lecturerCRUD/EditMaterialScreen';
 
 const Stack = createStackNavigator();
 
