@@ -22,11 +22,10 @@ import LecturerStack from './LecturerStack';
 import StudentTab from './StudentTab';
 import NotificationManager from '@/components/NotificationManager';
 
-const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const CustomDrawerComponent = props => {
-  const {logout} = useContext(AuthContext);
+const CustomDrawerComponent = (props) => {
+  const {logout, userInfo} = useContext(AuthContext);
 
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{flex: 1}}>
@@ -36,7 +35,8 @@ const CustomDrawerComponent = props => {
             style={styles.profileImage}
             source={require('@/assets/images/wble_banner.jpg')}
           />
-          <Text style={styles.profileName}>My Profile</Text>
+          <Text style={styles.profileName}>You are logged in as {userInfo.username}</Text>
+          <Text>Role: {userInfo.role}</Text>
         </View>
 
         {/* Menu items */}
@@ -88,7 +88,16 @@ const AppStack = () => {
           headerShown: false,
         }}
         drawerContent={props => <CustomDrawerComponent {...props} />}>
-        <Drawer.Screen name="MainDrawer" component={RoleStack} />
+        <Drawer.Screen 
+          name="Home" 
+          component={RoleStack} 
+          options={{
+            drawerLabel: 'Home',
+            drawerIcon: ({color}) => (
+              <Ionicons name="home-outline" size={22} color={color} />
+            ),
+          }}  
+        />
       </Drawer.Navigator>
     </>
   );
@@ -105,6 +114,9 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     justifyContent: 'center',
+    borderBottomColor: '#e0e0e0',
+    borderBottomWidth: 1,
+    paddingBottom: 10,
   },
   profileImage: {
     width: '100%',

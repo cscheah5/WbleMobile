@@ -1,35 +1,55 @@
-import React, {useContext} from 'react';
-import {
-  Button,
-} from 'react-native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {AuthContext} from '@/contexts/AuthContext';
-import HomeScreen from '@/screens/HomeScreen';
-import SubjectScreen from '@/screens/SubjectScreen';
-import FriendScreen from '@/screens/friend/FriendScreen';
-import SearchUserScreen from '@/screens/friend/SearchUserScreen';
-import FriendRequestScreen from '@/screens/friend/FriendRequestScreen';
-import ChatScreen from '@/screens/friend/ChatScreen';
+import React from 'react';
 
-const Stack = createStackNavigator();
+import FriendStackNavigator from './FriendStackNavigator';
+import SubjectStackNavigator from './SubjectStackNavigator';
 
-const AdminStack = () => {
-  const {logout} = useContext(AuthContext);
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
+
+const Tab = createBottomTabNavigator();
+
+const AdminTab = () => {
   return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={({navigation}) => ({
-          title: 'Admin Home',
-          headerRight: () => (
-            <Button title="Logout" onPress={logout} color="#000" />
+    <Tab.Navigator
+      screenOptions={({navigation}) => ({
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#ffffff',
+        },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarInactiveTintColor: '#8e8e93',
+      })}>
+      <Tab.Screen
+        name="Subjects"
+        component={SubjectStackNavigator}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons
+              name="home-outline"
+              size={36}
+              color={color}
+            />
           ),
-        })}
+        }}
       />
-    </Stack.Navigator>
+      <Tab.Screen
+        name="Friends"
+        component={FriendStackNavigator}
+        options={{
+          tabBarLabel: 'Friends',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons
+              name="account-group-outline"
+              size={36}
+              color={color}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
-export default AdminStack;
+export default AdminTab;

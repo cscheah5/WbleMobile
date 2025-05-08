@@ -54,10 +54,14 @@ pip install -r requirements.txt
   ```
 - Configure Firebase details in `flask-notifi/notification.py` (if needed).  
 
-4. Sync `FLASK_INTERNAL_SECRET` with Laravel Backend**  
+4. Sync `FLASK_INTERNAL_SECRET` with Laravel Backend
    Ensure the same secret is in Laravel’s `.env`:  
    ```ini
    FLASK_INTERNAL_SECRET=your-internal-flask-secret
+   ```
+5. Add this env variable to laravel .env file (server url of your notification flask server)
+   ```ini
+   FLASK_SERVER_URL=http://127.0.0.1:5002 #Use your own server url
    ```
    
 6. Start the backend server:
@@ -65,6 +69,15 @@ pip install -r requirements.txt
    python notification.py
    ```
    The server will run on `http://0.0.0.0:5002` by default. You can modify this port in `flask-notifi/notification.py`
+
+### **📌 Example Folder Structure**  
+```
+flask-notifi/
+├── .env                    # Config file
+├── firebase-adminsdk.json  # Firebase credentials
+├── notification.py         # Main server script
+└── ...
+```
 
 # WBLE Front-end
 1. Navigate to the React Native project directory:
@@ -145,7 +158,13 @@ php artisan jwt:secret
 php artisan storage:link
 ```
 
-10. Start the development server:
+10. Sync `FLASK_INTERNAL_SECRET` with Notification Server (if not done)
+   Ensure the same secret is in Notification Server’s `.env`:  
+   ```ini
+   FLASK_INTERNAL_SECRET=your-internal-flask-secret
+   ```
+
+11. Start the development server:
 ```bash
 php artisan serve
 ```

@@ -111,7 +111,7 @@ class FriendController extends Controller
         $receiver = User::find($friendId);
         if ($receiver && $receiver->fcm_token) {
             $title = "New Friend Request";
-            $body = auth()->user()->username . "sent you a friend request.";
+            $body = auth()->user()->username . " sent you a friend request.";
 
             Http::withHeaders([
                 'X-Internal-Secret' => env('FLASK_INTERNAL_SECRET'),
