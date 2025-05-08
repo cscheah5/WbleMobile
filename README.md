@@ -8,17 +8,12 @@
 | Lecturer  | leemj    | 123456   |
 | Admin     | admin    | 123456   |
 
+## Install python dependencies
+```bash
+pip install -r requirements.txt
+```
+
 # WBLE Flask Socket
-## Python dependencies
-```bash
-pip install Flask Flask-SocketIO python-dotenv PyJWT
-```
-
-## Optional Python dependencies (but often used with Flask-SocketIO)
-```bash
-pip install eventlet
-```
-
 1. Navigate to the Flask Socket directory:
    ```bash
    cd flaskSocket
