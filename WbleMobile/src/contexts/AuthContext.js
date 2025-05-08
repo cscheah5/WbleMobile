@@ -83,6 +83,8 @@ export const AuthProvider = ({children}) => {
       setUserToken(access_token);
       setRefreshToken(refresh_token);
 
+      console.log('Token refreshed successfully:', response.data);
+
       return {
         accessToken: access_token,
         refreshToken: refresh_token,
@@ -162,41 +164,47 @@ export const AuthProvider = ({children}) => {
         'userInfo',
       ]);
 
-      if (userToken[1] && userInfo[1]) {
-        setUserToken(userToken[1]);
-        setRefreshToken(refreshToken[1]);
-        setUserInfo(JSON.parse(userInfo[1]));
-      }
+      const result = {
+        userToken: userToken[1],
+        refreshToken: refreshToken[1],
+        userInfo: userInfo[1] ? JSON.parse(userInfo[1]) : null,
+      };
+
+      // Update state
+      if (result.userToken) setUserToken(result.userToken);
+      if (result.refreshToken) setRefreshToken(result.refreshToken);
+      if (result.userInfo) setUserInfo(result.userInfo);
+
+      console.log('Auth data loaded:', result);
+      return result; // Return the loaded data
     } catch (error) {
       console.log('Failed to load auth data:', error);
+      return null;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const initialize = async () => {
-    if (refreshToken) {
+  const initialize = async authData => {
+    console.log('Initializing with:', authData);
+    if (authData?.refreshToken) {
       try {
-        console.log('Proactively refreshing token on app start...');
+        console.log('Proactively refreshing token...');
         await refreshAuthToken();
-        console.log('Token refreshed successfully on app start');
       } catch (error) {
-        console.log('Failed to refresh token on app start:', error);
-        // If refresh fails with a real auth error (not network), clear auth data
-        if (error.response && error.response.status) {
-          console.log('Clearing auth data due to refresh failure');
-          await clearAuthData();
-        }
+        console.log('Refresh failed:', error);
+        if (error.response?.status) await clearAuthData();
       }
+    } else {
+      console.log('No refresh token available');
     }
-  }
+  };
 
   useEffect(() => {
     const bootstrap = async () => {
-      await loadAuthData();
-      await initialize();
-    }
-
+      const authData = await loadAuthData();
+      if (authData) await initialize(authData);
+    };
     bootstrap();
   }, []);
 
