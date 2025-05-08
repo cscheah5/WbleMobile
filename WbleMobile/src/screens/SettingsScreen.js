@@ -76,6 +76,14 @@ const SettingsScreen = ({navigation}) => {
       await RNFS.writeFile(settingsPath, JSON.stringify(newSettings), 'utf8');
       // Show save indicator briefly
       setTimeout(() => setSaveIndicator(false), 800);
+
+      RNFS.readDir(RNFS.DocumentDirectoryPath).then(result => {
+        console.log('Files in document directory:', result);
+        console.log('Full path check:', settingsPath);
+        RNFS.exists(settingsPath).then(exists => {
+          console.log('File exists:', exists);
+        });
+      });
     } catch (error) {
       console.error('Error saving settings:', error);
       Alert.alert(
