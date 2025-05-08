@@ -9,6 +9,7 @@ use App\Http\Controllers\FriendController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\UserController;
 
 Route::group([
     'middleware' => 'api', // Base API middleware
@@ -61,16 +62,22 @@ Route::group(['middleware' => 'api', 'prefix' => 'messages'], function ($router)
 });
 
 Route::middleware('auth:api')->group(function () {
+    Route::post('/store-fcm-token', [UserController::class, 'storeFCMtoken']);
+});
+
+
+
+Route::middleware('auth:api')->group(function () {
     // Section routes
     Route::post('/sections', [SectionController::class, 'store']);
     Route::put('/sections/{id}', [SectionController::class, 'update']);
     Route::delete('/sections/{id}', [SectionController::class, 'destroy']);
-    
+
     // Announcement routes
     Route::post('/announcements', [AnnouncementController::class, 'store']);
     Route::put('/announcements/{id}', [AnnouncementController::class, 'update']);
     Route::delete('/announcements/{id}', [AnnouncementController::class, 'destroy']);
-    
+
     // Material routes
     Route::post('/materials/upload', [MaterialController::class, 'upload']);
     Route::put('/materials/{id}', [MaterialController::class, 'update']);
