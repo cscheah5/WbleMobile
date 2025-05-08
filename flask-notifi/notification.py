@@ -3,10 +3,9 @@ from google.oauth2 import service_account
 import google.auth.transport.requests
 import requests
 import os
-import jwt
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get("LARAVEL_JWT_SECRET")
+FLASK_SECRET = os.environ.get('FLASK_INTERNAL_SECRET')
 
 # Config
 SCOPES = ['https://www.googleapis.com/auth/firebase.messaging']
@@ -45,33 +44,23 @@ def send_push_notification(fcm_token, title, body):
 
 @app.route('/send-notification', methods=['POST'])
 def send_notification():
-    data = request.get_json()
-    auth_header = request.headers.get('Authorization')
-    fcm_token = data.get('fcm_token')
-    title = data.get('title')
-    body = data.get('body')
-    
-    if not auth_header or not auth_header.startswith('Bearer '):
-        return jsonify({'error': 'Missing or invalid Authorization header'}), 401
-    
-    # extract the token
-    jwt_token = auth_header.split(' ')[1]
-        
-    # Decode the JWT
-    try:
-        user = jwt.decode(jwt_token, app.config['SECRET_KEY'], algorithms=['HS256'])
-    except jwt.InvalidTokenError as e:
-        return jsonify({'error': 'Invalid or expired token', 'details': str(e)}), 401
+	data = request.get_json()
+	fcm_token = data.get('fcm_token')
+	title = data.get('title')
+	body = data.get('body')
+	
+	if request.headers.get('X-Internal-Secret') != FLASK_SECRET:
+		return jsonify({'error': 'Unauthorized'}), 401
 
-    if not all([fcm_token, title, body]):
-        return jsonify({'error': 'Missing required fields'}), 400
+	if not all([fcm_token, title, body]):
+		return jsonify({'error': 'Missing required fields'}), 400
 
-    res = send_push_notification(fcm_token, title, body)
+	res = send_push_notification(fcm_token, title, body)
 
-    if res.status_code == 200:
-        return jsonify({'message': 'Notification sent successfully'})
-    else:
-        return jsonify({'error': 'Failed to send notification', 'details': res.text}), 500
+	if res.status_code == 200:
+		return jsonify({'message': 'Notification sent successfully'})
+	else:
+		return jsonify({'error': 'Failed to send notification', 'details': res.text}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
