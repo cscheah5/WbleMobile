@@ -20,11 +20,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AdminStack from './AdminStack';
 import LecturerStack from './LecturerStack';
 import StudentTab from './StudentTab';
+import NotificationManager from '@/components/NotificationManager';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const CustomDrawerComponent = (props) => {
+const CustomDrawerComponent = props => {
   const {logout} = useContext(AuthContext);
 
   return (
@@ -36,7 +37,6 @@ const CustomDrawerComponent = (props) => {
             source={require('@/assets/images/wble_banner.jpg')}
           />
           <Text style={styles.profileName}>My Profile</Text>
-         
         </View>
 
         {/* Menu items */}
@@ -81,13 +81,16 @@ const AppStack = () => {
   }
 
   return (
-    <Drawer.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      drawerContent={props => <CustomDrawerComponent {...props} />}>
-      <Drawer.Screen name="MainDrawer" component={RoleStack} />
-    </Drawer.Navigator>
+    <>
+      <NotificationManager />
+      <Drawer.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        drawerContent={props => <CustomDrawerComponent {...props} />}>
+        <Drawer.Screen name="MainDrawer" component={RoleStack} />
+      </Drawer.Navigator>
+    </>
   );
 };
 
@@ -112,7 +115,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333333', 
+    color: '#333333',
   },
   menuContainer: {
     flex: 1,
