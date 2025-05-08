@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
-import React, {useEffect, useState, useContext, useRef} from 'react';
+import React, {useEffect, useState, useContext, useRef, useLayoutEffect} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
 import {SocketContext} from '@/contexts/SocketContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,6 +21,22 @@ export default function ChatScreen({route, navigation}) {
   const {authAxios, userInfo} = useContext(AuthContext);
   const {socket} = useContext(SocketContext);
   const scrollViewRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const parent = navigation.getParent();
+    parent?.setOptions({
+      tabBarStyle: { display: 'none' },
+    });
+
+    // Reset tab bar when leaving
+    return () => {
+      parent?.setOptions({
+        tabBarStyle: {
+          backgroundColor: '#ffffff',
+        },
+      });
+    };
+  }, [navigation]);
 
   const _loadMessages = async () => {
     console.log('Loading messages...');
