@@ -91,4 +91,41 @@ class SectionController extends Controller
         // Return all materials
         return response()->json($materialsWithSection);
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'subject_id' => 'required|exists:subjects,id',
+            'week_number' => 'required|integer',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $section = Section::create($request->all());
+        
+        return response()->json($section, 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $section = Section::findOrFail($id);
+        
+        $request->validate([
+            'week_number' => 'required|integer',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+        
+        $section->update($request->all());
+        
+        return response()->json($section, 200);
+    }
+
+    public function destroy($id)
+    {
+        $section = Section::findOrFail($id);
+        $section->delete();
+        
+        return response()->json(['message' => 'Section deleted successfully'], 200);
+    }
 }

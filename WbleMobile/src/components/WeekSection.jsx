@@ -2,9 +2,21 @@ import {View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, PermissionsAn
 import React, {useState} from 'react';
 import RNFS from 'react-native-fs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { usePermission } from '@/contexts/PermissionContext';
 
-export default function WeekSection({item}) {
+export default function WeekSection({
+  item,
+  onEdit,
+  onDelete,
+  onAddAnnouncement,
+  onEditAnnouncement,
+  onDeleteAnnouncement,
+  onAddMaterial,
+  onEditMaterial,
+  onDeleteMaterial
+}) {
   const [downloading, setDownloading] = useState({});
+  const { can } = usePermission();
 
   // Format dates for display
   const formatDate = (dateString) => {
@@ -34,71 +46,43 @@ export default function WeekSection({item}) {
 
   const downloadFile = async (material) => {
     try {
-      console.log('Starting download process...');
-      
-      // For Android 10+ (API 29+), use app storage 
-      // For older versions, use download directory if permission granted
-      const isAndroid10OrHigher = Platform.OS === 'android' && Platform.Version >= 29;
-      let downloadPath;
-      
-      if (isAndroid10OrHigher) {
-        try {
-          // Use the shared Documents directory which is more accessible
-          downloadPath = `${RNFS.ExternalDirectoryPath}/${material.filename}`;
-          console.log('Using external app directory:', downloadPath);
-        } catch (error) {
-          downloadPath = `${RNFS.DocumentDirectoryPath}/${material.filename}`;
-          console.log('Fallback to document directory:', downloadPath);
-        }
-      } else {
-        // Older Android versions need permission for external storage
-        let hasPermission = await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-        );
-        
-        if (!hasPermission) {
-          hasPermission = await requestStoragePermission();
-        }
-        
-        if (!hasPermission) {
-          // Fall back to app storage if permission denied
-          downloadPath = `${RNFS.DocumentDirectoryPath}/${material.filename}`;
-          console.log('Permission denied, using app storage:', downloadPath);
-        } else {
-          // Use download directory if permission granted
-          downloadPath = `${RNFS.DownloadDirectoryPath}/${material.filename}`;
-          console.log('Using download directory:', downloadPath);
-        }
-      }
-      
       setDownloading({...downloading, [material.id]: true});
       
-      // Start download
-      console.log('Downloading from URL:', material.download_url);
+      // Use the public download URL instead
+      const url = `http://10.0.2.2:8000/api/public/materials/download/${material.id}`;
+      console.log('Downloading from URL:', url);
       
+      // Determine the download path
+      let downloadPath;
+      if (Platform.OS === 'android' && Platform.Version >= 29) {
+        downloadPath = `${RNFS.ExternalDirectoryPath}/${material.filename}`;
+      } else {
+        const hasPermission = await requestStoragePermission();
+        downloadPath = hasPermission 
+          ? `${RNFS.DownloadDirectoryPath}/${material.filename}`
+          : `${RNFS.DocumentDirectoryPath}/${material.filename}`;
+      }
+      
+      console.log('Downloading to path:', downloadPath);
+      
+      // Configure download with retries and better timeout settings
       const response = await RNFS.downloadFile({
-        fromUrl: material.download_url,
+        fromUrl: url,
         toFile: downloadPath,
         background: true,
-        progressDivider: 10,
+        discretionary: true,
+        progressDivider: 20,
+        connectionTimeout: 15000, // 15 seconds connection timeout
+        readTimeout: 30000, // 30 seconds read timeout
+        cacheable: false, // Don't use cache
+        progressInterval: 1000, // Update progress every second
       }).promise;
       
       console.log('Download complete, response:', response);
       setDownloading({...downloading, [material.id]: false});
       
       if (response.statusCode === 200) {
-        let alertMessage = '';
-        
-        if (isAndroid10OrHigher || !await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-        )) {
-          alertMessage = `${material.filename} has been downloaded to app storage. You can find it in the "Files" app under "Internal storage > Android > data > your.app.package > files"`;
-        } else {
-          alertMessage = `${material.filename} has been downloaded to your Downloads folder.`;
-        }
-        
-        Alert.alert('Download Complete', alertMessage);
-        
+        Alert.alert('Success', 'File downloaded successfully.');
       } else {
         Alert.alert('Download Failed', `Error code: ${response.statusCode}`);
       }
@@ -111,16 +95,39 @@ export default function WeekSection({item}) {
 
   const renderAnnouncement = ({item: announcement}) => (
     <View style={styles.announcementItem}>
-      <Text style={styles.itemTitle}>{announcement.title}</Text>
-      <Text style={styles.itemDescription}>{announcement.description}</Text>
-      <Text style={styles.itemDate}>Posted: {formatDate(announcement.created_at)}</Text>
+      <View style={styles.itemContent}>
+        <Text style={styles.itemTitle}>{announcement.title}</Text>
+        <Text style={styles.itemDescription}>{announcement.description}</Text>
+        <Text style={styles.itemDate}>Posted: {formatDate(announcement.created_at)}</Text>
+      </View>
+      
+      {/* Show edit/delete buttons only if functions are provided */}
+      {(onEditAnnouncement || onDeleteAnnouncement) && (
+        <View style={styles.actionButtons}>
+          {onEditAnnouncement && (
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.editButton]}
+              onPress={() => onEditAnnouncement(announcement)}>
+              <Ionicons name="create-outline" size={20} color="white" />
+            </TouchableOpacity>
+          )}
+          
+          {onDeleteAnnouncement && (
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={() => onDeleteAnnouncement(announcement.id)}>
+              <Ionicons name="trash-outline" size={20} color="white" />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   );
 
   const renderMaterial = ({item: material}) => (
     <View style={styles.materialItem}>
       <View style={styles.materialContent}>
-        
+        <Text style={styles.itemTitle}>{material.filename}</Text>
         <Text style={styles.fileInfo}>
           <Ionicons 
             name={getFileIcon(material.filename)} 
@@ -129,24 +136,40 @@ export default function WeekSection({item}) {
           /> {material.filename}
         </Text>
       </View>
-      <TouchableOpacity 
-        style={[
-          styles.downloadButton, 
-          downloading[material.id] && styles.downloadingButton
-        ]}
-        onPress={() => downloadFile(material)}
-        disabled={downloading[material.id]}
-      >
-        <Ionicons 
-          name={downloading[material.id] ? "cloud-download-outline" : "cloud-download"} 
-          size={22} 
-          color="white" 
-        />
-      </TouchableOpacity>
+      
+      <View style={styles.actionButtons}>
+        {/* Always show download button */}
+        <TouchableOpacity 
+          style={[styles.actionButton, styles.downloadButton, downloading[material.id] && styles.downloadingButton]}
+          onPress={() => downloadFile(material)}
+          disabled={downloading[material.id]}>
+          <Ionicons 
+            name={downloading[material.id] ? "cloud-download-outline" : "cloud-download"} 
+            size={22} 
+            color="white" 
+          />
+        </TouchableOpacity>
+        
+        {/* Only show edit/delete if handlers provided */}
+        {onEditMaterial && (
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.editButton]}
+            onPress={() => onEditMaterial(material)}>
+            <Ionicons name="create-outline" size={20} color="white" />
+          </TouchableOpacity>
+        )}
+        
+        {onDeleteMaterial && (
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.deleteButton]}
+            onPress={() => onDeleteMaterial(material.id)}>
+            <Ionicons name="trash-outline" size={20} color="white" />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 
-  // Helper to get icon based on file extension
   const getFileIcon = (filename) => {
     const ext = filename.split('.').pop().toLowerCase();
     switch(ext) {
@@ -168,18 +191,50 @@ export default function WeekSection({item}) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.weekHeader}>
-        Week {item.week_number}: {formatDate(item.start_date)} - {formatDate(item.end_date)}
-      </Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.weekHeader}>
+          Week {item.week_number}: {formatDate(item.start_date)} - {formatDate(item.end_date)}
+        </Text>
+        
+        {/* Section management buttons */}
+        {(onEdit || onDelete) && (
+          <View style={styles.sectionActions}>
+            {onEdit && (
+              <TouchableOpacity onPress={onEdit}>
+                <Ionicons name="create-outline" size={24} color="#007bff" />
+              </TouchableOpacity>
+            )}
+            
+            {onDelete && (
+              <TouchableOpacity onPress={onDelete}>
+                <Ionicons name="trash-outline" size={24} color="#dc3545" />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </View>
       
       {/* Announcements Section */}
-      <Text style={styles.sectionHeader}>Announcements</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Announcements</Text>
+        
+        {/* Add announcement button */}
+        {onAddAnnouncement && (
+          <TouchableOpacity 
+            style={styles.addItemButton}
+            onPress={onAddAnnouncement}>
+            <Ionicons name="add-circle-outline" size={24} color="#28a745" />
+            <Text style={styles.addItemText}>Add</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      
       {item.announcements && item.announcements.length > 0 ? (
         <FlatList
           data={item.announcements}
           renderItem={renderAnnouncement}
           keyExtractor={(announcement) => announcement.id.toString()}
-          scrollEnabled={false} // Prevents nested scrolling issues
+          scrollEnabled={false}
         />
       ) : (
         <Text style={styles.emptyMessage}>No announcements for this week</Text>
@@ -188,13 +243,26 @@ export default function WeekSection({item}) {
       <View style={styles.divider} />
       
       {/* Materials Section */}
-      <Text style={styles.sectionHeader}>Materials</Text>
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Materials</Text>
+        
+        {/* Add material button */}
+        {onAddMaterial && (
+          <TouchableOpacity 
+            style={styles.addItemButton}
+            onPress={onAddMaterial}>
+            <Ionicons name="add-circle-outline" size={24} color="#28a745" />
+            <Text style={styles.addItemText}>Add</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+      
       {item.materials && item.materials.length > 0 ? (
         <FlatList
           data={item.materials}
           renderItem={renderMaterial}
           keyExtractor={(material) => material.id.toString()}
-          scrollEnabled={false} // Prevents nested scrolling issues
+          scrollEnabled={false}
         />
       ) : (
         <Text style={styles.emptyMessage}>No materials for this week</Text>
@@ -224,10 +292,13 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 10,
-    marginBottom: 5,
     color: '#444',
   },
   divider: {
@@ -280,15 +351,50 @@ const styles = StyleSheet.create({
     padding: 10,
     textAlign: 'center',
   },
-  downloadButton: {
-    backgroundColor: '#4285F4',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  sectionActions: {
+    flexDirection: 'row',
+    width: 70,
+    justifyContent: 'space-between',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 5,
+  },
+  editButton: {
+    backgroundColor: '#007bff',
+  },
+  deleteButton: {
+    backgroundColor: '#dc3545',
+  },
+  downloadButton: {
+    backgroundColor: '#4285F4',
   },
   downloadingButton: {
     backgroundColor: '#ccc',
+  },
+  addItemButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  addItemText: {
+    color: '#28a745',
+    marginLeft: 5,
+  },
+  itemContent: {
+    flex: 1,
   },
 });

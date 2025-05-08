@@ -8,6 +8,7 @@ use App\Http\Controllers\SectionController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\AnnouncementController;
 
 Route::group([
     'middleware' => 'api', // Base API middleware
@@ -59,10 +60,23 @@ Route::group(['middleware' => 'api', 'prefix' => 'messages'], function ($router)
     Route::post('/create', [MessageController::class, 'createMessage']);
 });
 
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'materials'
-], function ($router) {
-    Route::post('/upload', [MaterialController::class, 'upload']);
-    Route::get('/download/{id}', [MaterialController::class, 'download']);
+Route::middleware('auth:api')->group(function () {
+    // Section routes
+    Route::post('/sections', [SectionController::class, 'store']);
+    Route::put('/sections/{id}', [SectionController::class, 'update']);
+    Route::delete('/sections/{id}', [SectionController::class, 'destroy']);
+    
+    // Announcement routes
+    Route::post('/announcements', [AnnouncementController::class, 'store']);
+    Route::put('/announcements/{id}', [AnnouncementController::class, 'update']);
+    Route::delete('/announcements/{id}', [AnnouncementController::class, 'destroy']);
+    
+    // Material routes
+    Route::post('/materials/upload', [MaterialController::class, 'upload']);
+    Route::put('/materials/{id}', [MaterialController::class, 'update']);
+    Route::delete('/materials/{id}', [MaterialController::class, 'destroy']);
+    Route::get('/materials/download/{id}', [MaterialController::class, 'download']);
+    Route::get('/download/materials/{id}', [MaterialController::class, 'publicDownload']);
 });
+
+Route::get('/public/materials/download/{id}', [MaterialController::class, 'publicDownload']);

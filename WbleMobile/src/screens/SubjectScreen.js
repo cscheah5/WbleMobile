@@ -1,31 +1,48 @@
-import {View, Text, SafeAreaView, TouchableOpacity, StyleSheet, Alert} from 'react-native';
-import React, {useContext, useState, useEffect} from 'react';
-import {AuthContext} from '@/contexts/AuthContext';
-import {FlatList} from 'react-native-gesture-handler';
+import React, { useContext, useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, Alert, SectionList } from 'react-native';
+import { AuthContext } from '@/contexts/AuthContext';
+import { usePermission } from '@/contexts/PermissionContext';
+import { FlatList } from 'react-native-gesture-handler';
 import WeekSection from '@/components/WeekSection';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function SubjectScreen({route, navigation}) {
-  const {subjectId, subjectCode, subjectName} = route.params;
-  const {authAxios} = useContext(AuthContext);
+export default function SubjectScreen({ route, navigation }) {
+  const { subjectId, subjectCode, subjectName } = route.params;
+  const { authAxios, userInfo } = useContext(AuthContext);
+  const { can } = usePermission();
   const [weekSections, setWeekSections] = useState([]);
   const [materials, setMaterials] = useState([]);
-  const [viewMode, setViewMode] = useState('current'); // 'current', 'all', 'materials'
+  const [viewMode, setViewMode] = useState('all'); // Default to 'all'
   const [loading, setLoading] = useState(false);
+  
+  // Check role explicitly to ensure it's properly detected
+  const isLecturer = userInfo?.role === 'lecturer';
+  console.log('User role:', userInfo?.role);
+  console.log('Is lecturer:', isLecturer);
+  console.log('Can view current week:', can('view:current_week'));
+  console.log('Can view materials:', can('view:materials'));
+
+  // Set initial view mode based on role
+  useEffect(() => {
+    if (!isLecturer && can('view:current_week')) {
+      setViewMode('current');
+    } else {
+      setViewMode('all');
+    }
+  }, [isLecturer, userInfo]);
 
   const loadCurrentWeek = async () => {
     setLoading(true);
     try {
       const response = await authAxios.get(`/sections/${subjectId}`);
-      // Construct a complete section object with its materials and announcements
+      // Construct a complete section object
       const currentSection = {
         ...response.data.section,
         materials: response.data.materials || [],
         announcements: response.data.announcements || []
       };
-      setWeekSections([currentSection]); // Wrap in array for FlatList
+      setWeekSections([currentSection]);
       setLoading(false);
-      console.log("Current week loaded:", currentSection);
     } catch (error) {
       console.error("Error loading current week:", error);
       setLoading(false);
@@ -38,7 +55,6 @@ export default function SubjectScreen({route, navigation}) {
       const response = await authAxios.get(`/sections/${subjectId}/all`);
       setWeekSections(response.data);
       setLoading(false);
-      console.log("All weeks loaded:", response.data);
     } catch (error) {
       console.error("Error loading all weeks:", error);
       setLoading(false);
@@ -60,14 +76,21 @@ export default function SubjectScreen({route, navigation}) {
   useEffect(() => {
     navigation.setOptions({
       title: subjectName,
+      // Remove the add section button from header
+      headerRight: undefined
     });
     
-    // Load default view (current week)
-    loadCurrentWeek();
+    // Initial data load
+    if (viewMode === 'current') {
+      loadCurrentWeek();
+    } else if (viewMode === 'all') {
+      loadAllWeeks();
+    } else if (viewMode === 'materials') {
+      loadAllMaterials();
+    }
   }, []);
 
   useEffect(() => {
-    // Change the data based on view mode
     if (viewMode === 'current') {
       loadCurrentWeek();
     } else if (viewMode === 'all') {
@@ -79,23 +102,90 @@ export default function SubjectScreen({route, navigation}) {
 
   const renderViewOptions = () => (
     <View style={styles.viewOptions}>
-      <TouchableOpacity 
-        style={[styles.viewButton, viewMode === 'current' && styles.activeButton]} 
-        onPress={() => setViewMode('current')}>
-        <Text style={viewMode === 'current' ? styles.activeText : styles.viewButtonText}>Current Week</Text>
-      </TouchableOpacity>
+      {/* Only show Current Week for students */}
+      {!isLecturer && (
+        <TouchableOpacity 
+          style={[styles.viewButton, viewMode === 'current' && styles.activeButton]} 
+          onPress={() => setViewMode('current')}>
+          <Text style={viewMode === 'current' ? styles.activeText : styles.viewButtonText}>
+            Current Week
+          </Text>
+        </TouchableOpacity>
+      )}
+      
       <TouchableOpacity 
         style={[styles.viewButton, viewMode === 'all' && styles.activeButton]} 
         onPress={() => setViewMode('all')}>
-        <Text style={viewMode === 'all' ? styles.activeText : styles.viewButtonText}>All Weeks</Text>
+        <Text style={viewMode === 'all' ? styles.activeText : styles.viewButtonText}>
+          All Weeks
+        </Text>
       </TouchableOpacity>
-      <TouchableOpacity 
-        style={[styles.viewButton, viewMode === 'materials' && styles.activeButton]} 
-        onPress={() => setViewMode('materials')}>
-        <Text style={viewMode === 'materials' ? styles.activeText : styles.viewButtonText}>All Materials</Text>
-      </TouchableOpacity>
+      
+      {/* Only show Materials for students */}
+      {!isLecturer && (
+        <TouchableOpacity 
+          style={[styles.viewButton, viewMode === 'materials' && styles.activeButton]} 
+          onPress={() => setViewMode('materials')}>
+          <Text style={viewMode === 'materials' ? styles.activeText : styles.viewButtonText}>
+            All Materials
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
+
+  const groupMaterialsByType = (materials) => {
+    // Create an object to store material groups
+    const groupedByType = {};
+    
+    // Sort the materials by type
+    materials.forEach(material => {
+      const type = material.type || 'others';
+      if (!groupedByType[type]) {
+        groupedByType[type] = [];
+      }
+      groupedByType[type].push(material);
+    });
+    
+    // Define the order of types
+    const typeOrder = ['lecture', 'tutorial', 'practical', 'assessment', 'others']; // Changed 'other' to 'others'
+    
+    // Sort the keys based on the defined order
+    const sortedTypes = Object.keys(groupedByType).sort((a, b) => {
+      const indexA = typeOrder.indexOf(a.toLowerCase());
+      const indexB = typeOrder.indexOf(b.toLowerCase());
+      
+      // If type not in our predefined order, put it at the end
+      const orderA = indexA === -1 ? 999 : indexA;
+      const orderB = indexB === -1 ? 999 : indexB;
+      
+      return orderA - orderB;
+    });
+    
+    // Convert to format required by SectionList, maintaining the sorted order
+    return sortedTypes.map(type => ({
+      title: formatMaterialType(type),
+      data: groupedByType[type]
+    }));
+  };
+  
+  const formatMaterialType = (type) => {
+    // Capitalize first letter and handle specific types
+    switch (type.toLowerCase()) {
+      case 'lecture':
+        return 'Lecture Materials';
+      case 'tutorial':
+        return 'Tutorial Materials';
+      case 'practical':
+        return 'Practical Materials';
+      case 'assessment':
+        return 'Assessment Materials';
+      case 'others':
+        return 'Other Materials';
+      default:
+        return type.charAt(0).toUpperCase() + type.slice(1) + ' Materials';
+    }
+  };
 
   const renderContent = () => {
     if (loading) {
@@ -104,14 +194,16 @@ export default function SubjectScreen({route, navigation}) {
 
     if (viewMode === 'materials') {
       return materials.length > 0 ? (
-        <FlatList
-          data={materials}
+        <SectionList
+          sections={groupMaterialsByType(materials)}
+          keyExtractor={item => item.id.toString()}
           renderItem={({item}) => (
             <View style={styles.materialItem}>
               <View style={styles.materialContent}>
                 <Text style={styles.materialTitle}>{item.filename}</Text>
                 <Text style={styles.materialInfo}>
-                  Week {item.week_number} • {item.type}
+                  Week {item.week_number} 
+                  {item.description ? ` • ${item.description}` : ''}
                 </Text>
               </View>
               <TouchableOpacity 
@@ -122,7 +214,12 @@ export default function SubjectScreen({route, navigation}) {
               </TouchableOpacity>
             </View>
           )}
-          keyExtractor={item => item.id.toString()}
+          renderSectionHeader={({section: {title}}) => (
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionHeaderText}>{title}</Text>
+            </View>
+          )}
+          stickySectionHeadersEnabled={true}
         />
       ) : (
         <Text style={styles.message}>No materials available</Text>
@@ -131,23 +228,87 @@ export default function SubjectScreen({route, navigation}) {
       return weekSections.length > 0 ? (
         <FlatList
           data={weekSections}
-          renderItem={({item}) => <WeekSection item={item} />}
+          renderItem={({item}) => (
+            <WeekSection 
+              item={item}
+              // Remove section management - pass undefined for these props
+              onEdit={undefined}
+              onDelete={undefined}
+              // Keep announcement management
+              onAddAnnouncement={isLecturer ? () => handleAddAnnouncement(item.id) : undefined}
+              onEditAnnouncement={isLecturer ? (announcement) => handleEditAnnouncement(announcement) : undefined}
+              onDeleteAnnouncement={isLecturer ? (announcementId) => handleDeleteAnnouncement(announcementId) : undefined}
+              // Keep material management
+              onAddMaterial={isLecturer ? () => handleAddMaterial(item.id) : undefined}
+              onEditMaterial={isLecturer ? (material) => handleEditMaterial(material) : undefined}
+              onDeleteMaterial={isLecturer ? (materialId) => handleDeleteMaterial(materialId) : undefined}
+            />
+          )}
           keyExtractor={item => item.id.toString()}
         />
       ) : (
-        <Text style={styles.message}>No sections available</Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.message}>No sections available</Text>
+          {/* Remove the create section button */}
+        </View>
       );
     }
   };
 
-  const downloadFile = async (material) => {
+  // Keep these handler functions for reference but they won't be used
+  const handleEditSection = (section) => { /* ... */ };
+  const handleDeleteSection = (sectionId) => { /* ... */ };
+  
+  const handleAddAnnouncement = (sectionId) => {
+    navigation.navigate('CreateAnnouncement', {
+      sectionId: sectionId,
+      onAnnouncementCreated: loadAllWeeks
+    });
+  };
+  
+  const handleEditAnnouncement = (announcement) => {
+    navigation.navigate('EditAnnouncement', {
+      announcement: announcement,
+      onAnnouncementUpdated: loadAllWeeks
+    });
+  };
+  
+  const handleDeleteAnnouncement = async (announcementId) => {
     try {
-      // Same download implementation as in WeekSection
-      // ...
+      await authAxios.delete(`/announcements/${announcementId}`);
+      loadAllWeeks();
     } catch (error) {
-      console.error('Download error:', error);
-      Alert.alert('Download Failed', 'Could not download the file. Please try again.');
+      console.error("Error deleting announcement:", error);
+      Alert.alert("Error", "Failed to delete announcement");
     }
+  };
+  
+  const handleAddMaterial = (sectionId) => {
+    navigation.navigate('CreateMaterial', {
+      sectionId: sectionId,
+      onMaterialCreated: loadAllWeeks
+    });
+  };
+  
+  const handleEditMaterial = (material) => {
+    navigation.navigate('EditMaterial', {
+      material: material,
+      onMaterialUpdated: loadAllWeeks
+    });
+  };
+  
+  const handleDeleteMaterial = async (materialId) => {
+    try {
+      await authAxios.delete(`/materials/${materialId}`);
+      loadAllWeeks();
+    } catch (error) {
+      console.error("Error deleting material:", error);
+      Alert.alert("Error", "Failed to delete material");
+    }
+  };
+
+  const downloadFile = async (material) => {
+    // Your existing download implementation
   };
 
   return (
@@ -202,6 +363,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: 'white',
   },
   materialContent: {
     flex: 1,
@@ -230,5 +392,34 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16,
     color: '#666',
-  }
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  createButton: {
+    backgroundColor: '#28a745',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginTop: 15,
+  },
+  createButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  sectionHeader: {
+    backgroundColor: '#f8f8f8',
+    padding: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: '#007bff',
+    marginVertical: 5,
+  },
+  sectionHeaderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
 });

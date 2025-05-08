@@ -13,7 +13,7 @@ import ChatScreen from '@/screens/friend/ChatScreen';
 
 const Stack = createStackNavigator();
 
-const AppStack = () => {
+const AdminStack = () => {
   const {logout} = useContext(AuthContext);
 
   return (
@@ -32,4 +32,4 @@ const AppStack = () => {
   );
 };
 
-export default AppStack;
+export default AdminStack;

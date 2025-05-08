@@ -10,10 +10,14 @@ import FriendScreen from '@/screens/friend/FriendScreen';
 import SearchUserScreen from '@/screens/friend/SearchUserScreen';
 import FriendRequestScreen from '@/screens/friend/FriendRequestScreen';
 import ChatScreen from '@/screens/friend/ChatScreen';
+import CreateAnnouncementScreen from '@/screens/CreateAnnouncementScreen';
+import EditAnnouncementScreen from '@/screens/EditAnnouncementScreen';
+import CreateMaterialScreen from '@/screens/CreateMaterialScreen';
+import EditMaterialScreen from '@/screens/EditMaterialScreen';
 
 const Stack = createStackNavigator();
 
-const AppStack = () => {
+const LecturerStack = () => {
   const {logout} = useContext(AuthContext);
 
   return (
@@ -29,6 +33,10 @@ const AppStack = () => {
         })}
       />
       <Stack.Screen name="Subject" component={SubjectScreen} />
+      <Stack.Screen name="CreateAnnouncement" component={CreateAnnouncementScreen} />
+      <Stack.Screen name="EditAnnouncement" component={EditAnnouncementScreen} />
+      <Stack.Screen name="CreateMaterial" component={CreateMaterialScreen} />
+      <Stack.Screen name="EditMaterial" component={EditMaterialScreen} />
       <Stack.Screen name="Friend" component={FriendScreen} />
       <Stack.Screen name="SearchUser" component={SearchUserScreen} />
       <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
@@ -37,4 +45,4 @@ const AppStack = () => {
   );
 };
 
-export default AppStack;
+export default LecturerStack;
