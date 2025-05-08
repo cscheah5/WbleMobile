@@ -84,7 +84,7 @@ class AuthController extends ApiController
 
         // Optional: Check if user exists (in case token is invalid/expired)
         if ($user) {
-            // Clear FCM token from database (assuming `fcm_token` is a column in `users` table)
+            // Clear FCM token from database
             $user->fcm_token = null;
             $user->save();
         }
