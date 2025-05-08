@@ -81,7 +81,6 @@ export default function ChatScreen({route, navigation}) {
 
   const generateLaravelTimestamps = () => {
     const now = new Date();
-    console.log('Laravel date:', now); // Example: "2025-05-05T04:00:38.123Z"
     const iso = now.toISOString(); // Example: "2025-05-05T04:00:38.123Z"
     const base = iso.split('.')[0]; // "2025-05-05T04:00:38"
     return `${base}.000000Z`; // "2025-05-05T04:00:38.000000Z"
