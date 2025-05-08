@@ -93,7 +93,7 @@ flask-notifi/
 3. Create and configure the app configuration file:
    ```bash
    cd src/config
-   cp config.example.js config.js
+   cp config.example.json config.json
    ```
 
 4. Configure server paths in `src/config/config.js` to point to your backend servers
