@@ -8,17 +8,12 @@
 | Lecturer  | leemj    | 123456   |
 | Admin     | admin    | 123456   |
 
+## Install python dependencies (at root directory)
+```bash
+pip install -r requirements.txt
+```
+
 # WBLE Flask Socket
-## Python dependencies
-```bash
-pip install Flask Flask-SocketIO python-dotenv PyJWT
-```
-
-## Optional Python dependencies (but often used with Flask-SocketIO)
-```bash
-pip install eventlet
-```
-
 1. Navigate to the Flask Socket directory:
    ```bash
    cd flaskSocket
@@ -29,7 +24,7 @@ pip install eventlet
    cp .env.example .env
 
 3. Find your JWT secret key in the WBLE backend Laravel `.env` file and add it to your Flask Socket `.env`:
-   ```
+   ```ini
    LARAVEL_JWT_SECRET=your-jwt-secret-key
    ```
    
@@ -38,6 +33,38 @@ pip install eventlet
    python app.py
    ```
    The server will run on `http://0.0.0.0:5001` by default. You can modify this port in `flaskSocket/app.py`
+
+# WBLE Notification Server
+1. Navigate to the Flask Notification directory:
+   ```bash
+   cd flask-notifi
+   ```
+
+2. Create a `.env` file by copying the example:
+   ```bash
+   cp .env.example .env
+
+3. Configure Firebase & Application Credentials
+- **Create a Firebase Project** (if not done already)  
+- Download your **Service Account JSON** file from Firebase Console  
+- Update `.env` with the correct path:  
+  ```ini
+  GOOGLE_APPLICATION_CREDENTIALS="path/to/your-service-account.json"
+  FLASK_INTERNAL_SECRET="your-random-secure-key"  # Must match Laravel's .env
+  ```
+- Configure Firebase details in `flask-notifi/notification.py` (if needed).  
+
+4. Sync `FLASK_INTERNAL_SECRET` with Laravel Backend**  
+   Ensure the same secret is in Laravel’s `.env`:  
+   ```ini
+   FLASK_INTERNAL_SECRET=your-internal-flask-secret
+   ```
+   
+6. Start the backend server:
+   ```bash
+   python notification.py
+   ```
+   The server will run on `http://0.0.0.0:5002` by default. You can modify this port in `flask-notifi/notification.py`
 
 # WBLE Front-end
 1. Navigate to the React Native project directory:
