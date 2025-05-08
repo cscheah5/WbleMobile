@@ -6,7 +6,7 @@ use App\Models\Friend;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Http;
 
 class FriendController extends Controller
 {
@@ -106,6 +106,21 @@ class FriendController extends Controller
         $friend->user_id2 = $friendId;
         $friend->status = 'pending';
         $friend->save();
+
+        //TODO: send notification the receiver
+        $receiver = User::find($friendId);
+        if ($receiver && $receiver->fcm_token) {
+            $title = "New Friend Request";
+            $body = auth()->user()->username . "sent you a friend request.";
+
+            Http::withHeaders([
+                'X-Internal-Secret' => env('FLASK_INTERNAL_SECRET'),
+            ])->post(env('FLASK_SERVER_URL') . '/send-notification', [
+                'fcm_token' => $receiver->fcm_token,
+                'title' => $title,
+                'body' => $body,
+            ]);
+        }
 
 
         return response()->json(['message' => 'Friend request sent successfully']);
