@@ -36,7 +36,7 @@ class AuthController extends ApiController
         if ($request->hasFile('profile_picture')) {
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
         } else {
-            $path = null; // or set a default string if you want
+            $path = 'images/default.jpg';
         }
 
         $user = User::create([
