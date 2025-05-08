@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {createContext, useEffect, useState} from 'react';
-import {API_URL} from '@/config/config';
+import config from '@/config/config.json';
 import axios from 'axios';
 
 export const AuthContext = createContext();
@@ -13,7 +13,7 @@ export const AuthProvider = ({children}) => {
   const [loginError, setLoginError] = useState(false);
 
   const authAxios = axios.create({
-    baseURL: API_URL,
+    baseURL: config.laravelApiUrl,
   });
 
   // Request interceptor
@@ -142,7 +142,7 @@ export const AuthProvider = ({children}) => {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
         await axios.post(
-          `${API_URL}/auth/logout`,
+          `${config.laravelApiUrl}/auth/logout`,
           {},
           {headers: {Authorization: `Bearer ${token}`}},
         );

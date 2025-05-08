@@ -1,7 +1,7 @@
 import React, {useState, useEffect, createContext, useContext} from 'react';
 import {AuthContext} from './AuthContext';
 import {io} from 'socket.io-client';
-import {SOCKET_URL} from '@/config/config';
+import config from '@/config/config.json';
 
 export const SocketContext = createContext({});
 
@@ -12,7 +12,7 @@ export default function SocketProvider({children}) {
   useEffect(() => {
     // if user exists, create a socket connection
     if (userToken) {
-      const newSocket = io(`${SOCKET_URL}`, {
+      const newSocket = io(`${config.socketServerUrl}`, {
         query: {userToken},
         transport: ['websocket'],
       });
