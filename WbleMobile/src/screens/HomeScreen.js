@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useCallback} from 'react';
 import {
   Text,
   View,
@@ -10,6 +10,7 @@ import {
 import {AuthContext} from '@/contexts/AuthContext';
 import {FlatList} from 'react-native-gesture-handler';
 import {AppButton} from '@/components/AppButton';
+import { useFocusEffect } from '@react-navigation/native';
 
 const HomeScreen = ({navigation}) => {
   const {authAxios, userInfo} = useContext(AuthContext);
@@ -31,9 +32,10 @@ const HomeScreen = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     _loadSubjectById();
-  }, []);
+  }, [])
+);
 
   const renderSubjectItem = ({item}) => (
     <TouchableNativeFeedback

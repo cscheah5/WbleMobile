@@ -20,12 +20,13 @@ class AuthController extends ApiController
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    // User registration
+    // Admin register new user
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:30|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string|min:6',
+            'role' => 'required|string|in:student,lecturer,admin',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -42,12 +43,14 @@ class AuthController extends ApiController
         $user = User::create([
             'username' => $request->get('username'),
             'password' => Hash::make($request->get('password')),
+            'role' => $request->get('role'),
             'profile_picture' => $path,
         ]);
 
-        $token = JWTAuth::fromUser($user);
-
-        return $this->createNewToken($token, $user);
+        return response()->json([
+            'message' => 'User created successfully.',
+            'user' => $user
+        ]);
     }
 
     // User login

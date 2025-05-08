@@ -1,31 +1,35 @@
 import React from 'react';
 
-import FriendStackNavigator from './FriendStackNavigator';
+
 import SubjectStackNavigator from './SubjectStackNavigator';
+import CreateSubjectStackNavigator from './CreateSubjectStackNavigator';
+import CreateSubjectScreen from '@/screens/admin/CreateSubjectScreen';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import CreateUserStackNavigator from './CreateUserStackNavigator';
+import AssignUserStackNavigator from './AssignUserStackNavigator';
 
 const Tab = createBottomTabNavigator();
 
 const AdminTab = () => {
   return (
     <Tab.Navigator
-      screenOptions={({navigation}) => ({
+      screenOptions={{
         headerShown: false,
         tabBarStyle: {
           backgroundColor: '#ffffff',
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#8e8e93',
-      })}>
+      }}>
+      
       <Tab.Screen
         name="Subjects"
         component={SubjectStackNavigator}
         options={{
-          tabBarLabel: 'Home',
-          tabBarIcon: ({color}) => (
+          tabBarLabel: 'Subjects',
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="home-outline"
               size={36}
@@ -34,20 +38,52 @@ const AdminTab = () => {
           ),
         }}
       />
+
       <Tab.Screen
-        name="Friends"
-        component={FriendStackNavigator}
+        name="CreateSubjectTab"
+        component={CreateSubjectStackNavigator}
         options={{
-          tabBarLabel: 'Friends',
-          tabBarIcon: ({color}) => (
+          tabBarLabel: 'Create Subject',
+          tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
-              name="account-group-outline"
+              name="file-document-outline"
               size={36}
               color={color}
             />
           ),
         }}
       />
+      
+      <Tab.Screen
+        name="CreateUserTab"
+        component={CreateUserStackNavigator}
+        options={{
+          tabBarLabel: 'Create Subject',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="face-man"
+              size={36}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="AssignTab"
+        component={AssignUserStackNavigator}
+        options={{
+          tabBarLabel: 'Assign',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="plus-box-outline"
+              size={36}
+              color={color}
+            />
+          ),
+        }}
+      />
+
     </Tab.Navigator>
   );
 };
