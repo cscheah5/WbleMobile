@@ -32,9 +32,11 @@ class FriendFactory extends Factory
 
             // Create a unique key for this pair
             $pairKey = $user1->id . '-' . $user2->id;
+            $pairKey2 = $user2->id . '-' . $user1->id;
 
             // Check if we've used this pair before
             $isDuplicate = isset($usedPairs[$pairKey]);
+            $isDuplicate2 = isset($usedPairs[$pairKey2]);
 
             $attempts++;
 
@@ -42,7 +44,7 @@ class FriendFactory extends Factory
             if ($attempts > $maxAttempts) {
                 throw new \Exception("Unable to generate unique friendship pair after $maxAttempts attempts");
             }
-        } while ($isDuplicate);
+        } while ($isDuplicate || $isDuplicate2);
 
         // Mark this pair as used
         $usedPairs[$pairKey] = true;
