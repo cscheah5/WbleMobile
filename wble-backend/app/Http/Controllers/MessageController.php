@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class MessageController extends Controller
 {
@@ -40,6 +42,20 @@ class MessageController extends Controller
         $messageORM->receiver_id = $request->friendId;
         $messageORM->message = $request->message;
 
+        // sending notification to the receiver
+        $receiver = User::find($request->friendId);
+        if ($receiver && $receiver->fcm_token) {
+            $title = "New Messages";
+            $body = auth()->user()->username . " sent you a messsage.";
+
+            Http::withHeaders([
+                'X-Internal-Secret' => env('FLASK_INTERNAL_SECRET'),
+            ])->post(env('FLASK_SERVER_URL') . '/send-notification', [
+                'fcm_token' => $receiver->fcm_token,
+                'title' => $title,
+                'body' => $body,
+            ]);
+        }
 
         if ($messageORM->save())
             return response()->json(['message' => 'Message created successfully']);
