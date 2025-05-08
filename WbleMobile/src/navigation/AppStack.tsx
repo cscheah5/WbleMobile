@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import {
   View,
-  TouchableNativeFeedback,
   TouchableOpacity,
   Text,
   Image,
@@ -16,6 +15,7 @@ import {
 } from '@react-navigation/drawer';
 import {AuthContext} from '@/contexts/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import SettingsScreen from '@/screens/SettingsScreen';
 
 import AdminStack from './AdminStack';
 import LecturerTab from './LecturerTab';
@@ -95,6 +95,17 @@ const AppStack = () => {
             drawerLabel: 'Home',
             drawerIcon: ({color}) => (
               <Ionicons name="home-outline" size={22} color={color} />
+            ),
+          }}  
+        />
+        <Drawer.Screen 
+          name="Settings" 
+          component={SettingsScreen} 
+          options={{
+            headerShown: true,
+            drawerLabel: 'Settings',
+            drawerIcon: ({color}) => (
+              <Ionicons name="settings-outline" size={22} color={color} />
             ),
           }}  
         />
