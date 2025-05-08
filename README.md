@@ -24,7 +24,7 @@ pip install -r requirements.txt
    cp .env.example .env
 
 3. Find your JWT secret key in the WBLE backend Laravel `.env` file and add it to your Flask Socket `.env`:
-   ```
+   ```ini
    LARAVEL_JWT_SECRET=your-jwt-secret-key
    ```
    
