@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import {
   View,
-  TouchableNativeFeedback,
   TouchableOpacity,
   Text,
   Image,
@@ -15,7 +14,9 @@ import {
   createDrawerNavigator,
 } from '@react-navigation/drawer';
 import {AuthContext} from '@/contexts/AuthContext';
+import {SocketContext} from '@/contexts/SocketContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import SettingsScreen from '@/screens/SettingsScreen';
 
 import AdminStack from './AdminStack';
 import LecturerTab from './LecturerTab';
@@ -24,8 +25,9 @@ import NotificationManager from '@/components/NotificationManager';
 
 const Drawer = createDrawerNavigator();
 
-const CustomDrawerComponent = (props) => {
+const CustomDrawerComponent = props => {
   const {logout, userInfo} = useContext(AuthContext);
+  const {socket} = useContext(SocketContext);
 
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{flex: 1}}>
@@ -35,7 +37,9 @@ const CustomDrawerComponent = (props) => {
             style={styles.profileImage}
             source={require('@/assets/images/wble_banner.jpg')}
           />
-          <Text style={styles.profileName}>You are logged in as {userInfo.username}</Text>
+          <Text style={styles.profileName}>
+            You are logged in as {userInfo.username}
+          </Text>
           <Text>Role: {userInfo.role}</Text>
         </View>
 
@@ -52,7 +56,12 @@ const CustomDrawerComponent = (props) => {
 
         {/* Footer with logout button */}
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={() => {
+              socket.disconnect();
+              logout();
+            }}>
             <Ionicons name="exit-outline" size={22} color="#555" />
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
@@ -88,13 +97,24 @@ const AppStack = () => {
           headerShown: false,
         }}
         drawerContent={props => <CustomDrawerComponent {...props} />}>
-        <Drawer.Screen 
-          name="Home" 
-          component={RoleStack} 
+        <Drawer.Screen
+          name="Home"
+          component={RoleStack}
           options={{
             drawerLabel: 'Home',
             drawerIcon: ({color}) => (
               <Ionicons name="home-outline" size={22} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen 
+          name="Settings" 
+          component={SettingsScreen} 
+          options={{
+            headerShown: true,
+            drawerLabel: 'Settings',
+            drawerIcon: ({color}) => (
+              <Ionicons name="settings-outline" size={22} color={color} />
             ),
           }}  
         />
