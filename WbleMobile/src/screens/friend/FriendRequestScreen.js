@@ -1,81 +1,204 @@
-import {View, Text, TouchableNativeFeedback} from 'react-native';
+import {
+  View, 
+  Text, 
+  TouchableNativeFeedback, 
+  Alert, 
+  StyleSheet, 
+  ActivityIndicator, 
+  SafeAreaView
+} from 'react-native';
 import React, {useContext, useState, useCallback, useEffect} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
 import {AuthContext} from '@/contexts/AuthContext';
 import {SocketContext} from '@/contexts/SocketContext';
 import {useFocusEffect} from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-export default function FriendRequestScreen({route}) {
+export default function FriendRequestScreen({route, navigation}) {
   const {authAxios} = useContext(AuthContext);
   const {socket} = useContext(SocketContext);
   const [friendRequests, setFriendRequests] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  //TODO: try catch block for error handling
   const _loadFriendRequests = async () => {
-    console.log('Loading friend requests...');
-    const response = await authAxios.get('/friends/requests');
-    setFriendRequests(response.data);
-    // console.log('friendRequests', response.data);
+    try {
+      setLoading(true);
+      console.log('Loading friend requests...');
+      const response = await authAxios.get('/friends/requests');
+      setFriendRequests(response.data);
+    } catch (error) {
+      console.error('Error loading friend requests:', error);
+      Alert.alert('Error', 'Failed to load friend requests. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  //TODO: try catch block for error handling
   const _acceptFriendRequest = async friendId => {
-    console.log('Accepting friend request from user:', friendId);
-    const response = await authAxios.get(
-      `/friends/accept-friend-request/${friendId}`,
-    );
-    console.log(response.data);
-    _loadFriendRequests();
+    try {
+      console.log('Accepting friend request from user:', friendId);
+      const response = await authAxios.get(
+        `/friends/accept-friend-request/${friendId}`,
+      );
+      Alert.alert('Success', 'Friend request accepted');
+      _loadFriendRequests();
+      if (route.params?.friendRefresh) {
+        route.params.friendRefresh();
+      }
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+      Alert.alert('Error', 'Failed to accept friend request. Please try again.');
+    }
   };
 
-  //TODO: try catch block for error handling
   const _rejectFriendRequest = async friendId => {
-    const response = await authAxios(
-      `/friends/reject-friend-request/${friendId}`,
-    );
-    console.log(response.data);
-    _loadFriendRequests();
+    try {
+      const response = await authAxios.get(
+        `/friends/reject-friend-request/${friendId}`,
+      );
+      Alert.alert('Success', 'Friend request rejected');
+      _loadFriendRequests();
+    } catch (error) {
+      console.error('Error rejecting friend request:', error);
+      Alert.alert('Error', 'Failed to reject friend request. Please try again.');
+    }
   };
 
-  //runs code whenever the screen comes into focus, so your friends list will refresh every time you navigate back to this screen.
   useEffect(() => {
     _loadFriendRequests();
-  }, []);
-
-  // TODO: socket to be tested
-  useEffect(() => {
+    
     socket.on('receive_friend_request', friend => {
       setFriendRequests(prevState => {
         return [...prevState, friend];
       });
       _loadFriendRequests();
     });
+    
+    return () => {
+      socket.off('receive_friend_request');
+    };
   }, []);
 
   return (
-    <FlatList
-      data={friendRequests}
-      renderItem={({item}) => {
-        return (
-          <View
-            style={{padding: 10, borderBottomWidth: 1, borderColor: '#ccc'}}>
-            <Text style={{fontSize: 18}}>{item.username}</Text>
-            <TouchableNativeFeedback
-              onPress={() => {
-                _acceptFriendRequest(item.id);
-                // route.params.friendRefresh();
-              }}>
-              <Text style={{color: 'blue'}}>Accept</Text>
-            </TouchableNativeFeedback>
-            <TouchableNativeFeedback
-              onPress={() => {
-                _rejectFriendRequest(item.id);
-              }}>
-              <Text style={{color: 'red'}}>Reject</Text>
-            </TouchableNativeFeedback>
-          </View>
-        );
-      }}
-    />
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.header}>Friend Requests</Text>
+      
+      {loading ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color="#007bff" />
+        </View>
+      ) : friendRequests.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <Ionicons name="mail-outline" size={60} color="#ccc" />
+          <Text style={styles.emptyText}>No friend requests</Text>
+          <Text style={styles.emptySubText}>
+            Friend requests will appear here
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={friendRequests}
+          renderItem={({item}) => (
+            <View style={styles.requestItem}>
+              <View style={styles.userInfo}>
+                <Ionicons name="person-circle-outline" size={40} color="#007bff" />
+                <Text style={styles.username}>{item.username}</Text>
+              </View>
+              
+              <View style={styles.actionButtons}>
+                <TouchableNativeFeedback
+                  onPress={() => _acceptFriendRequest(item.id)}>
+                  <View style={[styles.actionButton, styles.acceptButton]}>
+                    <Ionicons name="checkmark-outline" size={18} color="white" />
+                    <Text style={styles.actionText}>Accept</Text>
+                  </View>
+                </TouchableNativeFeedback>
+                
+                <TouchableNativeFeedback
+                  onPress={() => _rejectFriendRequest(item.id)}>
+                  <View style={[styles.actionButton, styles.rejectButton]}>
+                    <Ionicons name="close-outline" size={18} color="white" />
+                    <Text style={styles.actionText}>Reject</Text>
+                  </View>
+                </TouchableNativeFeedback>
+              </View>
+            </View>
+          )}
+          keyExtractor={item => item.id.toString()}
+        />
+      )}
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 30,
+  },
+  requestItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  username: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 12,
+    color: '#333',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  acceptButton: {
+    backgroundColor: '#28a745',
+  },
+  rejectButton: {
+    backgroundColor: '#dc3545',
+  },
+  actionText: {
+    color: 'white',
+    fontWeight: '500',
+    marginLeft: 5,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#555',
+    marginTop: 15,
+    marginBottom: 8,
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: '#888',
+    textAlign: 'center',
+  },
+});
