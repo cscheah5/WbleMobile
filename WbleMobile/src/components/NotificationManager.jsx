@@ -5,6 +5,7 @@ import {
   getMessaging,
   getToken,
   requestPermission,
+  onMessage,
   isDeviceRegisteredForRemoteMessages,
 } from '@react-native-firebase/messaging';
 import {getApp} from '@react-native-firebase/app';
@@ -46,10 +47,19 @@ export default function NotificationManager() {
     console.log('FCM token updated = ', token);
   };
 
+  // Background handler (required for Android)
+  const onMessageReceived = async message => {
+    console.log('Message handled in the background!', message);
+    // You can perform additional work here if needed
+    return Promise.resolve();
+  };
+
   useEffect(() => {
     checkApplicationPermission();
     requestUserPermission();
     getFcmToken();
+
+    setBackgroundMessageHandler(messaging, onMessageReceived);
   }, []);
 
   return null;
