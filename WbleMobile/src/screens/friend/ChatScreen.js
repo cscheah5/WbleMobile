@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
-import React, {useEffect, useState, useContext, useRef} from 'react';
+import React, {useEffect, useState, useContext, useRef, useLayoutEffect} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
 import {SocketContext} from '@/contexts/SocketContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,6 +21,22 @@ export default function ChatScreen({route, navigation}) {
   const {authAxios, userInfo} = useContext(AuthContext);
   const {socket} = useContext(SocketContext);
   const scrollViewRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const parent = navigation.getParent();
+    parent?.setOptions({
+      tabBarStyle: { display: 'none' },
+    });
+
+    // Reset tab bar when leaving
+    return () => {
+      parent?.setOptions({
+        tabBarStyle: {
+          backgroundColor: '#ffffff',
+        },
+      });
+    };
+  }, [navigation]);
 
   const _loadMessages = async () => {
     console.log('Loading messages...');
@@ -65,7 +81,6 @@ export default function ChatScreen({route, navigation}) {
 
   const generateLaravelTimestamps = () => {
     const now = new Date();
-    console.log('Laravel date:', now); // Example: "2025-05-05T04:00:38.123Z"
     const iso = now.toISOString(); // Example: "2025-05-05T04:00:38.123Z"
     const base = iso.split('.')[0]; // "2025-05-05T04:00:38"
     return `${base}.000000Z`; // "2025-05-05T04:00:38.000000Z"
