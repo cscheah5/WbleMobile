@@ -62,9 +62,10 @@ const CustomDrawerComponent = (props) => {
   );
 };
 
-const AppDrawerNavigator = ({role}: any) => {
+const AppStack = () => {
+  const {userInfo} = useContext(AuthContext);
   let RoleStack;
-  switch (role) {
+  switch (userInfo.role) {
     case 'admin':
       RoleStack = AdminStack;
       break;
@@ -72,6 +73,8 @@ const AppDrawerNavigator = ({role}: any) => {
       RoleStack = LecturerStack;
       break;
     case 'student':
+      RoleStack = StudentTab;
+      break;
     default:
       RoleStack = StudentTab;
       break;
@@ -86,12 +89,6 @@ const AppDrawerNavigator = ({role}: any) => {
       <Drawer.Screen name="MainDrawer" component={RoleStack} />
     </Drawer.Navigator>
   );
-};
-
-const AppStack = () => {
-  const {userInfo} = useContext(AuthContext);
-
-  return <AppDrawerNavigator role={userInfo} />;
 };
 
 export default AppStack;
