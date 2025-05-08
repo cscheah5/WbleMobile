@@ -58,6 +58,7 @@ pip install -r requirements.txt
    Ensure the same secret is in Laravel’s `.env`:  
    ```ini
    FLASK_INTERNAL_SECRET=your-internal-flask-secret
+   FLASK_SERVER_URL=http://127.0.0.1:5000 #Use your own server url
    ```
    
 6. Start the backend server:
