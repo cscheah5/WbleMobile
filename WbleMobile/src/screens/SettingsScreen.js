@@ -1,3 +1,4 @@
+import { DrawerActions } from '@react-navigation/native';
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -16,13 +17,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const SettingsScreen = ({navigation}) => {
   // Default settings
   const defaultSettings = {
-    darkMode: false,
-    notifications: true,
-    fontSize: 'medium',
-    language: 'en',
-    vibration: true,
-    autoSync: true,
-    dataUsage: 'medium',
+    friendRequestNotifications: true,
+    chatNotifications: true,
   };
 
   const [settings, setSettings] = useState(defaultSettings);
@@ -40,14 +36,12 @@ const SettingsScreen = ({navigation}) => {
       const fileExists = await RNFS.exists(settingsPath);
 
       if (fileExists) {
-        console.log('Settings file exists, loading...');
         console.log('Settings file path:', settingsPath);
         const fileContents = await RNFS.readFile(settingsPath);
         const loadedSettings = JSON.parse(fileContents);
+        console.log('Loaded settings:', loadedSettings);
         setSettings(loadedSettings);
       } else {
-        console.log('Settings file does not exist, creating default...');
-        console.log('Default setting path:', settingsPath);
         // Create file with default settings if it doesn't exist
         await RNFS.writeFile(
           settingsPath,
@@ -76,14 +70,7 @@ const SettingsScreen = ({navigation}) => {
       await RNFS.writeFile(settingsPath, JSON.stringify(newSettings), 'utf8');
       // Show save indicator briefly
       setTimeout(() => setSaveIndicator(false), 800);
-
-      RNFS.readDir(RNFS.DocumentDirectoryPath).then(result => {
-        console.log('Files in document directory:', result);
-        console.log('Full path check:', settingsPath);
-        RNFS.exists(settingsPath).then(exists => {
-          console.log('File exists:', exists);
-        });
-      });
+      console.log('Settings saved:', newSettings);
     } catch (error) {
       console.error('Error saving settings:', error);
       Alert.alert(
@@ -130,8 +117,8 @@ const SettingsScreen = ({navigation}) => {
       headerLeft: () => (
         <TouchableOpacity
           style={styles.headerLeft}
-          onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#fff" />
+          onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+          <Icon name="menu" size={24} color="#fff" />
         </TouchableOpacity>
       ),
       headerRight: () =>
@@ -149,20 +136,10 @@ const SettingsScreen = ({navigation}) => {
     loadSettings();
   }, []);
 
-  const getLanguageName = code => {
-    const languages = {
-      en: 'English',
-      es: 'Español',
-      fr: 'Français',
-      de: 'Deutsch',
-    };
-    return languages[code] || code;
-  };
-
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#4a6da7" />
+        <ActivityIndicator size="large" color="#007bff" />
         <Text style={styles.loadingText}>Loading settings...</Text>
       </View>
     );
@@ -181,187 +158,62 @@ const SettingsScreen = ({navigation}) => {
               <Icon
                 name="brightness-6"
                 size={22}
-                color="#4a6da7"
+                color="#007bff"
                 style={styles.settingIcon}
               />
               <Text style={styles.settingText}>Dark Mode</Text>
             </View>
             <Switch
-              trackColor={{false: '#e0e0e0', true: '#a0b6d9'}}
-              thumbColor={settings.darkMode ? '#4a6da7' : '#f4f3f4'}
+              trackColor={{false: '#e0e0e0', true: '#80bdff'}}
+              thumbColor={settings.darkMode ? '#007bff' : '#f4f3f4'}
               ios_backgroundColor="#e0e0e0"
               value={settings.darkMode}
               onValueChange={value => handleSettingChange('darkMode', value)}
             />
-          </View>
-
-          {/* Font Size Setting */}
-          <View style={styles.settingItemColumn}>
-            <View style={styles.settingInfo}>
-              <Icon
-                name="format-size"
-                size={22}
-                color="#4a6da7"
-                style={styles.settingIcon}
-              />
-              <Text style={styles.settingText}>Font Size</Text>
-            </View>
-            <View style={styles.radioGroup}>
-              {['small', 'medium', 'large'].map(size => (
-                <TouchableOpacity
-                  key={size}
-                  style={[
-                    styles.radioButton,
-                    settings.fontSize === size && styles.radioButtonSelected,
-                  ]}
-                  onPress={() => handleSettingChange('fontSize', size)}>
-                  <Text
-                    style={[
-                      styles.radioButtonText,
-                      settings.fontSize === size &&
-                        styles.radioButtonSelectedText,
-                    ]}>
-                    {size.charAt(0).toUpperCase() + size.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
           </View>
         </View>
 
         <View style={styles.settingSection}>
           <Text style={styles.sectionHeader}>Notifications</Text>
 
-          {/* Notifications Setting */}
+          {/* Friend Request Notifications */}
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
               <Icon
-                name="notifications"
+                name="person-add"
                 size={22}
-                color="#4a6da7"
+                color="#007bff"
                 style={styles.settingIcon}
               />
-              <Text style={styles.settingText}>Enable Notifications</Text>
+              <Text style={styles.settingText}>Friend Request Notifications</Text>
             </View>
             <Switch
-              trackColor={{false: '#e0e0e0', true: '#a0b6d9'}}
-              thumbColor={settings.notifications ? '#4a6da7' : '#f4f3f4'}
+              trackColor={{false: '#e0e0e0', true: '#80bdff'}}
+              thumbColor={settings.friendRequestNotifications ? '#007bff' : '#f4f3f4'}
               ios_backgroundColor="#e0e0e0"
-              value={settings.notifications}
-              onValueChange={value =>
-                handleSettingChange('notifications', value)
-              }
+              value={settings.friendRequestNotifications}
+              onValueChange={value => handleSettingChange('friendRequestNotifications', value)}
             />
           </View>
 
-          {/* Vibration Setting */}
+          {/* Chat Notifications */}
           <View style={styles.settingItem}>
             <View style={styles.settingInfo}>
               <Icon
-                name="vibration"
+                name="chat"
                 size={22}
-                color="#4a6da7"
+                color="#007bff"
                 style={styles.settingIcon}
               />
-              <Text style={styles.settingText}>Vibration Feedback</Text>
+              <Text style={styles.settingText}>Chat Notifications</Text>
             </View>
             <Switch
-              trackColor={{false: '#e0e0e0', true: '#a0b6d9'}}
-              thumbColor={settings.vibration ? '#4a6da7' : '#f4f3f4'}
+              trackColor={{false: '#e0e0e0', true: '#80bdff'}}
+              thumbColor={settings.chatNotifications ? '#007bff' : '#f4f3f4'}
               ios_backgroundColor="#e0e0e0"
-              value={settings.vibration}
-              onValueChange={value => handleSettingChange('vibration', value)}
+              value={settings.chatNotifications}
+              onValueChange={value => handleSettingChange('chatNotifications', value)}
             />
-          </View>
-        </View>
-
-        <View style={styles.settingSection}>
-          <Text style={styles.sectionHeader}>General</Text>
-
-          {/* Auto Sync Setting */}
-          <View style={styles.settingItem}>
-            <View style={styles.settingInfo}>
-              <Icon
-                name="sync"
-                size={22}
-                color="#4a6da7"
-                style={styles.settingIcon}
-              />
-              <Text style={styles.settingText}>Auto Sync</Text>
-            </View>
-            <Switch
-              trackColor={{false: '#e0e0e0', true: '#a0b6d9'}}
-              thumbColor={settings.autoSync ? '#4a6da7' : '#f4f3f4'}
-              ios_backgroundColor="#e0e0e0"
-              value={settings.autoSync}
-              onValueChange={value => handleSettingChange('autoSync', value)}
-            />
-          </View>
-
-          {/* Language Setting */}
-          <View style={styles.settingItemColumn}>
-            <View style={styles.settingInfo}>
-              <Icon
-                name="language"
-                size={22}
-                color="#4a6da7"
-                style={styles.settingIcon}
-              />
-              <Text style={styles.settingText}>Language</Text>
-            </View>
-            <View style={styles.languageGrid}>
-              {['en', 'es', 'fr', 'de'].map(lang => (
-                <TouchableOpacity
-                  key={lang}
-                  style={[
-                    styles.languageButton,
-                    settings.language === lang && styles.languageButtonSelected,
-                  ]}
-                  onPress={() => handleSettingChange('language', lang)}>
-                  <Text
-                    style={[
-                      styles.languageButtonText,
-                      settings.language === lang &&
-                        styles.languageButtonSelectedText,
-                    ]}>
-                    {getLanguageName(lang)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          {/* Data Usage Setting */}
-          <View style={styles.settingItemColumn}>
-            <View style={styles.settingInfo}>
-              <Icon
-                name="data-usage"
-                size={22}
-                color="#4a6da7"
-                style={styles.settingIcon}
-              />
-              <Text style={styles.settingText}>Data Usage</Text>
-            </View>
-            <View style={styles.radioGroup}>
-              {['low', 'medium', 'high'].map(level => (
-                <TouchableOpacity
-                  key={level}
-                  style={[
-                    styles.radioButton,
-                    settings.dataUsage === level && styles.radioButtonSelected,
-                  ]}
-                  onPress={() => handleSettingChange('dataUsage', level)}>
-                  <Text
-                    style={[
-                      styles.radioButtonText,
-                      settings.dataUsage === level &&
-                        styles.radioButtonSelectedText,
-                    ]}>
-                    {level.charAt(0).toUpperCase() + level.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
           </View>
         </View>
 
@@ -386,7 +238,7 @@ const SettingsScreen = ({navigation}) => {
             <Icon
               name="storage"
               size={20}
-              color="#4a6da7"
+              color="#007bff"
               style={styles.buttonIcon}
             />
             <Text style={styles.storageButtonText}>
@@ -412,14 +264,14 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: '#4a6da7',
+    color: '#007bff',
     fontSize: 16,
   },
   scrollContent: {
     paddingVertical: 15,
   },
   header: {
-    backgroundColor: '#4a6da7',
+    backgroundColor: '#007bff',
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,
@@ -464,10 +316,10 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#4a6da7',
+    color: '#007bff',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: 'rgba(74, 109, 167, 0.05)',
+    backgroundColor: 'rgba(0, 123, 255, 0.05)',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
@@ -475,12 +327,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  settingItemColumn: {
     paddingVertical: 16,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
@@ -496,57 +342,6 @@ const styles = StyleSheet.create({
   settingText: {
     fontSize: 16,
     color: '#333',
-  },
-  radioGroup: {
-    flexDirection: 'row',
-    marginTop: 12,
-    justifyContent: 'flex-start',
-  },
-  radioButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#f5f5f7',
-  },
-  radioButtonSelected: {
-    backgroundColor: '#4a6da7',
-    borderColor: '#4a6da7',
-  },
-  radioButtonText: {
-    color: '#555',
-    fontSize: 14,
-  },
-  radioButtonSelectedText: {
-    color: '#fff',
-  },
-  languageGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 12,
-  },
-  languageButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    margin: 5,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#f5f5f7',
-    minWidth: '45%',
-    alignItems: 'center',
-  },
-  languageButtonSelected: {
-    backgroundColor: '#4a6da7',
-    borderColor: '#4a6da7',
-  },
-  languageButtonText: {
-    color: '#555',
-  },
-  languageButtonSelectedText: {
-    color: '#fff',
   },
   actionsContainer: {
     marginTop: 10,
@@ -578,7 +373,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     padding: 12,
     borderRadius: 10,
-    backgroundColor: 'rgba(74, 109, 167, 0.08)',
+    backgroundColor: 'rgba(0, 123, 255, 0.08)',
     flexDirection: 'row',
     alignItems: 'center',
   },
