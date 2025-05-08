@@ -8,7 +8,7 @@ import {
   Button,
   StyleSheet,
 } from 'react-native';
-import {createStackNavigator} from '@react-navigation/stack';
+
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -18,7 +18,7 @@ import {AuthContext} from '@/contexts/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import AdminStack from './AdminStack';
-import LecturerStack from './LecturerStack';
+import LecturerTab from './LecturerTab';
 import StudentTab from './StudentTab';
 import NotificationManager from '@/components/NotificationManager';
 
@@ -70,7 +70,7 @@ const AppStack = () => {
       RoleStack = AdminStack;
       break;
     case 'lecturer':
-      RoleStack = LecturerStack;
+      RoleStack = LecturerTab;
       break;
     case 'student':
       RoleStack = StudentTab;
