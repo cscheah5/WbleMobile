@@ -5,7 +5,7 @@ import {
   getMessaging,
   getToken,
   requestPermission,
-  onMessage,
+  setBackgroundMessageHandler,
   isDeviceRegisteredForRemoteMessages,
 } from '@react-native-firebase/messaging';
 import {getApp} from '@react-native-firebase/app';
