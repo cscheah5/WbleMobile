@@ -17,6 +17,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['student', 'lecturer', 'admin'])->default('student');
+            $table->string('profile_picture')->nullable();
             $table->string('fcm_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
