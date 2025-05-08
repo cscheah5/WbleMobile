@@ -107,7 +107,7 @@ class FriendController extends Controller
         $friend->status = 'pending';
         $friend->save();
 
-        //TODO: send notification the receiver
+        // sending notification to the receiver
         $receiver = User::find($friendId);
         if ($receiver && $receiver->fcm_token) {
             $title = "New Friend Request";
