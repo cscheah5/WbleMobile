@@ -8,7 +8,7 @@
 | Lecturer  | leemj    | 123456   |
 | Admin     | admin    | 123456   |
 
-## Install python dependencies
+## Install python dependencies (at root directory)
 ```bash
 pip install -r requirements.txt
 ```
