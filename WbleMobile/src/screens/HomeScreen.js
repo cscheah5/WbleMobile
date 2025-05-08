@@ -24,18 +24,6 @@ const HomeScreen = ({navigation}) => {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text style={{fontSize: 50}}>Home</Text>
-      {/* <View
-        style={{
-          borderColor: 'black',
-          borderWidth: 1,
-          padding: 10,
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}
-        onPress={() => navigation.navigate('Friend')}>
-        <Text>Friends</Text>
-        <Ionicons name="people-outline" size={25} color="black" />
-      </View> */}
       <FlatList
         data={subjectList}
         renderItem={({item}) => (

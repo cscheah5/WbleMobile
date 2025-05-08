@@ -21,13 +21,13 @@ const StudentTab = () => {
         tabBarInactiveTintColor: '#8e8e93',
       })}>
       <Tab.Screen
-        name="Subjects"
+        name="WBLE"
         component={SubjectStackNavigator}
         options={{
-          tabBarLabel: 'Home',
+          tabBarLabel: 'WBLE',
           tabBarIcon: ({color}) => (
             <MaterialCommunityIcons
-              name="home-outline"
+              name="school-outline"
               size={36}
               color={color}
             />
