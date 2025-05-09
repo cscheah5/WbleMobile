@@ -47,8 +47,7 @@ def handle_private_message(data):
 
 @socketio.on('send_friend_request')
 def handle_friend_request(data):
-    # user object
-    # {"created_at": "2025-05-06T14:21:51.000000Z", "email_verified_at": null, "id": 2, "requested": false, "role": "student", "updated_at": "2025-05-06T14:21:51.000000Z", "username": "user2"}
+
     username = data['friend']['username']
 
     print(f"Socket received friend request {data['friend']}")
@@ -66,7 +65,6 @@ def handle_disconnect():
             print(f"{username} disconnected")
             del connected_users[username]
             break
-
 
 
 if __name__ == '__main__':
