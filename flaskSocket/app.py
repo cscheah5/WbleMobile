@@ -90,7 +90,7 @@ def handle_friend_request(data):
 
         try:
             response = requests.post(target_url, json=payload, headers=headers)
-        except:
+        except Exception as e:
             print("notification sent failed:", e)
         
         emit("receive_friend_request", {
