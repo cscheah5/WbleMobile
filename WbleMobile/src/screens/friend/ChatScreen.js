@@ -71,6 +71,7 @@ export default function ChatScreen({route, navigation}) {
       senderName: userInfo.username,
       receiverId: friend.id,
       receiverName: friend.username,
+      receiverFCMToken: friend.fcm_token,
       message: message,
     });
     setMessagesHistory(prev => {

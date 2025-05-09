@@ -49,8 +49,8 @@ class MessageController extends Controller
             $body = auth()->user()->username . ": sent you a messsage.";
 
             Http::withHeaders([
-                'X-Internal-Secret' => env('FLASK_INTERNAL_SECRET'),
-            ])->post(env('FLASK_SERVER_URL') . '/send-notification', [
+                'X-Internal-Secret' => env('NOTIFICATION_INTERNAL_SECRET'),
+            ])->post(env('NOTIFICATION_SERVER_URL') . '/send-notification', [
                 'fcm_token' => $receiver->fcm_token,
                 'title' => $title,
                 'body' => $body,
