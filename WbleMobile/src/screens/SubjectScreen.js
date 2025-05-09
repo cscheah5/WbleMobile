@@ -210,14 +210,14 @@ export default function SubjectScreen({ route, navigation }) {
 
   
   const handleAddAnnouncement = (sectionId) => {
-    navigation.navigate('CreateAnnouncement', {
+    navigation.navigate('AnnouncementForm', {
       sectionId: sectionId,
       onAnnouncementCreated: loadAllWeeks
     });
   };
   
   const handleEditAnnouncement = (announcement) => {
-    navigation.navigate('EditAnnouncement', {
+    navigation.navigate('AnnouncementForm', {
       announcement: announcement,
       onAnnouncementUpdated: loadAllWeeks
     });
@@ -234,14 +234,14 @@ export default function SubjectScreen({ route, navigation }) {
   };
   
   const handleAddMaterial = (sectionId) => {
-    navigation.navigate('CreateMaterial', {
+    navigation.navigate('MaterialForm', {
       sectionId: sectionId,
       onMaterialCreated: loadAllWeeks
     });
   };
   
   const handleEditMaterial = (material) => {
-    navigation.navigate('EditMaterial', {
+    navigation.navigate('MaterialForm', {
       material: material,
       onMaterialUpdated: loadAllWeeks
     });
@@ -251,6 +251,7 @@ export default function SubjectScreen({ route, navigation }) {
     try {
       await authAxios.delete(`/materials/${materialId}`);
       loadAllWeeks();
+      Alert.alert("Success", "Material deleted successfully");
     } catch (error) {
       console.error("Error deleting material:", error);
       Alert.alert("Error", "Failed to delete material");

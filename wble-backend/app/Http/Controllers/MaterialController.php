@@ -14,8 +14,8 @@ class MaterialController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'section_id' => 'required|exists:sections,id',
-            'type' => 'required|in:lecture,tutorial,practical,others', // Validate against allowed types
+            'section_id' => 'required',
+            'type' => 'required|string|in:lecture,tutorial,practical,others',
             'file' => 'required|file|max:10240', // 10MB max
         ]);
         
@@ -30,7 +30,7 @@ class MaterialController extends Controller
         // Create database record
         $material = Material::create([
             'section_id' => $request->section_id,
-            'type' => $folderType, // Always use the normalized value
+            'type' => $folderType,
             'filename' => $filename,
             'filepath' => $path,
         ]);
@@ -42,19 +42,65 @@ class MaterialController extends Controller
     {
         $material = Material::findOrFail($id);
         
-        $request->validate([
-            'type' => 'required|string',
-            'title' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
+        // Log incoming request data for debugging
+        Log::info('Material update request:', [
+            'id' => $id,
+            'has_file' => $request->hasFile('file'),
+            'content_type' => $request->header('Content-Type'),
+            'fields' => $request->all()
         ]);
         
-        $material->update([
-            'type' => $request->type,
-            'title' => $request->title,
-            'description' => $request->description,
-        ]);
-        
-        return response()->json($material, 200);
+        try {
+            // Validate the request
+            $validatedData = $request->validate([
+                'type' => 'required|string|in:lecture,tutorial,practical,others',
+                'file' => 'nullable|file|max:10240', // 10MB max
+            ]);
+            
+            // Update the material type
+            $material->type = $validatedData['type'];
+            
+            // Handle file upload if provided
+            if ($request->hasFile('file')) {
+                // Log file info
+                Log::info('Processing file upload', [
+                    'original_name' => $request->file('file')->getClientOriginalName(),
+                    'size' => $request->file('file')->getSize(),
+                ]);
+                
+                // Delete the existing file if it exists
+                if ($material->filepath && Storage::disk('public')->exists($material->filepath)) {
+                    Storage::disk('public')->delete($material->filepath);
+                }
+                
+                // Get the file and store it
+                $file = $request->file('file');
+                $filename = $file->getClientOriginalName();
+                
+                // Store in the appropriate folder
+                $folderType = $material->type === 'other' ? 'others' : $material->type;
+                $path = $file->storeAs('materials/' . $folderType, $filename, 'public');
+                
+                // Update the material with new file info
+                $material->filename = $filename;
+                $material->filepath = $path;
+            }
+            
+            // Save the changes
+            $material->save();
+            
+            return response()->json($material, 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroy($id)
