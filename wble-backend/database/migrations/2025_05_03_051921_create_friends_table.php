@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id1')->constrained('users')->onDelete('cascade');
             $table->foreignId('user_id2')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+            $table->enum('status', ['pending', 'accepted'])->default('pending');
             $table->timestamps();
 
             // Add unique constraint to ensure user_id1 and user_id2 cannot repeat in any order

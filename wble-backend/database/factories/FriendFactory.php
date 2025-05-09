@@ -52,7 +52,7 @@ class FriendFactory extends Factory
         return [
             'user_id1' => $user1->id,
             'user_id2' => $user2->id,
-            'status' => $this->faker->randomElement(['pending', 'accepted', 'rejected']),
+            'status' => $this->faker->randomElement(['pending', 'accepted']),
         ];
     }
 }
