@@ -3,10 +3,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import HomeScreen from '@/screens/HomeScreen';
 import SubjectScreen from '@/screens/SubjectScreen';
-import CreateAnnouncementScreen from '@/screens/lecturerCRUD/CreateAnnouncementScreen';
-import EditAnnouncementScreen from '@/screens/lecturerCRUD/EditAnnouncementScreen';
-import CreateMaterialScreen from '@/screens/lecturerCRUD/CreateMaterialScreen';
-import EditMaterialScreen from '@/screens/lecturerCRUD/EditMaterialScreen';
+import AnnouncementFormScreen from '@/screens/lecturerCRUD/AnnouncementFormScreen';
+import MaterialFormScreen from '@/screens/lecturerCRUD/MaterialFormScreen';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {DrawerActions} from '@react-navigation/native';
@@ -33,10 +31,20 @@ const SubjectStackNavigator = () => {
         })}
       />
       <Stack.Screen name="Subject" component={SubjectScreen} />
-      <Stack.Screen name="CreateAnnouncement" component={CreateAnnouncementScreen} />
-      <Stack.Screen name="EditAnnouncement" component={EditAnnouncementScreen} />
-      <Stack.Screen name="CreateMaterial" component={CreateMaterialScreen} />
-      <Stack.Screen name="EditMaterial" component={EditMaterialScreen} />
+      <Stack.Screen 
+        name="AnnouncementForm" 
+        component={AnnouncementFormScreen} 
+        options={({route}) => ({
+          title: route.params.announcement ? "Edit Announcement" : "Create Announcement"
+        })}
+      />
+      <Stack.Screen 
+        name="MaterialForm" 
+        component={MaterialFormScreen} 
+        options={({route}) => ({
+          title: route.params.material ? "Edit Material" : "Upload Material"
+        })}
+      />
     </Stack.Navigator>
   );
 };
