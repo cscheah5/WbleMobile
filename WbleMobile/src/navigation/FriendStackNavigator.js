@@ -30,7 +30,11 @@ const FriendStack = () => {
           ),
         })}
       />
-      <Stack.Screen name="SearchUser" component={SearchUserScreen} />
+      <Stack.Screen name="SearchUser" component={SearchUserScreen} 
+        options={{
+          title: 'Add Friends',
+        }}
+      />
       <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
       <Stack.Screen name="Chat" component={ChatScreen} />
     </Stack.Navigator>
