@@ -13,12 +13,39 @@ const CreateSubjectScreen = ({navigation}) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const {authAxios} = useContext(AuthContext);
 
+  const toTitleCase = (str) => {
+    if (!str) return str; 
+    return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   const handleCreateSubject = async () => {
+    // Trim inputs
+    const trimmedName = toTitleCase(name.trim());
+    const trimmedCode = code.trim();
+
+    // Name validation
+    if (trimmedName.length < 5 || trimmedName.length > 50) {
+      Alert.alert(
+        'Validation Error',
+        'Subject name must be between 5 and 50 characters.',
+      );
+      return;
+    }
+
+    // Code format validation (4 uppercase letters + 4 digits)
+    const codeRegex = /^[A-Z]{4}[0-9]{4}$/;
+    if (!codeRegex.test(trimmedCode)) {
+      Alert.alert(
+        'Validation Error',
+        'Subject code must be 4 uppercase letters followed by 4 digits (e.g., MATH1001).',
+      );
+      return;
+    }
+
     try {
       const subjectResponse = await authAxios.post(`/subjects`, {
-        name,
-        code,
+        name: trimmedName,
+        code: trimmedCode,
         description,
       });
 
@@ -76,7 +103,10 @@ const CreateSubjectScreen = ({navigation}) => {
 
       <View style={styles.datePickerContainer}>
         <Text style={styles.label}>Start Date: {startDate.toDateString()}</Text>
-        <Button title="Pick Start Date" onPress={() => setShowDatePicker(true)} />
+        <Button
+          title="Pick Start Date"
+          onPress={() => setShowDatePicker(true)}
+        />
       </View>
 
       {showDatePicker && (
