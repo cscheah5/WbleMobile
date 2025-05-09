@@ -55,7 +55,7 @@ def handle_private_message(data):
         }
 
         try:
-            response = requests.post(NOTIFICATION_SERVER_URL + "/send-notification", json=payload, headers=headers)
+            response = requests.post(f"{NOTIFICATION_SERVER_URL}/send-notification", json=payload, headers=headers)
         except Exception as e:
             print("Notification send failed:", str(e))
 
@@ -72,7 +72,7 @@ def handle_friend_request(data):
     username = data['friend']['username']
 
     # --- POST request to another server ---
-    target_url = NOTIFICATION_SERVER_URL + "/send-notification"
+    target_url = f"{NOTIFICATION_SERVER_URL}/send-notification"
 
     print(f"Socket received friend request {data['friend']}")
     if username in connected_users:
