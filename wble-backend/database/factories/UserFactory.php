@@ -26,8 +26,10 @@ class UserFactory extends Factory
         $defaultProfilePic = '/images/default.jpg';
 
         return [
-            'username' => fake()->name(),
+            'username' => fake()->unique()->userName(),
             'password' =>  123456,
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
             'role' => fake()->randomElement(['student', 'lecturer', 'admin']),
             'profile_picture' => $defaultProfilePic,
         ];
