@@ -36,12 +36,6 @@ class SubjectController extends Controller
         // return response()->json(Subject::where('user_id', $id)->get());
     }
 
-    public function index()
-    {
-        $subjects = \App\Models\Subject::all();
-        return response()->json($subjects);
-    }
-
     //create new subject
     public function store(Request $request)
     {
