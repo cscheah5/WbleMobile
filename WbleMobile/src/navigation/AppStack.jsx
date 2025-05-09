@@ -18,7 +18,7 @@ import {SocketContext} from '@/contexts/SocketContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SettingsScreen from '@/screens/SettingsScreen';
 
-import AdminStack from './AdminStack';
+import AdminTab from './AdminTab';
 import LecturerTab from './LecturerTab';
 import StudentTab from './StudentTab';
 import NotificationManager from '@/components/NotificationManager';
@@ -77,7 +77,7 @@ const AppStack = () => {
   let RoleStack;
   switch (userInfo.role) {
     case 'admin':
-      RoleStack = AdminStack;
+      RoleStack = AdminTab;
       break;
     case 'lecturer':
       RoleStack = LecturerTab;
