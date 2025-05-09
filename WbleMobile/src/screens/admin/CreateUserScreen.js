@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import axios from 'axios';
 import config from '@/config/config.json';
 import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { AuthContext } from '@/contexts/AuthContext';
 
 const CreateUserScreen = () => {
   const [name, setName] = useState('');
   const [role, setRole] = useState('student');
   const [password, setPassword] = useState('');
   const [profile_picture, setProfilePicture] = useState(null);
+  const { authAxios } = useContext(AuthContext);
 
   const handleImagePick = () => {
     launchImageLibrary({ mediaType: 'photo', includeBase64: false }, (response) => {
@@ -39,7 +41,7 @@ const CreateUserScreen = () => {
         });
       }
 
-      await axios.post(`${config.laravelApiUrl}/auth/register`, formData, {
+      await authAxios.post(`/auth/register`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 

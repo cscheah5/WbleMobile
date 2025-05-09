@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {View, Text, TextInput, Button, Alert, StyleSheet} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import axios from 'axios';
@@ -11,12 +11,12 @@ const CreateSubjectScreen = ({navigation}) => {
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const {authAxios} = React.useContext(AuthContext);
+  const {authAxios} = useContext(AuthContext);
 
 
   const handleCreateSubject = async () => {
     try {
-      const subjectResponse = await axios.post(`${config.laravelApiUrl}/subjects`, {
+      const subjectResponse = await authAxios.post(`/subjects`, {
         name,
         code,
         description,
@@ -43,7 +43,7 @@ const CreateSubjectScreen = ({navigation}) => {
 
       // Send section creation requests
       for (const section of sections) {
-        await authAxios.post(`${config.laravelApiUrl}/sections`, section);
+        await authAxios.post(`/sections`, section);
       }
 
       Alert.alert('Success', 'Subject and sections created successfully.');

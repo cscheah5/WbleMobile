@@ -84,11 +84,19 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/materials/{id}', [MaterialController::class, 'destroy']);
     Route::get('/materials/download/{id}', [MaterialController::class, 'download']);
     Route::get('/download/materials/{id}', [MaterialController::class, 'publicDownload']);
+
+    //Subject routes
+    Route::get('/subjects', [SubjectController::class, 'index']);
+    Route::post('/subjects', [SubjectController::class, 'store']);
+    Route::post('/subjects/enrollStudent', [SubjectController::class, 'enrollStudent']);
+    Route::post('/subjects/assignLecturer', [SubjectController::class, 'assignLecturer']);
+
+    //User routes
+    Route::get('/users', [UserController::class, 'getByRole']);
 });
 
 Route::get('/public/materials/download/{id}', [MaterialController::class, 'publicDownload']);
-Route::post('/subjects', [SubjectController::class, 'store']);
-Route::get('/subjects', [SubjectController::class, 'index']);
-Route::get('/users', [UserController::class, 'getByRole']);
-Route::post('/subjects/enrollStudent', [SubjectController::class, 'enrollStudent']);
-Route::post('/subjects/assignLecturer', [SubjectController::class, 'assignLecturer']);
+
+
+
+

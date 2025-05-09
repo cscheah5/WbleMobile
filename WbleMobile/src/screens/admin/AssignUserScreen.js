@@ -1,16 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  Button,
-  Alert,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import React, { useEffect, useState, useContext } from 'react';
+import { View, Text, Button, Alert, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
 import config from '@/config/config.json';
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
+import { AuthContext } from '@/contexts/AuthContext';
 
 const AssignUserScreen = () => {
   const [subjects, setSubjects] = useState([]);
@@ -20,6 +13,7 @@ const AssignUserScreen = () => {
   const [selectedUser, setSelectedUser] = useState('');
   const [loading, setLoading] = useState(true);
   const [assigning, setAssigning] = useState(false);
+  const { authAxios } = useContext(AuthContext);
 
   useEffect(() => {
     fetchSubjects();
@@ -33,7 +27,7 @@ const AssignUserScreen = () => {
 
   const fetchSubjects = async () => {
     try {
-      const response = await axios.get(`${config.laravelApiUrl}/subjects`);
+      const response = await authAxios.get(`/subjects`);
       setSubjects(response.data);
     } catch (error) {
       Alert.alert('Error', 'Failed to load subjects');
@@ -45,7 +39,7 @@ const AssignUserScreen = () => {
     try {
       setLoading(true);
       setSelectedUser(''); // Reset user selection when type changes
-      const response = await axios.get(`${config.laravelApiUrl}/users?role=${role}`);
+      const response = await authAxios.get(`/users?role=${role}`);
       setUsers(response.data);
     } catch (error) {
       Alert.alert('Error', 'Failed to load users');
@@ -73,8 +67,8 @@ const AssignUserScreen = () => {
         user_id: selectedUser
       };
 
-      const response = await axios.post(
-        `${config.laravelApiUrl}${endpoint}`,
+      const response = await authAxios.post(
+        `${endpoint}`,
         payload
       );
 
