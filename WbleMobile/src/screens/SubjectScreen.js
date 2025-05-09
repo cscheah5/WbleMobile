@@ -18,17 +18,26 @@ export default function SubjectScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState({}); // Add this state variable
   
-  // Check role explicitly to ensure it's properly detected
-  const isLecturer = userInfo?.role === 'lecturer';
+  const [isLecturer, setIsLecturer] = useState(false);
+  const [userInfoReady, setUserInfoReady] = useState(false);
 
-  // Set initial view mode based on role
   useEffect(() => {
+    navigation.setOptions({
+      title: subjectName,
+      headerRight: undefined
+    });
+
+    if (userInfo) {
+      setIsLecturer(userInfo.role === 'lecturer');
+      setUserInfoReady(true);
+    }
+    
     if (!isLecturer && can('view:current_week')) {
       setViewMode('current');
     } else {
       setViewMode('all');
     }
-  }, [isLecturer, userInfo]);
+  }, [isLecturer, can, subjectName]);
 
   const loadCurrentWeek = async () => {
     setLoading(true);
@@ -72,23 +81,11 @@ export default function SubjectScreen({ route, navigation }) {
     }
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      title: subjectName,
-      headerRight: undefined
-    });
-    
-    // Initial data load
-    if (viewMode === 'current') {
-      loadCurrentWeek();
-    } else if (viewMode === 'all') {
-      loadAllWeeks();
-    } else if (viewMode === 'materials') {
-      loadAllMaterials();
-    }
-  }, []);
+
 
   useEffect(() => {
+    if (!userInfoReady) return;
+
     if (viewMode === 'current') {
       loadCurrentWeek();
     } else if (viewMode === 'all') {
@@ -96,7 +93,7 @@ export default function SubjectScreen({ route, navigation }) {
     } else if (viewMode === 'materials') {
       loadAllMaterials();
     }
-  }, [viewMode]);
+  }, [viewMode, userInfoReady]);
 
   const renderViewOptions = () => (
     <View style={styles.viewOptions}>
