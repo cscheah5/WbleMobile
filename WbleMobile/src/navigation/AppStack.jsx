@@ -22,6 +22,7 @@ import AdminStack from './AdminStack';
 import LecturerTab from './LecturerTab';
 import StudentTab from './StudentTab';
 import NotificationManager from '@/components/NotificationManager';
+import ProfileStack from './ProfileStack';
 
 const Drawer = createDrawerNavigator();
 
@@ -104,6 +105,16 @@ const AppStack = () => {
             drawerLabel: 'Home',
             drawerIcon: ({color}) => (
               <Ionicons name="home-outline" size={22} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="ProfileStack"
+          component={ProfileStack}
+          options={{
+            drawerLabel: 'My Profile',
+            drawerIcon: ({color, focused}) => (
+              <Ionicons name={focused ? "person-circle-outline" : "person-circle"} size={22} color={color} />
             ),
           }}
         />
