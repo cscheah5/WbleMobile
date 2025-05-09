@@ -23,7 +23,6 @@ const AdminTab = () => {
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: '#8e8e93',
       }}>
-      
       <Tab.Screen
         name="Subjects"
         component={SubjectStackNavigator}
@@ -38,7 +37,6 @@ const AdminTab = () => {
           ),
         }}
       />
-
       <Tab.Screen
         name="CreateSubjectTab"
         component={CreateSubjectStackNavigator}
@@ -53,7 +51,6 @@ const AdminTab = () => {
           ),
         }}
       />
-      
       <Tab.Screen
         name="CreateUserTab"
         component={CreateUserStackNavigator}
@@ -68,7 +65,6 @@ const AdminTab = () => {
           ),
         }}
       />
-
       <Tab.Screen
         name="AssignTab"
         component={AssignUserStackNavigator}
@@ -83,7 +79,6 @@ const AdminTab = () => {
           ),
         }}
       />
-
     </Tab.Navigator>
   );
 };

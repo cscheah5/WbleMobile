@@ -1,7 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import axios from 'axios';
-import config from '@/config/config.json';
 import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { AuthContext } from '@/contexts/AuthContext';
@@ -29,6 +27,27 @@ const CreateUserScreen = () => {
   };
 
   const handleCreateUser = async () => {
+    if (!username || !name || !email || !password) {
+      Alert.alert('Validation Error', 'All fields are required.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Validation Error', 'Please enter a valid email address.');
+      return;
+    }
+
+    if (username.length > 30) {
+      Alert.alert('Validation Error', 'Username must be leser than 30 characters.');
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert('Validation Error', 'Password must be at least 6 characters long.');
+      return;
+    }
+    
     try {
       const formData = new FormData();
       formData.append('username', username);
