@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import axios from 'axios';
 import config from '@/config/config.json';
 import { Picker } from '@react-native-picker/picker';
@@ -9,6 +9,8 @@ import { formStyles } from '@/styles/formStyles';
 
 const CreateUserScreen = () => {
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [role, setRole] = useState('student');
   const [password, setPassword] = useState('');
   const [profile_picture, setProfilePicture] = useState(null);
@@ -29,16 +31,19 @@ const CreateUserScreen = () => {
   const handleCreateUser = async () => {
     try {
       const formData = new FormData();
-      formData.append('username', name);
+      formData.append('username', username);
+      formData.append('name', name);
+      formData.append('email', email);
       formData.append('password', password);
       formData.append('role', role);
 
       if (profile_picture) {
         const { uri, type, fileName } = profile_picture;
+
         formData.append('profile_picture', {
           uri,
-          type,
-          name: fileName,
+          type: type || 'jpeg/png/jpg/gif/svg', 
+          name: fileName || 'profile',
         });
       }
 
@@ -48,6 +53,8 @@ const CreateUserScreen = () => {
 
       Alert.alert('Success', `${role} user created successfully.`);
       setName('');
+      setUsername('');
+      setEmail('');
       setPassword('');
       setRole('student');
       setProfilePicture(null);
@@ -58,13 +65,31 @@ const CreateUserScreen = () => {
   };
 
   return (
+    <ScrollView contentContainerStyle={formStyles.scrollContainer}>
     <View style={formStyles.container}>
+      <Text style={formStyles.label}>User Name:</Text>
+      <TextInput
+        style={formStyles.input}
+        placeholder="Enter username"
+        value={username}
+        onChangeText={setUsername}
+      />
+
       <Text style={formStyles.label}>Full Name:</Text>
       <TextInput
         style={formStyles.input}
         placeholder="Enter full name"
         value={name}
         onChangeText={setName}
+      />
+
+    <Text style={formStyles.label}>Email:</Text>
+      <TextInput
+        style={formStyles.input}
+        placeholder="Enter email"
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
       />
 
       <Text style={formStyles.label}>Password:</Text>
@@ -105,6 +130,7 @@ const CreateUserScreen = () => {
         </TouchableOpacity>
       </View>
     </View>
+    </ScrollView>
   );
 };
 
