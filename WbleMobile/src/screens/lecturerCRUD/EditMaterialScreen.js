@@ -11,6 +11,7 @@ import {
 import {Picker} from '@react-native-picker/picker';
 import {AuthContext} from '@/contexts/AuthContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { formStyles } from '@/styles/formStyles';
 
 export default function EditMaterialScreen({route, navigation}) {
   const {material, onMaterialUpdated} = route.params;
@@ -68,7 +69,7 @@ export default function EditMaterialScreen({route, navigation}) {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={formStyles.container}>
       <View style={styles.fileInfoBox}>
         <Ionicons name={getFileIcon(material.filename)} size={40} color="#007bff" />
         <View style={styles.fileDetails}>
@@ -77,29 +78,29 @@ export default function EditMaterialScreen({route, navigation}) {
         </View>
       </View>
 
-      <Text style={styles.label}>Material Type:</Text>
-      <View style={styles.pickerContainer}>
+      <Text style={formStyles.label}>Material Type:</Text>
+      <View style={formStyles.pickerContainer}>
         <Picker
           selectedValue={type}
           onValueChange={(itemValue) => setType(itemValue)}
-          style={styles.picker}>
+          style={formStyles.picker}>
           {materialTypes.map((item) => (
             <Picker.Item key={item.value} label={item.label} value={item.value} />
           ))}
         </Picker>
       </View>
 
-      <Text style={styles.label}>Title (Optional):</Text>
+      <Text style={formStyles.label}>Title (Optional):</Text>
       <TextInput
-        style={styles.input}
+        style={formStyles.input}
         value={title}
         onChangeText={setTitle}
         placeholder="Enter material title"
       />
 
-      <Text style={styles.label}>Description (Optional):</Text>
+      <Text style={formStyles.label}>Description (Optional):</Text>
       <TextInput
-        style={styles.textArea}
+        style={formStyles.textArea}
         value={description}
         onChangeText={setDescription}
         placeholder="Enter material description"
@@ -109,19 +110,15 @@ export default function EditMaterialScreen({route, navigation}) {
       />
 
       <TouchableOpacity 
-        style={styles.updateButton}
+        style={formStyles.primaryButton}
         onPress={handleUpdateMaterial}>
-        <Text style={styles.updateButtonText}>Update Material</Text>
+        <Text style={formStyles.primaryButtonText}>Update Material</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
   fileInfoBox: {
     flexDirection: 'row',
     backgroundColor: '#f0f8ff',
@@ -142,48 +139,5 @@ const styles = StyleSheet.create({
   fileType: {
     fontSize: 14,
     color: '#666',
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: 'bold',
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    marginBottom: 20,
-  },
-  picker: {
-    height: 50,
-    width: '100%',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 20,
-  },
-  textArea: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 20,
-    height: 100,
-  },
-  updateButton: {
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  updateButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
   },
 });

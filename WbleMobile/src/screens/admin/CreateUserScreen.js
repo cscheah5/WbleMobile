@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import config from '@/config/config.json';
 import { Picker } from '@react-native-picker/picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { AuthContext } from '@/contexts/AuthContext';
+import { formStyles } from '@/styles/formStyles';
 
 const CreateUserScreen = () => {
   const [name, setName] = useState('');
@@ -57,82 +58,54 @@ const CreateUserScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Full Name:</Text>
+    <View style={formStyles.container}>
+      <Text style={formStyles.label}>Full Name:</Text>
       <TextInput
-        style={styles.input}
+        style={formStyles.input}
         placeholder="Enter full name"
         value={name}
         onChangeText={setName}
       />
 
-      <Text style={styles.label}>Password:</Text>
+      <Text style={formStyles.label}>Password:</Text>
       <TextInput
-        style={styles.input}
+        style={formStyles.input}
         placeholder="Enter password"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
 
-      <Text style={styles.label}>Select Role:</Text>
-      <Picker
-        selectedValue={role}
-        style={styles.picker}
-        onValueChange={(itemValue) => setRole(itemValue)}
-      >
-        <Picker.Item label="Student" value="student" />
-        <Picker.Item label="Lecturer" value="lecturer" />
-        <Picker.Item label="Admin" value="admin" />
-      </Picker>
+      <Text style={formStyles.label}>Select Role:</Text>
+      <View style={formStyles.pickerContainer}>
+        <Picker
+          selectedValue={role}
+          style={formStyles.picker}
+          onValueChange={(itemValue) => setRole(itemValue)}
+        >
+          <Picker.Item label="Student" value="student" />
+          <Picker.Item label="Lecturer" value="lecturer" />
+          <Picker.Item label="Admin" value="admin" />
+        </Picker>
+      </View>
 
-      <View style={styles.buttonContainer}>
+      <View style={formStyles.buttonContainer}>
         <Button title="Pick Profile Picture" onPress={handleImagePick} />
       </View>
 
       {profile_picture && (
-        <Text style={styles.imageInfo}>📷 Selected: {profile_picture.fileName}</Text>
+        <Text style={formStyles.infoText}>📷 Selected: {profile_picture.fileName}</Text>
       )}
 
-      <View style={styles.buttonContainer}>
-        <Button title="Create User" onPress={handleCreateUser} />
+      <View style={formStyles.buttonContainer}>
+        <TouchableOpacity 
+          style={formStyles.successButton}
+          onPress={handleCreateUser}>
+          <Text style={formStyles.successButtonText}>Create User</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    gap: 10,
-    backgroundColor: '#fff',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  label: {
-    fontWeight: '600',
-    marginBottom: 5,
-    fontSize: 16,
-  },
-  picker: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  buttonContainer: {
-    marginVertical: 10,
-  },
-  imageInfo: {
-    marginBottom: 10,
-    fontStyle: 'italic',
-    color: '#444',
-  },
-});
 
 export default CreateUserScreen;

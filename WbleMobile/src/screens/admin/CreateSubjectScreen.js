@@ -1,7 +1,8 @@
 import React, {useState, useContext} from 'react';
-import {View, Text, TextInput, Button, Alert, StyleSheet} from 'react-native';
+import {View, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {AuthContext} from '@/contexts/AuthContext';
+import { formStyles } from '@/styles/formStyles';
 
 const CreateSubjectScreen = ({navigation}) => {
   const [name, setName] = useState('');
@@ -79,28 +80,28 @@ const CreateSubjectScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={formStyles.container}>
       <TextInput
-        style={styles.input}
+        style={formStyles.input}
         placeholder="Subject Name"
         value={name}
         onChangeText={setName}
       />
       <TextInput
-        style={styles.input}
+        style={formStyles.input}
         placeholder="Subject Code"
         value={code}
         onChangeText={setCode}
       />
       <TextInput
-        style={styles.input}
+        style={formStyles.input}
         placeholder="Description"
         value={description}
         onChangeText={setDescription}
       />
 
       <View style={styles.datePickerContainer}>
-        <Text style={styles.label}>Start Date: {startDate.toDateString()}</Text>
+        <Text style={formStyles.label}>Start Date: {startDate.toDateString()}</Text>
         <Button
           title="Pick Start Date"
           onPress={() => setShowDatePicker(true)}
@@ -121,43 +122,19 @@ const CreateSubjectScreen = ({navigation}) => {
         />
       )}
 
-      <Button title="Create Subject" onPress={handleCreateSubject} />
+      <TouchableOpacity 
+        style={formStyles.successButton}
+        onPress={handleCreateSubject}>
+        <Text style={formStyles.successButtonText}>Create Subject</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    gap: 10,
-    backgroundColor: '#fff',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 8,
+  datePickerContainer: {
     marginBottom: 15,
-  },
-  label: {
-    fontWeight: '600',
-    marginBottom: 5,
-    fontSize: 16,
-  },
-  picker: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  buttonContainer: {
-    marginVertical: 10,
-  },
-  imageInfo: {
-    marginBottom: 10,
-    fontStyle: 'italic',
-    color: '#444',
-  },
+  }
 });
 
 export default CreateSubjectScreen;

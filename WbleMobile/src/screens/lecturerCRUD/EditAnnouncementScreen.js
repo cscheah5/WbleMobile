@@ -1,6 +1,7 @@
 import React, {useState, useContext} from 'react';
 import {View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView} from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
+import { formStyles } from '@/styles/formStyles';
 
 export default function EditAnnouncementScreen({route, navigation}) {
   const {announcement, onAnnouncementUpdated} = route.params;
@@ -39,18 +40,18 @@ export default function EditAnnouncementScreen({route, navigation}) {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.label}>Title:</Text>
+    <ScrollView style={formStyles.container}>
+      <Text style={formStyles.label}>Title:</Text>
       <TextInput
-        style={styles.input}
+        style={formStyles.input}
         value={title}
         onChangeText={setTitle}
         placeholder="Enter announcement title"
       />
 
-      <Text style={styles.label}>Description:</Text>
+      <Text style={formStyles.label}>Description:</Text>
       <TextInput
-        style={styles.textArea}
+        style={formStyles.textArea}
         value={description}
         onChangeText={setDescription}
         placeholder="Enter announcement description"
@@ -60,49 +61,10 @@ export default function EditAnnouncementScreen({route, navigation}) {
       />
 
       <TouchableOpacity 
-        style={styles.updateButton}
+        style={formStyles.primaryButton}
         onPress={handleUpdateAnnouncement}>
-        <Text style={styles.updateButtonText}>Update Announcement</Text>
+        <Text style={formStyles.primaryButtonText}>Update Announcement</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: 'bold',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 20,
-  },
-  textArea: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 20,
-    height: 120,
-  },
-  updateButton: {
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  updateButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});

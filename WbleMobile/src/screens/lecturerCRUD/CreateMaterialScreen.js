@@ -12,6 +12,7 @@ import {Picker} from '@react-native-picker/picker';
 import {AuthContext} from '@/contexts/AuthContext';
 import DocumentPicker from 'react-native-document-picker';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { formStyles } from '@/styles/formStyles';
 
 export default function CreateMaterialScreen({route, navigation}) {
   const {sectionId, onMaterialCreated} = route.params;
@@ -91,82 +92,32 @@ export default function CreateMaterialScreen({route, navigation}) {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.label}>Material Type:</Text>
-      <View style={styles.pickerContainer}>
+    <ScrollView style={formStyles.container}>
+      <Text style={formStyles.label}>Material Type:</Text>
+      <View style={formStyles.pickerContainer}>
         <Picker
           selectedValue={type}
           onValueChange={(itemValue) => setType(itemValue)}
-          style={styles.picker}>
+          style={formStyles.picker}>
           {materialTypes.map((item) => (
             <Picker.Item key={item.value} label={item.label} value={item.value} />
           ))}
         </Picker>
       </View>
 
-      <Text style={styles.label}>File:</Text>
-      <TouchableOpacity style={styles.filePicker} onPress={pickDocument}>
+      <Text style={formStyles.label}>File:</Text>
+      <TouchableOpacity style={formStyles.filePicker} onPress={pickDocument}>
         <Ionicons name="document-attach-outline" size={24} color="#666" />
-        <Text style={styles.filePickerText}>
+        <Text style={formStyles.filePickerText}>
           {file ? file.name : 'Select a file'}
         </Text>
       </TouchableOpacity>
 
       <TouchableOpacity 
-        style={styles.uploadButton}
+        style={formStyles.successButton}
         onPress={handleUploadMaterial}>
-        <Text style={styles.uploadButtonText}>Upload Material</Text>
+        <Text style={formStyles.successButtonText}>Upload Material</Text>
       </TouchableOpacity>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 5,
-    fontWeight: 'bold',
-  },
-  pickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    marginBottom: 20,
-  },
-  picker: {
-    height: 50,
-    width: '100%',
-  },
-  filePicker: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderStyle: 'dashed',
-    borderRadius: 5,
-    padding: 20,
-    marginBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  filePickerText: {
-    marginLeft: 10,
-    color: '#666',
-  },
-  uploadButton: {
-    backgroundColor: '#28a745',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  uploadButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});

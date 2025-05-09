@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Button, Alert, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, Button, Alert, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import config from '@/config/config.json';
 import axios from 'axios';
 import { Picker } from '@react-native-picker/picker';
 import { AuthContext } from '@/contexts/AuthContext';
+import { formStyles } from '@/styles/formStyles';
 
 const AssignUserScreen = () => {
   const [subjects, setSubjects] = useState([]);
@@ -35,7 +36,7 @@ const AssignUserScreen = () => {
     }
   };
 
-  const fetchUsers = async (role: string) => {
+  const fetchUsers = async (role) => {
     try {
       setLoading(true);
       setSelectedUser(''); // Reset user selection when type changes
@@ -56,12 +57,12 @@ const AssignUserScreen = () => {
     }
 
     setAssigning(true);
-    
+
     try {
       const endpoint = userType === 'student'
         ? '/subjects/enrollStudent'
         : '/subjects/assignLecturer';
-      
+
       const payload = {
         subject_id: selectedSubject,
         user_id: selectedUser
@@ -73,7 +74,7 @@ const AssignUserScreen = () => {
       );
 
       Alert.alert('Success', response.data.message || `${userType} assigned successfully`);
-      
+
       // Reset selections after successful assignment
       setSelectedUser('');
       if (userType === 'student') {
@@ -89,88 +90,63 @@ const AssignUserScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Select Subject:</Text>
-      <Picker
-        selectedValue={selectedSubject}
-        onValueChange={value => setSelectedSubject(value)}
-        style={styles.picker}
-      >
-        <Picker.Item label="-- Select Subject --" value="" />
-        {subjects.map(subject => (
-          <Picker.Item key={subject.id} label={subject.name} value={subject.id} />
-        ))}
-      </Picker>
+    <ScrollView contentContainerStyle={formStyles.scrollContainer}>
+      <Text style={formStyles.label}>Select Subject:</Text>
+      <View style={formStyles.pickerContainer}>
+        <Picker
+          selectedValue={selectedSubject}
+          onValueChange={value => setSelectedSubject(value)}
+          style={formStyles.picker}
+        >
+          <Picker.Item label="-- Select Subject --" value="" />
+          {subjects.map(subject => (
+            <Picker.Item key={subject.id} label={subject.name} value={subject.id} />
+          ))}
+        </Picker>
+      </View>
 
-      <Text style={styles.label}>Select User Type:</Text>
-      <Picker
-        selectedValue={userType}
-        onValueChange={value => setUserType(value)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Student" value="student" />
-        <Picker.Item label="Lecturer" value="lecturer" />
-      </Picker>
+      <Text style={formStyles.label}>Select User Type:</Text>
+      <View style={formStyles.pickerContainer}>
+        <Picker
+          selectedValue={userType}
+          onValueChange={value => setUserType(value)}
+          style={formStyles.picker}
+        >
+          <Picker.Item label="Student" value="student" />
+          <Picker.Item label="Lecturer" value="lecturer" />
+        </Picker>
+      </View>
 
-      <Text style={styles.label}>Select {userType}:</Text>
+      <Text style={formStyles.label}>Select {userType}:</Text>
       {loading ? (
         <ActivityIndicator size="small" />
       ) : (
-        <Picker
-          selectedValue={selectedUser}
-          onValueChange={value => setSelectedUser(value)}
-          style={styles.picker}
-        >
-          <Picker.Item label={`-- Select ${userType} --`} value="" />
-          {users.map(user => (
-            <Picker.Item key={user.id} label={user.username} value={user.id} />
-          ))}
-        </Picker>
+        <View style={formStyles.pickerContainer}>
+          <Picker
+            selectedValue={selectedUser}
+            onValueChange={value => setSelectedUser(value)}
+            style={formStyles.picker}
+          >
+            <Picker.Item label={`-- Select ${userType} --`} value="" />
+            {users.map(user => (
+              <Picker.Item key={user.id} label={user.username} value={user.id} />
+            ))}
+          </Picker>
+        </View>
       )}
 
-      <View style={styles.buttonContainer}>
-        <Button 
-          title={assigning ? "Processing..." : "Assign"} 
+      <View style={formStyles.buttonContainer}>
+        <TouchableOpacity
+          style={formStyles.primaryButton}
           onPress={handleAssign}
-          disabled={assigning || !selectedSubject || !selectedUser}
-        />
+          disabled={assigning || !selectedSubject || !selectedUser}>
+          <Text style={formStyles.primaryButtonText}>
+            {assigning ? "Processing..." : "Assign User"}
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    gap: 10,
-    backgroundColor: '#fff',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  label: {
-    fontWeight: '600',
-    marginBottom: 5,
-    fontSize: 16,
-  },
-  picker: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  buttonContainer: {
-    marginVertical: 10,
-  },
-  imageInfo: {
-    marginBottom: 10,
-    fontStyle: 'italic',
-    color: '#444',
-  },
-});
 
 export default AssignUserScreen;
