@@ -43,7 +43,7 @@ export default function FriendRequestScreen({route, navigation}) {
       _loadFriendRequests();
       if (route.params?.friendRefresh) {
         route.params.friendRefresh();
-      }
+      } 
     } catch (error) {
       console.error('Error accepting friend request:', error);
       Alert.alert('Error', 'Failed to accept friend request. Please try again.');

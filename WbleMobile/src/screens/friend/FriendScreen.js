@@ -145,7 +145,7 @@ export default function FriendScreen({navigation}) {
         color="#007bff"
         overlayColor="rgba(0, 0, 0, 0.5)"
       />
-    </SafeAreaView>
+    </SafeAreaView> 
   );
 }
 
