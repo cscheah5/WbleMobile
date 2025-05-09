@@ -23,10 +23,13 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $defaultProfilePic = '/images/default.jpg';
+
         return [
             'username' => fake()->name(),
             'password' =>  123456,
             'role' => fake()->randomElement(['student', 'lecturer', 'admin']),
+            'profile_picture' => $defaultProfilePic,
         ];
     }
 

@@ -1,18 +1,26 @@
 import {
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
   ScrollView,
   StyleSheet,
   SafeAreaView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  Image,
 } from 'react-native';
-import React, {useEffect, useState, useContext, useRef, useLayoutEffect} from 'react';
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  useLayoutEffect,
+} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
 import {SocketContext} from '@/contexts/SocketContext';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import config from '@/config/config.json';
 
 export default function ChatScreen({route, navigation}) {
   const {friend} = route.params;
@@ -25,7 +33,7 @@ export default function ChatScreen({route, navigation}) {
   useLayoutEffect(() => {
     const parent = navigation.getParent();
     parent?.setOptions({
-      tabBarStyle: { display: 'none' },
+      tabBarStyle: {display: 'none'},
     });
 
     // Reset tab bar when leaving
@@ -119,7 +127,7 @@ export default function ChatScreen({route, navigation}) {
         ];
       });
     });
-    
+
     return () => {
       socket.off('private_message');
     };
@@ -134,7 +142,7 @@ export default function ChatScreen({route, navigation}) {
         backgroundColor: '#fff',
         elevation: 2, // Android shadow
         shadowOpacity: 0.1, // iOS shadow
-        shadowOffset: { height: 1, width: 0 },
+        shadowOffset: {height: 1, width: 0},
         shadowRadius: 3,
         borderBottomWidth: 1,
         borderBottomColor: '#f0f0f0',
@@ -143,14 +151,22 @@ export default function ChatScreen({route, navigation}) {
       headerTitleStyle: {
         fontWeight: '600',
         fontSize: 18,
-        color: '#000'
+        color: '#000',
       },
       // Add a custom header title component with online status
       headerTitle: () => (
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Ionicons name="person-circle-outline" size={24} color="#555" style={{marginRight: 8}} />
+          {/* <Ionicons name="person-circle-outline" size={24} color="#555" style={{marginRight: 8}} /> */}
+          <Image
+            style={{width: 40, height: 40, borderRadius: 20}}
+            source={{
+              uri: `${config.laravelServerUrl}${friend.profile_picture}`,
+            }}
+          />
           <View>
-            <Text style={{fontSize: 18, fontWeight: '600', color: '#000'}}>{friend.username}</Text>
+            <Text style={{fontSize: 18, fontWeight: '600', color: '#000'}}>
+              {friend.username}
+            </Text>
           </View>
         </View>
       ),
@@ -159,72 +175,81 @@ export default function ChatScreen({route, navigation}) {
     _loadMessages();
   }, [friend]);
 
-  const formatTime = (dateString) => {
+  const formatTime = dateString => {
     // Create a new date object from the timestamp string
     const date = new Date(dateString);
-    
+
     // Get hours and minutes in local timezone
     let hours = date.getHours();
     const minutes = date.getMinutes();
-    
+
     // Convert to 12-hour format with AM/PM
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12; // Convert 0 to 12
-    
+
     // Format with padding for minutes
     return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = dateString => {
     const date = new Date(dateString);
-    const options = { weekday: 'short', month: 'short', day: 'numeric' };
+    const options = {weekday: 'short', month: 'short', day: 'numeric'};
     return date.toLocaleDateString(undefined, options);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.container}>
-        
-        <ScrollView 
-          ref={scrollViewRef} 
+        <ScrollView
+          ref={scrollViewRef}
           style={styles.messagesContainer}
           contentContainerStyle={styles.messagesContent}>
-            
           {messagesHistory.map((msg, index) => {
             const isMyMessage = msg.sender_id === userInfo.id;
             const time = formatTime(msg.created_at);
-            const showDate = index === 0 || 
-              new Date(msg.created_at).toDateString() !== 
-              new Date(messagesHistory[index-1].created_at).toDateString();
-              
+            const showDate =
+              index === 0 ||
+              new Date(msg.created_at).toDateString() !==
+                new Date(messagesHistory[index - 1].created_at).toDateString();
+
             return (
               <React.Fragment key={index}>
                 {showDate && (
                   <View style={styles.dateContainer}>
-                    <Text style={styles.dateText}>{formatDate(msg.created_at)}</Text>
+                    <Text style={styles.dateText}>
+                      {formatDate(msg.created_at)}
+                    </Text>
                   </View>
                 )}
-                <View style={[
-                  styles.messageWrapper,
-                  isMyMessage ? styles.myMessageWrapper : styles.theirMessageWrapper
-                ]}>
-                  <View style={[
-                    styles.messageContainer,
-                    isMyMessage ? styles.myMessage : styles.theirMessage
+                <View
+                  style={[
+                    styles.messageWrapper,
+                    isMyMessage
+                      ? styles.myMessageWrapper
+                      : styles.theirMessageWrapper,
                   ]}>
-                    <Text style={[
-                      styles.messageText,
-                      isMyMessage ? styles.myMessageText : styles.theirMessageText
+                  <View
+                    style={[
+                      styles.messageContainer,
+                      isMyMessage ? styles.myMessage : styles.theirMessage,
                     ]}>
+                    <Text
+                      style={[
+                        styles.messageText,
+                        isMyMessage
+                          ? styles.myMessageText
+                          : styles.theirMessageText,
+                      ]}>
                       {msg.message}
                     </Text>
-                    <Text style={[
-                      styles.timeText,
-                      isMyMessage ? styles.myTimeText : styles.theirTimeText
-                    ]}>
+                    <Text
+                      style={[
+                        styles.timeText,
+                        isMyMessage ? styles.myTimeText : styles.theirTimeText,
+                      ]}>
                       {time}
                     </Text>
                   </View>
@@ -233,7 +258,7 @@ export default function ChatScreen({route, navigation}) {
             );
           })}
         </ScrollView>
-        
+
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -242,7 +267,7 @@ export default function ChatScreen({route, navigation}) {
             onChangeText={text => setMessage(text)}
             multiline
           />
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.sendButton}
             onPress={() => {
               if (message.trim()) {
@@ -357,5 +382,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
-  }
+  },
 });
