@@ -11,7 +11,6 @@ import React, {useContext, useState, useCallback, useEffect} from 'react';
 import {FlatList} from 'react-native-gesture-handler';
 import {AuthContext} from '@/contexts/AuthContext';
 import {SocketContext} from '@/contexts/SocketContext';
-import {useFocusEffect} from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function FriendRequestScreen({route, navigation}) {
