@@ -58,7 +58,7 @@ const AdminTab = () => {
         name="CreateUserTab"
         component={CreateUserStackNavigator}
         options={{
-          tabBarLabel: 'Create Subject',
+          tabBarLabel: 'Create User',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="face-man"
