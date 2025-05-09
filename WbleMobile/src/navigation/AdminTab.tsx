@@ -1,9 +1,7 @@
 import React from 'react';
 
-
 import SubjectStackNavigator from './SubjectStackNavigator';
 import CreateSubjectStackNavigator from './CreateSubjectStackNavigator';
-import CreateSubjectScreen from '@/screens/admin/CreateSubjectScreen';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
