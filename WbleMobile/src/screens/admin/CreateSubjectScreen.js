@@ -1,8 +1,6 @@
 import React, {useState, useContext} from 'react';
 import {View, Text, TextInput, Button, Alert, StyleSheet} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import axios from 'axios';
-import config from '@/config/config.json';
 import {AuthContext} from '@/contexts/AuthContext';
 
 const CreateSubjectScreen = ({navigation}) => {
