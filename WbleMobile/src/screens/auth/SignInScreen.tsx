@@ -3,7 +3,7 @@ import {
   SafeAreaView,
   View,
   Text,
-  Pressable,
+  KeyboardAvoidingView,
   StyleSheet,
   Image,
   Alert,
@@ -11,6 +11,7 @@ import {
 import {AuthContext} from '@/contexts/AuthContext';
 import {InputWithLabel} from '@/components/InputWithLabel';
 import {AppButton} from '@/components/AppButton';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const SignInScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -35,33 +36,37 @@ const SignInScreen = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}>Login</Text>
-        <Image
-          source={require('@/assets/images/logo.png')}
-          style={styles.logo}
-        />
-      </View>
+      <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
+        <ScrollView>
+          <View style={styles.headerContainer}>
+            <Text style={styles.title}>Login</Text>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={styles.logo}
+            />
+          </View>
 
-      <View style={styles.formContainer}>
-        <InputWithLabel
-          label="Username"
-          placeholder="Enter your username"
-          value={username}
-          onChangeText={setUsername}
-          autoCapitalize="none"
-        />
+          <View style={styles.formContainer}>
+            <InputWithLabel
+              label="Username"
+              placeholder="Enter your username"
+              value={username}
+              onChangeText={setUsername}
+              autoCapitalize="none"
+            />
 
-        <InputWithLabel
-          label="Password"
-          placeholder="Enter your password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+            <InputWithLabel
+              label="Password"
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-        <AppButton title="Log in" onPress={handleLogin} />
-      </View>
+            <AppButton title="Log in" onPress={handleLogin} />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
