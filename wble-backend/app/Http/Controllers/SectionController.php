@@ -106,26 +106,4 @@ class SectionController extends Controller
         return response()->json($section, 201);
     }
 
-    public function update(Request $request, $id)
-    {
-        $section = Section::findOrFail($id);
-        
-        $request->validate([
-            'week_number' => 'required|integer',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
-        
-        $section->update($request->all());
-        
-        return response()->json($section, 200);
-    }
-
-    public function destroy($id)
-    {
-        $section = Section::findOrFail($id);
-        $section->delete();
-        
-        return response()->json(['message' => 'Section deleted successfully'], 200);
-    }
 }
