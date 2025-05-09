@@ -76,7 +76,7 @@ export const downloadFile = async (material, setDownloadingState = null) => {
     }
 
     if (response.statusCode === 200) {
-      Alert.alert('Success', 'File downloaded successfully.');
+      Alert.alert('Success', 'File downloaded successfully. The file can be found in YourDevice/Android/data/com.wblemobile');
       return true;
     } else {
       Alert.alert('Download Failed', `Error code: ${response.statusCode}`);
