@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#007bff',
+    color: '#000',
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: 'rgba(0, 123, 255, 0.05)',

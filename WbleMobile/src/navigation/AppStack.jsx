@@ -103,8 +103,8 @@ const AppStack = () => {
           component={RoleStack}
           options={{
             drawerLabel: 'Home',
-            drawerIcon: ({color}) => (
-              <Ionicons name="home-outline" size={22} color={color} />
+            drawerIcon: ({color, focused}) => (
+              <Ionicons name={focused ? "home" : "home-outline" } size={22} color={color} />
             ),
           }}
         />
@@ -114,7 +114,7 @@ const AppStack = () => {
           options={{
             drawerLabel: 'My Profile',
             drawerIcon: ({color, focused}) => (
-              <Ionicons name={focused ? "person-circle-outline" : "person-circle"} size={22} color={color} />
+              <Ionicons name={focused ? "person-circle" : "person-circle-outline"} size={22} color={color} />
             ),
           }}
         />
@@ -124,8 +124,8 @@ const AppStack = () => {
           options={{
             headerShown: true,
             drawerLabel: 'Settings',
-            drawerIcon: ({color}) => (
-              <Ionicons name="settings-outline" size={22} color={color} />
+            drawerIcon: ({color, focused}) => (
+              <Ionicons name={focused ? "settings" :"settings-outline"} size={22} color={color} />
             ),
           }}  
         />
