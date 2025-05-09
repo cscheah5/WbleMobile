@@ -14,7 +14,7 @@ const AssignUserScreen = () => {
   const [selectedUser, setSelectedUser] = useState('');
   const [loading, setLoading] = useState(true);
   const [assigning, setAssigning] = useState(false);
-  const { authAxios } = useContext(AuthContext);
+  const { authAxios, userInfo } = useContext(AuthContext);
 
   useEffect(() => {
     fetchSubjects();
@@ -28,7 +28,7 @@ const AssignUserScreen = () => {
 
   const fetchSubjects = async () => {
     try {
-      const response = await authAxios.get(`/subjects`);
+      const response = await authAxios.get(`/subjects/${userInfo.id}`);
       setSubjects(response.data);
     } catch (error) {
       Alert.alert('Error', 'Failed to load subjects');
