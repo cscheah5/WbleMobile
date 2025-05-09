@@ -18,7 +18,7 @@ import config from '@/config/config.json';
 
 const actions = [
   {
-    text: 'Search User',
+    text: 'Add Friends',
     icon: <Ionicons name="search-circle-outline" size={24} color="#fff" />,
     name: 'bt_search_user',
     position: 1,
@@ -44,11 +44,6 @@ export default function FriendScreen({navigation}) {
       console.log('Loading friends...');
       const response = await authAxios.get('/friends/');
       setAcceptedFriends(response.data);
-      console.log(
-        'Friends response:',
-        config.laravelApiUrl,
-        response.data[0].profile_picture,
-      ); // 👈 LOG HERE
     } catch (error) {
       console.error('Error loading friends:', error);
       Alert.alert('Error', 'Failed to load friends. Please try again.');
