@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import {View, Text, TextInput, TouchableOpacity, Alert, ScrollView} from 'react-native';
+import {Text, TextInput, TouchableOpacity, Alert, ScrollView} from 'react-native';
 import {AuthContext} from '@/contexts/AuthContext';
 import { formStyles } from '@/styles/formStyles';
 

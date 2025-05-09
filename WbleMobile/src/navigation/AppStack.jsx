@@ -19,8 +19,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import SettingsScreen from '@/screens/SettingsScreen';
 
 import AdminTab from './AdminTab';
-import LecturerTab from './LecturerTab';
-import StudentTab from './StudentTab';
+import StudentLecturerTab from './StudentLecturerTab';
 import NotificationManager from '@/components/NotificationManager';
 import ProfileStack from './ProfileStack';
 
@@ -80,13 +79,13 @@ const AppStack = () => {
       RoleStack = AdminTab;
       break;
     case 'lecturer':
-      RoleStack = LecturerTab;
+      RoleStack = StudentLecturerTab;
       break;
     case 'student':
-      RoleStack = StudentTab;
+      RoleStack = StudentLecturerTab;
       break;
     default:
-      RoleStack = StudentTab;
+      RoleStack = StudentLecturerTab;
       break;
   }
 

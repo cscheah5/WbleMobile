@@ -9,7 +9,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator();
 
-const LecturerTab = () => {
+const StudentLecturerTab = () => {
   return (
     <Tab.Navigator
       screenOptions={({navigation}) => ({
@@ -52,4 +52,4 @@ const LecturerTab = () => {
   );
 };
 
-export default LecturerTab;
+export default StudentLecturerTab;
