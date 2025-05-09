@@ -83,7 +83,9 @@ class AuthController extends ApiController
             return $this->errorResponse('Invalid token', 400);
         }
 
-        return $this->successResponse(compact('user'));
+        return $this->successResponse([
+            'user' => $user->makeHidden(['fcm_token'])
+        ]);
     }
 
     // User logout
