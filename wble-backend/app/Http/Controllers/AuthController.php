@@ -26,6 +26,8 @@ class AuthController extends ApiController
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:30|unique:users',
             'password' => 'required|string|min:6',
+            'email' => 'required|string|email|max:255',
+            'name' => 'required|string|max:255',
             'role' => 'required|string|in:student,lecturer,admin',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -43,6 +45,8 @@ class AuthController extends ApiController
         $user = User::create([
             'username' => $request->get('username'),
             'password' => Hash::make($request->get('password')),
+            'email' => $request->get('email'),
+            'name' => $request->get('name'),
             'role' => $request->get('role'),
             'profile_picture' => $path,
         ]);
@@ -83,7 +87,9 @@ class AuthController extends ApiController
             return $this->errorResponse('Invalid token', 400);
         }
 
-        return $this->successResponse(compact('user'));
+        return $this->successResponse([
+            'user' => $user->makeHidden(['fcm_token'])
+        ]);
     }
 
     // User logout

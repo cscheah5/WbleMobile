@@ -118,7 +118,7 @@ const SettingsScreen = ({navigation}) => {
         <TouchableOpacity
           style={styles.headerLeft}
           onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
-          <Icon name="menu" size={24} color="#fff" />
+          <Icon name="menu" size={24} color="#000" />
         </TouchableOpacity>
       ),
       headerRight: () =>
@@ -264,20 +264,20 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 10,
-    color: '#007bff',
+    color: '#fff',
     fontSize: 16,
   },
   scrollContent: {
     paddingVertical: 15,
   },
   header: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#fff',
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,
   },
   headerTitle: {
-    color: '#fff',
+    color: '#000',
     fontSize: 18,
     fontWeight: '600',
   },
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   saveText: {
-    color: '#fff',
+    color: '#000',
     marginLeft: 5,
     fontSize: 12,
   },
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#007bff',
+    color: '#000',
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: 'rgba(0, 123, 255, 0.05)',
