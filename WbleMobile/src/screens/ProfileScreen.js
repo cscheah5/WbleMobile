@@ -42,7 +42,7 @@ const ProfileScreen = ({ navigation }) => {
 
   const getImageUrl = () => {
     if (user?.profile_picture) {
-      return `${config.laravelServerUrl}${user.profile_picture}`;
+      return `${config.laravelServerUrl}/${user.profile_picture}`;
     }
   };
 
