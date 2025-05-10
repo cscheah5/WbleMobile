@@ -26,9 +26,9 @@ const AdminTab = () => {
         component={SubjectStackNavigator}
         options={{
           tabBarLabel: 'Subjects',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({focused, color }) => (
             <MaterialCommunityIcons
-              name="home-outline"
+              name={focused ? "home" : "home-outline"}
               size={36}
               color={color}
             />
@@ -40,9 +40,9 @@ const AdminTab = () => {
         component={CreateSubjectStackNavigator}
         options={{
           tabBarLabel: 'Create Subject',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
-              name="file-document-outline"
+              name={focused ? "file-document" : "file-document-outline"}
               size={36}
               color={color}
             />
@@ -54,9 +54,9 @@ const AdminTab = () => {
         component={CreateUserStackNavigator}
         options={{
           tabBarLabel: 'Create User',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
-              name="face-man"
+              name={focused? "face-man" : "face-man-outline"}
               size={36}
               color={color}
             />
@@ -68,9 +68,9 @@ const AdminTab = () => {
         component={AssignUserStackNavigator}
         options={{
           tabBarLabel: 'Assign',
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <MaterialCommunityIcons
-              name="plus-box-outline"
+              name={focused ? "plus-box" : "plus-box-outline"}
               size={36}
               color={color}
             />
