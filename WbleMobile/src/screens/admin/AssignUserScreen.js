@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Button, Alert, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
-import config from '@/config/config.json';
-import axios from 'axios';
+import { View, Text, Alert, ActivityIndicator, ScrollView, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { AuthContext } from '@/contexts/AuthContext';
 import { formStyles } from '@/styles/formStyles';

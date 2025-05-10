@@ -156,7 +156,6 @@ export default function ChatScreen({route, navigation}) {
       // Add a custom header title component with online status
       headerTitle: () => (
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {/* <Ionicons name="person-circle-outline" size={24} color="#555" style={{marginRight: 8}} /> */}
           <Image
             style={{width: 40, height: 40, borderRadius: 20}}
             source={{
