@@ -82,8 +82,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/materials/upload', [MaterialController::class, 'upload']);
     Route::put('/materials/{id}', [MaterialController::class, 'update']);
     Route::delete('/materials/{id}', [MaterialController::class, 'destroy']);
-    Route::get('/materials/download/{id}', [MaterialController::class, 'download']);
-    Route::get('/download/materials/{id}', [MaterialController::class, 'publicDownload']);
 
     //Subject routes
     Route::get('/subjects', [SubjectController::class, 'index']);

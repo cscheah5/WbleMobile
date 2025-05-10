@@ -117,22 +117,6 @@ class MaterialController extends Controller
         return response()->json(['message' => 'Material deleted successfully'], 200);
     }
 
-    public function download($id)
-    {
-        $material = Material::findOrFail($id);
-        
-        if (!Storage::disk('public')->exists($material->filepath)) {
-            return response()->json(['error' => 'File not found'], 404);
-        }
-        
-        $path = storage_path('app/public/' . $material->filepath);
-        
-        // Log for debugging
-        Log::info('Downloading file: ' . $path);
-        
-        return response()->download($path, $material->filename);
-    }
-
     public function publicDownload($id)
     {
         // Set unlimited execution time for large downloads
