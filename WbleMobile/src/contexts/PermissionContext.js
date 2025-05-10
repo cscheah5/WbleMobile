@@ -11,10 +11,6 @@ export const PermissionProvider = ({ children }) => {
     
     const permissions = {
       'lecturer': {
-        // Remove section management permissions
-        'create:section': false,
-        'edit:section': false,
-        'delete:section': false,
         // Keep other lecturer permissions
         'create:announcement': true,
         'edit:announcement': true,

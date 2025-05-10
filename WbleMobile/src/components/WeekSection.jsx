@@ -32,10 +32,11 @@ export default function WeekSection({
         <Text style={styles.itemDate}>Posted: {formatDate(announcement.created_at)}</Text>
       </View>
       
-      {/* Show edit/delete buttons only if functions are provided */}
-      {(onEditAnnouncement || onDeleteAnnouncement) && (
+      {/* Show action buttons container if user has any relevant permission */}
+      {(can('edit:announcement') && can('delete:announcement')) && (
         <View style={styles.actionButtons}>
-          {onEditAnnouncement && (
+          {/* Only show edit button if user has permission AND handler exists */}
+          {can('edit:announcement') && onEditAnnouncement && (
             <TouchableOpacity 
               style={[styles.actionButton, styles.editButton]}
               onPress={() => onEditAnnouncement(announcement)}>
@@ -43,7 +44,8 @@ export default function WeekSection({
             </TouchableOpacity>
           )}
           
-          {onDeleteAnnouncement && (
+          {/* Only show delete button if user has permission AND handler exists */}
+          {can('delete:announcement') && onDeleteAnnouncement && (
             <TouchableOpacity 
               style={[styles.actionButton, styles.deleteButton]}
               onPress={() => onDeleteAnnouncement(announcement.id)}>
@@ -69,20 +71,22 @@ export default function WeekSection({
       </View>
       
       <View style={styles.actionButtons}>
-        {/* Always show download button */}
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.downloadButton, downloading[material.id] && styles.downloadingButton]}
-          onPress={() => downloadFile(material, setDownloading)}
-          disabled={downloading[material.id]}>
-          <Ionicons 
-            name={downloading[material.id] ? "cloud-download-outline" : "cloud-download"} 
-            size={22} 
-            color="white" 
-          />
-        </TouchableOpacity>
+        {/* Always show download button if user has permission */}
+        {can('download:material') && (
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.downloadButton, downloading[material.id] && styles.downloadingButton]}
+            onPress={() => downloadFile(material, setDownloading)}
+            disabled={downloading[material.id]}>
+            <Ionicons 
+              name={downloading[material.id] ? "cloud-download-outline" : "cloud-download"} 
+              size={22} 
+              color="white" 
+            />
+          </TouchableOpacity>
+        )}
         
-        {/* Only show edit/delete if handlers provided */}
-        {onEditMaterial && (
+        {/* Only show edit button if user has permission AND handler exists */}
+        {can('edit:material') && onEditMaterial && (
           <TouchableOpacity 
             style={[styles.actionButton, styles.editButton]}
             onPress={() => onEditMaterial(material)}>
@@ -90,7 +94,8 @@ export default function WeekSection({
           </TouchableOpacity>
         )}
         
-        {onDeleteMaterial && (
+        {/* Only show delete button if user has permission AND handler exists */}
+        {can('delete:material') && onDeleteMaterial && (
           <TouchableOpacity 
             style={[styles.actionButton, styles.deleteButton]}
             onPress={() => onDeleteMaterial(material.id)}>
@@ -113,8 +118,8 @@ export default function WeekSection({
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Announcements</Text>
         
-        {/* Add announcement button */}
-        {onAddAnnouncement && (
+        {/* Add announcement button - check permission first */}
+        {can('create:announcement') && onAddAnnouncement && (
           <TouchableOpacity 
             style={styles.addItemButton}
             onPress={onAddAnnouncement}>
@@ -141,8 +146,8 @@ export default function WeekSection({
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Materials</Text>
         
-        {/* Add material button */}
-        {onAddMaterial && (
+        {/* Add material button - check permission first */}
+        {can('create:material') && onAddMaterial && (
           <TouchableOpacity 
             style={styles.addItemButton}
             onPress={onAddMaterial}>
