@@ -135,18 +135,37 @@ class MaterialController extends Controller
 
     public function publicDownload($id)
     {
+        // Set unlimited execution time for large downloads
+        set_time_limit(0);
+        
+        // Increase memory limit for this request
+        ini_set('memory_limit', '256M');
+        
         $material = Material::findOrFail($id);
         
+        // Stream file instead of loading it all into memory
         if (!Storage::disk('public')->exists($material->filepath)) {
             return response()->json(['error' => 'File not found'], 404);
         }
         
         $path = storage_path('app/public/' . $material->filepath);
         
-        // Log for debugging
-        Log::info('Public downloading file: ' . $path);
-        
-        // Disable CSRF for this download
-        return response()->download($path, $material->filename);
+        // Use streaming response for large files
+        return response()->stream(
+            function() use ($path) {
+                $file = fopen($path, 'rb');
+                while (!feof($file)) {
+                    echo fread($file, 8192); // Send in 8KB chunks
+                    flush();
+                }
+                fclose($file);
+            },
+            200,
+            [
+                'Content-Type' => mime_content_type($path),
+                'Content-Length' => filesize($path),
+                'Content-Disposition' => 'attachment; filename="' . $material->filename . '"',
+            ]
+        );
     }
 }

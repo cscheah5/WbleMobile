@@ -29,6 +29,8 @@ export const requestStoragePermission = async () => {
  * @returns {Promise<void>}
  */
 export const downloadFile = async (material, setDownloadingState = null) => {
+  let downloadPath = '';
+  
   try {
     // Update downloading state if provided
     if (setDownloadingState) {
@@ -43,7 +45,6 @@ export const downloadFile = async (material, setDownloadingState = null) => {
     console.log('Downloading from URL:', url);
 
     // Determine the download path
-    let downloadPath;
     if (Platform.OS === 'android' && Platform.Version >= 29) {
       downloadPath = `${RNFS.ExternalDirectoryPath}/${uniqueFilename}`;
     } else {
@@ -62,8 +63,8 @@ export const downloadFile = async (material, setDownloadingState = null) => {
       background: true,
       discretionary: true,
       progressDivider: 20,
-      connectionTimeout: 15000, // 15 seconds connection timeout
-      readTimeout: 30000, // 30 seconds read timeout
+      connectionTimeout: 150000, // 150 seconds connection timeout
+      readTimeout: 300000, // 300 seconds read timeout
       cacheable: false, // Don't use cache
       progressInterval: 1000, // Update progress every second
     }).promise;
@@ -75,9 +76,21 @@ export const downloadFile = async (material, setDownloadingState = null) => {
       setDownloadingState(prev => ({...prev, [material.id]: false}));
     }
 
-    if (response.statusCode === 200) {
-      Alert.alert('Success', 'File downloaded successfully. The file can be found in YourDevice/Android/data/com.wblemobile');
-      return true;
+    // Verify file exists before showing success
+    const fileExists = await RNFS.exists(downloadPath);
+    
+    if (response.statusCode === 200 && fileExists) {
+      // Check file size to make sure it's not empty
+      const fileStats = await RNFS.stat(downloadPath);
+      console.log(`Downloaded file size: ${fileStats.size} bytes`);
+      
+      if (fileStats.size > 0) {
+        Alert.alert('Success', 'File downloaded successfully. The file can be found in YourDevice/Android/data/com.wblemobile');
+        return true;
+      } else {
+        console.log('File exists but has zero size');
+        throw new Error('Downloaded file has zero size');
+      }
     } else {
       Alert.alert('Download Failed', `Error code: ${response.statusCode}`);
       return false;
@@ -90,6 +103,25 @@ export const downloadFile = async (material, setDownloadingState = null) => {
       setDownloadingState(prev => ({...prev, [material.id]: false}));
     }
 
+    // Before showing error, check if file exists and has content
+    // This handles "end of stream" errors that occur after download completes
+    if (downloadPath && error.message && error.message.includes('end of stream')) {
+      try {
+        const fileExists = await RNFS.exists(downloadPath);
+        if (fileExists) {
+          const fileStats = await RNFS.stat(downloadPath);
+          if (fileStats.size > 0) {
+            console.log(`File exists despite error. Size: ${fileStats.size} bytes`);
+            Alert.alert('Success', 'File downloaded successfully. The file can be found in YourDevice/Android/data/com.wblemobile');
+            return true;
+          }
+        }
+      } catch (checkError) {
+        console.log('Error checking file after download:', checkError);
+      }
+    }
+
+    // Only show error alert if we didn't return success above
     Alert.alert(
       'Download Failed',
       'Could not download the file. Please try again.',
