@@ -13,6 +13,35 @@
 pip install -r requirements.txt
 ```
 
+# File Upload Handler for Large Files
+
+This module handles file uploads of larger sizes in the wble-backend application by configuring PHP settings to accommodate bigger files and longer processing times.
+
+## Configuration Requirements
+
+To enable large file uploads, the following PHP settings must be configured in your `php.ini` file:
+
+```
+upload_max_filesize = 20M
+post_max_size = 21M
+max_execution_time = 300
+memory_limit = 256M
+```
+
+## Setup Instructions
+
+1. Locate your PHP configuration file:
+   - Run `php --ini` to find the loaded configuration file
+   - Navigate to the specified php.ini file
+
+2. Modify the following settings:
+   - Set `upload_max_filesize` to 20M (maximum size for individual files)
+   - Set `post_max_size` to 21M (slightly larger than upload_max_filesize)
+   - Set `max_execution_time` to 300 seconds (5 minutes) for larger uploads
+   - Set `memory_limit` to 256M to ensure sufficient memory
+
+3. Restart your web server after making changes
+
 # WBLE Flask Socket
 1. Navigate to the Flask Socket directory:
    ```bash
