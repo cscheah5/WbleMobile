@@ -10,6 +10,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Illuminate\Support\Str;
 
 use Illuminate\Routing\Controller;
 
@@ -70,7 +71,15 @@ class AuthController extends ApiController
             // Get the authenticated user.
             $user = JWTAuth::user();
 
-            return $this->createNewToken($token, $user);
+            // Generate a new random refresh token (not JWT)
+            $refreshToken = Str::random(64);
+
+            // Store refresh token in database
+            $user->refresh_token = $refreshToken;
+            $user->refresh_token_expires_at = now()->addDays(7); // 7-day expiry
+            $user->save();
+
+            return $this->createNewToken($token, $user, $refreshToken);
         } catch (JWTException $e) {
             return $this->errorResponse('Could not create token', 500);
         }
@@ -113,38 +122,34 @@ class AuthController extends ApiController
 
     public function refresh()
     {
-        try {
-            // Parse the existing token
-            $currentToken = JWTAuth::getToken();
+        $refreshToken = request('refresh_token');
+        $user = User::where('refresh_token', $refreshToken)
+        ->where('refresh_token_expires_at', '>', now()) // Check expiry
+        ->first();
 
-            if (! $currentToken) {
-                return $this->errorResponse('Token not provided', 400);
-            }
-
-            // Refresh the token (invalidates old one)
-            $newToken = JWTAuth::refresh($currentToken);
-
-            // Authenticate user based on old token
-            $user = JWTAuth::setToken($newToken)->toUser();
-
-            return $this->createNewToken($newToken, $user);
-        } catch (TokenExpiredException $e) {
-            return $this->errorResponse('Token expired', 401);
-        } catch (TokenInvalidException $e) {
-            return $this->errorResponse('Token invalid', 401);
-        } catch (JWTException $e) {
-            return $this->errorResponse('Could not refresh token', 500);
+        if (!$user) {
+            return $this->errorResponse('Invalid refresh token', 401);
         }
+
+        // Generate new tokens
+        $newAccessToken = JWTAuth::fromUser($user);
+        $newRefreshToken = Str::random(64); // Generate a new refresh token
+
+        // Update DB
+        $user->refresh_token = $newRefreshToken;
+        $user->save();
+
+        return $this->createNewToken($newAccessToken, $user, $newRefreshToken);
     }
 
-    protected function createNewToken($token, $user)
+    protected function createNewToken($token, $user, $refreshToken)
     {
         return $this->successResponse([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => JWTAuth::factory()->getTTL() * 60, // 60 minutes
             'issued_at' => now()->timestamp,
-            'refresh_token' => JWTAuth::claims(['type' => 'refresh'])->fromUser($user), // 14 days
+            'refresh_token' => $refreshToken, // 14 days
             'user' => $user->only(['id', 'username', 'role'])
         ]);
     }

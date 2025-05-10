@@ -21,6 +21,8 @@ return new class extends Migration
             $table->enum('role', ['student', 'lecturer', 'admin'])->default('student');
             $table->string('profile_picture')->nullable();
             $table->string('fcm_token')->nullable();
+            $table->string('refresh_token')->nullable()->after('password');
+            $table->timestamp('refresh_token_expires_at')->nullable()->after('refresh_token');
             $table->rememberToken();
             $table->timestamps();
         });
