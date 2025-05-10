@@ -52,7 +52,8 @@ pip install -r requirements.txt
   GOOGLE_APPLICATION_CREDENTIALS="path/to/your-service-account.json"
   FLASK_INTERNAL_SECRET="your-random-secure-key"  # Must match Laravel's .env
   ```
-- Configure Firebase details in `flask-notifi/notification.py` (if needed).  
+- Configure Firebase details in `flask-notifi/notification.py` (if needed).
+- Example: change the firebase project id based on your use case  
 
 4. Sync `FLASK_INTERNAL_SECRET` with Laravel Backend
    Ensure the same secret is in Laravel’s `.env`:  
