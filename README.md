@@ -46,7 +46,7 @@ pip install -r requirements.txt
 
 3. Configure Firebase & Application Credentials
 - **Create a Firebase Project** (if not done already)  
-- Download your **Service Account JSON** file from Firebase Console  
+- Download your **Service Account JSON** file from Your Firebase Project   
 - Update `.env` with the correct path:  
   ```ini
   GOOGLE_APPLICATION_CREDENTIALS="path/to/your-service-account.json"
