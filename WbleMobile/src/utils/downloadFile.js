@@ -85,7 +85,7 @@ export const downloadFile = async (material, setDownloadingState = null) => {
       console.log(`Downloaded file size: ${fileStats.size} bytes`);
       
       if (fileStats.size > 0) {
-        Alert.alert('Success', 'File downloaded successfully. The file can be found in YourDevice/Android/data/com.wblemobile');
+        Alert.alert('Success', 'File downloaded successfully. The file can be found in YourDevice/Android/data/com.wblemobile/files');
         return true;
       } else {
         console.log('File exists but has zero size');
