@@ -57,11 +57,11 @@ pip install -r requirements.txt
 4. Sync `FLASK_INTERNAL_SECRET` with Laravel Backend
    Ensure the same secret is in Laravel’s `.env`:  
    ```ini
-   FLASK_INTERNAL_SECRET=your-internal-flask-secret
+   NOTIFICATION_INTERNAL_SECRET=your_internal_secret_here
    ```
 5. Add this env variable to laravel .env file (server url of your notification flask server)
    ```ini
-   FLASK_SERVER_URL=http://127.0.0.1:5002 #Use your own server url
+   NOTIFICATION_SERVER_URL=http://127.0.0.1:5002 #Use your own server url
    ```
    
 6. Start the backend server:
