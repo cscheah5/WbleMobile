@@ -141,10 +141,8 @@ export const AuthProvider = ({children}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token) {
-        await axios.post(
-          `${config.laravelApiUrl}/auth/logout`,
-          {},
-          {headers: {Authorization: `Bearer ${token}`}},
+        await authAxios.post(
+          `${config.laravelApiUrl}/auth/logout`
         );
       }
     } catch (error) {
