@@ -7,11 +7,13 @@ import {
   StyleSheet,
   ActivityIndicator,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import React, {useContext, useState, useRef, useEffect} from 'react';
 import {AuthContext} from '@/contexts/AuthContext';
 import {SocketContext} from '@/contexts/SocketContext';
 import {FlatList} from 'react-native-gesture-handler';
+import config from '@/config/config.json';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function SearchUserScreen({navigation}) {
@@ -72,11 +74,11 @@ export default function SearchUserScreen({navigation}) {
       setUserList([]);
       return;
     }
-    
+
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
-    
+
     debounceTimer.current = setTimeout(async () => {
       _searchUserByUsername(searchTerm);
     }, 500);
@@ -85,9 +87,14 @@ export default function SearchUserScreen({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Find Friends</Text>
-      
+
       <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color="#777" style={styles.searchIcon} />
+        <Ionicons
+          name="search-outline"
+          size={20}
+          color="#777"
+          style={styles.searchIcon}
+        />
         <TextInput
           placeholder="Search for a user..."
           style={styles.searchInput}
@@ -96,7 +103,7 @@ export default function SearchUserScreen({navigation}) {
           placeholderTextColor="#999"
         />
       </View>
-      
+
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#007bff" />
@@ -113,10 +120,15 @@ export default function SearchUserScreen({navigation}) {
           renderItem={({item}) => (
             <View style={styles.userItem}>
               <View style={styles.userInfo}>
-                <Ionicons name="person-outline" size={30} color="#007bff" style={styles.userIcon} />
+                <Image
+                  style={{width: 40, height: 40, borderRadius: 20}}
+                  source={{
+                    uri: `${config.laravelServerUrl}${item.profile_picture}`,
+                  }}
+                />
                 <Text style={styles.username}>{item.username}</Text>
               </View>
-              
+
               <TouchableNativeFeedback
                 onPress={() => {
                   if (!item.requested) {
@@ -125,10 +137,11 @@ export default function SearchUserScreen({navigation}) {
                     _sendFriendRequest(item.id);
                   }
                 }}>
-                <View style={[
-                  styles.addButton,
-                  item.requested && styles.requestedButton
-                ]}>
+                <View
+                  style={[
+                    styles.addButton,
+                    item.requested && styles.requestedButton,
+                  ]}>
                   <Text style={styles.buttonText}>
                     {item.requested ? 'Requested' : 'Add Friend'}
                   </Text>
