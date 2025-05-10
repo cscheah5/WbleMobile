@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { usePermission } from '@/contexts/PermissionContext';
@@ -7,7 +7,6 @@ import { getFileIcon } from '@/utils/sortMaterials';
 
 export default function WeekSection({
   item,
-
   onAddAnnouncement,
   onEditAnnouncement,
   onDeleteAnnouncement,
@@ -16,6 +15,7 @@ export default function WeekSection({
   onDeleteMaterial
 }) {
   const [downloading, setDownloading] = useState({});
+  
   const { can } = usePermission();
 
   // Format dates for display

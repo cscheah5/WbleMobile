@@ -27,12 +27,10 @@ export const InputWithLabel: React.FC<InputProps> = props => {
   return (
     <View style={styles.inputGroup}>
       <Text style={styles.inputLabel}>{label}</Text>
-
       <TextInput
         style={styles.input}
         {...inputProps}
       />
-
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
