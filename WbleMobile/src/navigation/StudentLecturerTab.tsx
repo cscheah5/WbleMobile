@@ -25,9 +25,9 @@ const StudentLecturerTab = () => {
         component={SubjectStackNavigator}
         options={{
           tabBarLabel: 'WBLE',
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({color, focused}) => (
             <MaterialCommunityIcons
-              name="school-outline"
+              name={focused ? "school" : "school-outline"}
               size={36}
               color={color}
             />
@@ -39,9 +39,9 @@ const StudentLecturerTab = () => {
         component={FriendStackNavigator}
         options={{
           tabBarLabel: 'Friends',
-          tabBarIcon: ({color}) => (
+          tabBarIcon: ({color, focused}) => (
             <MaterialCommunityIcons
-              name="account-group-outline"
+              name={focused ? "account-group" : "account-group-outline"}
               size={36}
               color={color}
             />
