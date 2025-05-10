@@ -49,14 +49,14 @@ pip install -r requirements.txt
 - Download your **Service Account JSON** file from Your Firebase Project   
 - Update `.env` with the correct path:  
   ```ini
-  GOOGLE_APPLICATION_CREDENTIALS="path/to/your-service-account.json"
-  FLASK_INTERNAL_SECRET="your-random-secure-key"  # Must match Laravel's .env
+  GOOGLE_APPLICATION_CREDENTIALS=path/to/your-service-account.json
+  FLASK_INTERNAL_SECRET=your_internal_secret_here  # Must match Laravel's .env
   ```
 - Configure Firebase details in `flask-notifi/notification.py` (if needed).
 - Example: change the firebase project id based on your use case  
 
 4. Sync `FLASK_INTERNAL_SECRET` with Laravel Backend
-   Ensure the same secret is in Laravel’s `.env`:  
+   Ensure the same secret is in `NOTIFICATION_INTERNAL_SECRET` of Laravel’s `.env`:  
    ```ini
    FLASK_INTERNAL_SECRET=your_internal_secret_here
    ```
@@ -155,15 +155,20 @@ php artisan jwt:secret
 php artisan storage:link
 ```
 
-10. Sync `FLASK_INTERNAL_SECRET` with Notification Server (if not done)
+10. Sync `NOTIFICATION_INTERNAL_SECRET` with `FLASK_INTERNAL_SECRET` of Notification Server (if not done)
    Ensure the same secret is in Notification Server’s `.env`:  
    ```ini
-   FLASK_INTERNAL_SECRET=your-internal-flask-secret
+   NOTIFICATION_INTERNAL_SECRET=your-internal-secret-here
    ```
 
-11. Start the development server:
-```bash
-php artisan serve
-```
+11. Ensure `NOTIFICATION_SERVER_URL` with points to the notification server
+   ```ini
+   NOTIFICATION_SERVER_URL=http://127.0.0.1:5002
+   ```
+
+12. Start the development server:
+   ```bash
+   php artisan serve
+   ```
 
 The application will be available at `http://localhost:8000`.
