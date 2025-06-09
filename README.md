@@ -1,3 +1,6 @@
+> [!NOTE]
+> This project is academic coursework for UECS3253 Wireless Application Development module.
+
 # WBLE 
 ## Default Accounts
 
