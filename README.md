@@ -221,7 +221,7 @@ php artisan storage:link
 
 The application will be available at `http://localhost:8000`.
 
-## Contributors
+# Contributors
 <a href="https://github.com/cscheah5/WbleMobile/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=cscheah5/WbleMobile" />
 </a>
