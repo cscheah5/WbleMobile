@@ -14,10 +14,6 @@ Structured into several key modules, WbleMobile covers a wide range of functiona
 
 In summary, WbleMobile is not just a replica of the WBLE website—it is an enhanced, mobile-first version designed to provide a better overall experience for all users, making academic and administrative interactions more efficient and accessible anytime, anywhere.
 
-
-
-
-# WBLE 
 ## Default Accounts
 
 | User Type | Username | Password |
